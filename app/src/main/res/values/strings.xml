@@ -9,4 +9,6 @@
     <string name="Disconnect"></string>
     <string name="Administration"></string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_peer_to_peer">PeerToPeer</string>
+    <string name="p2p_off_warning" />
 </resources>
