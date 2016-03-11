@@ -3,6 +3,10 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <string name="Home"></string>
+    <string name="Search"></string>
+    <string name="Queue"></string>
+    <string name="Disconnect"></string>
+    <string name="Administration"></string>
     <string name="action_settings">Settings</string>
 </resources>
