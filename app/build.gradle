@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 
@@ -25,6 +28,7 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -38,5 +42,11 @@ dependencies {
 
     // This library handles music playback
     compile 'com.spotify.sdk:spotify-player:1.0.0-beta12@aar'
+
+    //This is the spotify web API
+    compile 'com.github.kaaes:spotify-web-api-android:0.2.0'
+
+    // Test dependencies
+    testCompile "org.mockito:mockito-core:1.9.5"
 }
 

@@ -3,27 +3,33 @@ package com.example.aaup8v2.aaup8v2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
+import com.spotify.sdk.android.player.Spotify;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Playlist;
+import kaaes.spotify.webapi.android.models.Track;
+import retrofit.RetrofitError;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ConnectionStateCallback, PlayerNotificationCallback {
@@ -34,7 +40,10 @@ public class MainActivity extends AppCompatActivity
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
-    public boolean connectionFlag = false;
+
+    //Spotify instance
+    private SpotifyApi mSpotify = new SpotifyApi();
+    private SpotifyService mService = mSpotify.getService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +71,11 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
+        authenticate();
+
+    }
+
+    public void authenticate(){
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, //authentication
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
@@ -69,11 +83,10 @@ public class MainActivity extends AppCompatActivity
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+    }
 
-        if (true)
-        {
-            connectionFlag = true;
-        }
+    public void authenticate(String username, String password){
+
     }
 
     @Override
@@ -162,9 +175,7 @@ public class MainActivity extends AppCompatActivity
 
     //Spotify functions
     @Override
-    public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
-    }
+    public void onLoggedIn() { Log.d("MainActivity", "User logged in"); }
 
     @Override
     public void onLoggedOut() {
@@ -211,5 +222,23 @@ public class MainActivity extends AppCompatActivity
         // VERY IMPORTANT! This must always be called or else you will leak resources
         Spotify.destroyPlayer(this);
         super.onDestroy();
+    }
+
+    public Track getTrack(String id){
+
+        return mService.getTrack(id);
+
+    }
+
+    public Playlist getPlaylist(String userid, String pid) {
+        Playlist result;
+
+        try {
+            result = mService.getPlaylist(userid, pid);
+        }
+        catch (RetrofitError e){
+            return new Playlist();
+        }
+        return result;
     }
 }
