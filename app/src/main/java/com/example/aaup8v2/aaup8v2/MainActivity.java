@@ -25,12 +25,6 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Playlist;
-import kaaes.spotify.webapi.android.models.Track;
-import retrofit.RetrofitError;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ConnectionStateCallback, PlayerNotificationCallback {
 
@@ -40,10 +34,6 @@ public class MainActivity extends AppCompatActivity
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
-
-    //Spotify instance
-    private SpotifyApi mSpotify = new SpotifyApi();
-    private SpotifyService mService = mSpotify.getService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +73,6 @@ public class MainActivity extends AppCompatActivity
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-    }
-
-    public void authenticate(String username, String password){
-
     }
 
     @Override
@@ -224,21 +210,4 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    public Track getTrack(String id){
-
-        return mService.getTrack(id);
-
-    }
-
-    public Playlist getPlaylist(String userid, String pid) {
-        Playlist result;
-
-        try {
-            result = mService.getPlaylist(userid, pid);
-        }
-        catch (RetrofitError e){
-            return new Playlist();
-        }
-        return result;
-    }
 }
