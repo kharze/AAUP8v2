@@ -1,12 +1,15 @@
 <resources>
-    <string name="app_name">AAUP8v2</string>
+    <string name="app_name">AAU JukeBox</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="Home"></string>
-    <string name="Search"></string>
-    <string name="Queue"></string>
-    <string name="Disconnect"></string>
-    <string name="Administration"></string>
+    <string name="Home">Home</string>
+    <string name="Search">Search</string>
+    <string name="Queue">Queue</string>
+    <string name="Playlist">Playlist</string>
+    <string name="Disconnect">Disconnect</string>
+    <string name="Administration">Administration</string>
     <string name="action_settings">Settings</string>
+    <string name="QueueFragment">Queue</string>
+
 </resources>
