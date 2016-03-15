@@ -31,6 +31,8 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
+import kaaes.spotify.webapi.android.models.Track;
+
 public class MainActivity extends AppCompatActivity
         implements /*NavigationView.OnNavigationItemSelectedListener,*/AdminFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, PlayListFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener,
         QueueFragment.OnFragmentInteractionListener, DisconnectFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener, ConnectionStateCallback, PlayerNotificationCallback {
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
+    public SpotifyAccess mSpotifyAccess = new SpotifyAccess();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,14 +210,15 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
+                mSpotifyAccess.setAccessToken(response.getAccessToken());
+                Track a = mSpotifyAccess.getTrack("1zHlj4dQ8ZAtrayhuDDmkY");
                 Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
+                mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                     @Override
                     public void onInitialized(Player player) {
-                        player.addConnectionStateCallback(MainActivity.this);
-                        player.addPlayerNotificationCallback(MainActivity.this);
-                        //player.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N");
-
+                        mPlayer.addConnectionStateCallback(MainActivity.this);
+                        mPlayer.addPlayerNotificationCallback(MainActivity.this);
+                        //mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N");
                     }
 
                     @Override

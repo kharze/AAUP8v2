@@ -18,23 +18,24 @@ public class SpotifyAccess {
 
     public void setAccessToken(String token){
 
-        //mService = mSpotify.setAccessToken(AuthenticationClient.getResponse().getAccessToken()).getService();
+        mSpotify.setAccessToken(token);
+        mService = mSpotify.getService();
+        Track a = getTrack("1zHlj4dQ8ZAtrayhuDDmkY");
+        Playlist p = getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");
     }
 
     public Track getTrack(String id){
         Track mTrack;
         try {
-            mTrack = mService.getTrack(id);
+            return mService.getTrack(id);
         }
-        catch (RetrofitError e){
-            return new Track();
+        catch (Exception e){
+           return new Track();
         }
-        return mTrack;
     }
 
     public Album getAlbum(String id){
         Album mAlbum;
-
         try {
             mAlbum = mService.getAlbum(id);
         }
@@ -46,7 +47,6 @@ public class SpotifyAccess {
 
     public Playlist getPlaylist(String userid, String pid) {
         Playlist result;
-
         try {
             result = mService.getPlaylist(userid, pid);
         }
