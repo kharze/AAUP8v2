@@ -7,6 +7,10 @@
             android:icon="@drawable/ic_home"
             android:title="@string/Home" />
         <item
+            android:id="@+id/nav_search"
+            android:icon="@drawable/ic_search"
+            android:title="@string/Search" />
+        <item
             android:id="@+id/nav_queue"
             android:icon="@drawable/ic_playlist_play"
             android:title="@string/Queue" />
@@ -26,6 +30,9 @@
             android:id="@+id/nav_admin"
             android:icon="@drawable/ic_star"
             android:title="@string/Administration" />
+
+
+
     </group>
 
 

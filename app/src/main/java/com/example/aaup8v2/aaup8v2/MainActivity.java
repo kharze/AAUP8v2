@@ -33,7 +33,7 @@ import com.spotify.sdk.android.player.Spotify;
 
 public class MainActivity extends AppCompatActivity
         implements /*NavigationView.OnNavigationItemSelectedListener,*/AdminFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, PlayListFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener,
-        QueueFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener, ConnectionStateCallback, PlayerNotificationCallback {
+        QueueFragment.OnFragmentInteractionListener, DisconnectFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener, ConnectionStateCallback, PlayerNotificationCallback {
 
     TextView textView;
     DrawerLayout drawer;
@@ -101,10 +101,16 @@ public class MainActivity extends AppCompatActivity
                 fragmentClass = PlayListFragment.class;
                 break;
             case R.id.nav_settings:
-                fragmentClass = PlayListFragment.class;
+                fragmentClass = SettingsFragment.class;
                 break;
             case R.id.nav_admin:
-                fragmentClass = PlayListFragment.class;
+                fragmentClass = AdminFragment.class;
+                break;
+            case R.id.nav_disconnect:
+                fragmentClass = DisconnectFragment.class;
+                break;
+            case R.id.nav_search:
+                fragmentClass = SearchFragment.class;
                 break;
             default:
                 fragmentClass = HomeFragment.class;
