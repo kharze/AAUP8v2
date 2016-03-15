@@ -34,19 +34,28 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.0'
-    compile 'com.android.support:design:23.2.0'
 
     // This library handles authentication and authorization
-    compile 'com.spotify.sdk:spotify-auth:1.0.0-beta12@aar'
 
     // This library handles music playback
-    compile 'com.spotify.sdk:spotify-player:1.0.0-beta12@aar'
 
     //This is the spotify web API
-    compile 'com.github.kaaes:spotify-web-api-android:0.2.0'
 
     // Test dependencies
     testCompile "org.mockito:mockito-core:1.9.5"
+
+
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:design:23.2.1'
+    compile 'com.spotify.sdk:spotify-auth:1.0.0-beta12@aar'
+    compile 'com.spotify.sdk:spotify-player:1.0.0-beta12@aar'
+    compile 'com.github.kaaes:spotify-web-api-android:0.2.0'
+    compile 'com.android.support:support-v4:23.2.1'
 }
+
+
+
+
+
+
 
