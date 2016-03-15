@@ -1,7 +1,5 @@
 package com.example.aaup8v2.aaup8v2;
 
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Album;
@@ -20,7 +18,7 @@ public class SpotifyAccess {
 
     public void setAccessToken(String token){
 
-        mService = mSpotify.setAccessToken(AuthenticationClient.getResponse().getAccessToken()).getService();
+        //mService = mSpotify.setAccessToken(AuthenticationClient.getResponse().getAccessToken()).getService();
     }
 
     public Track getTrack(String id){
