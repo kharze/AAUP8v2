@@ -14,7 +14,7 @@ public class SpotifyAccess {
 
     //Spotify instance
     private SpotifyApi mSpotify = new SpotifyApi();
-    private SpotifyService mService;
+    private SpotifyService mService = mSpotify.getService();
 
     public void setAccessToken(String token){
 
