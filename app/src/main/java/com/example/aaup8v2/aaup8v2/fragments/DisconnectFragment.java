@@ -1,4 +1,4 @@
-package com.example.aaup8v2.aaup8v2;
+package com.example.aaup8v2.aaup8v2.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -8,16 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.aaup8v2.aaup8v2.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link QueueFragment.OnFragmentInteractionListener} interface
+ * {@link DisconnectFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link QueueFragment#newInstance} factory method to
+ * Use the {@link DisconnectFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class QueueFragment extends Fragment {
+public class DisconnectFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,7 +31,7 @@ public class QueueFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public QueueFragment() {
+    public DisconnectFragment() {
         // Required empty public constructor
     }
 
@@ -39,11 +41,11 @@ public class QueueFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment QueueFragment.
+     * @return A new instance of fragment DisconnectFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static QueueFragment newInstance(String param1, String param2) {
-        QueueFragment fragment = new QueueFragment();
+    public static DisconnectFragment newInstance(String param1, String param2) {
+        DisconnectFragment fragment = new DisconnectFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -64,7 +66,7 @@ public class QueueFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_queue, container, false);
+        return inflater.inflate(R.layout.fragment_disconnect, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
