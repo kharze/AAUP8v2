@@ -19,8 +19,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
+import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
+import com.example.aaup8v2.aaup8v2.fragments.HomeFragment;
+import com.example.aaup8v2.aaup8v2.fragments.PlayListFragment;
+import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
+import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
+import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -57,14 +63,14 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /**FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });**/
 
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
