@@ -23,17 +23,89 @@
         android:layout_alignParentBottom="true">
         
         </LinearLayout>
-    <Button
-        android:id="@+id/Test_spotify_Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="Test_spotify"
-        android:text="Press for magic"/>
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+    <TableRow>
+        <Button
+            android:id="@+id/Test_spotify_Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="Test_spotify"
+            android:text="Press for magic"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Text here"
+            android:id="@+id/Name_for_song"
+            android:layout_below="@+id/Test_spotify_Button"/>
+    </TableRow>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Text here"
-        android:id="@+id/Name_for_song"
-        android:layout_below="@+id/Test_spotify_Button"/>
+    <TableRow android:minHeight="20dp">
+
+    </TableRow>
+
+    <TableRow>
+        <Button
+            android:id="@+id/Test_Play_Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="playMusic"
+            android:text="Press to play music"/>
+    </TableRow>
+    <TableRow android:minHeight="20dp">
+
+    </TableRow>
+
+    <TableRow>
+        <Button
+            android:id="@+id/Test_resume_Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="resumeMusic"
+            android:text="Press to resume music"/>
+    </TableRow>
+
+        <TableRow android:minHeight="20dp">
+
+        </TableRow>
+
+        <TableRow>
+            <Button
+                android:id="@+id/Test_skip_Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="skipMusic"
+                android:text="Press to skip music"/>
+        </TableRow>
+        <TableRow android:minHeight="20dp">
+
+        </TableRow>
+
+        <TableRow>
+            <Button
+                android:id="@+id/Test_prev_Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="prevMusic"
+                android:text="Press to play prev music"/>
+        </TableRow>
+        <TableRow android:minHeight="20dp">
+
+        </TableRow>
+
+        <TableRow>
+            <Button
+                android:id="@+id/Test_pause_Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="pauseMusic"
+                android:text="Press to pause music"/>
+        </TableRow>
+
+
+
+    </TableLayout>
+
+
 </RelativeLayout>

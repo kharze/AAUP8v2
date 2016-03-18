@@ -309,4 +309,20 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
+    public void playMusic(View view){
+        mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N");
+    }
+    public void pauseMusic(View view){
+        mPlayer.pause();
+    }
+    public void skipMusic(View view){
+        mPlayer.skipToNext();
+    }
+    public void prevMusic(View view){
+        mPlayer.skipToPrevious();
+    }
+
+    public void resumeMusic(View view) {
+        mPlayer.resume();
+    }
 }
