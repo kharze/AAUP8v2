@@ -17,4 +17,17 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <Button
+        android:id="@+id/Test_spotify_Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="Test_spotify"
+        android:text="Press for magic"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Text here"
+        android:id="@+id/Name_for_song"
+        android:layout_below="@+id/Test_spotify_Button"/>
 </RelativeLayout>
