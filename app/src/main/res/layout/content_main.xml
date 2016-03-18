@@ -21,6 +21,19 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true">
+        
+        </LinearLayout>
+    <Button
+        android:id="@+id/Test_spotify_Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="Test_spotify"
+        android:text="Press for magic"/>
 
-    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Text here"
+        android:id="@+id/Name_for_song"
+        android:layout_below="@+id/Test_spotify_Button"/>
 </RelativeLayout>
