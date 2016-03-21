@@ -5,9 +5,33 @@
     tools:context=".fragments.SearchFragment">
 
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/Search" />
 
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+
+        <TableRow>
+            <TextView
+                android:text="@string/Search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:width="300dp" />
+        </TableRow>
+
+        <TableRow android:minHeight="20dp">
+
+        </TableRow>
+
+        <TableRow>
+        <ListView android:minWidth="50dp" android:contextClickable="true" android:layout_height="wrap_content"
+            android:layout_width="match_parent" android:id="@+id/listView">
+        </ListView>
+        </TableRow>
+
+    </TableLayout>
 </FrameLayout>
