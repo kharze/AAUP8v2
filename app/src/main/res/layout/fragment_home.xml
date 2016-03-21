@@ -16,16 +16,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/searchView"
             android:layout_gravity="center_horizontal"
-            android:background="#373737" />
+            android:background="@drawable/search" />
 
-        <GridView
+        <ListView
             android:layout_width="match_parent"
-            android:layout_height="395dp"
-            android:layout_margin="1dp"
-            android:horizontalSpacing="1dp"
-            android:id="@+id/playListHome"
-            android:numColumns="1"
-            android:background="#373737"/>
+            android:layout_height="383dp"
+            android:id="@+id/playListHome" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -33,6 +29,10 @@
             android:id="@+id/scrollView"
             android:fillViewport="false">
 
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/listView2" />
         </ScrollView>
     </LinearLayout>
 </FrameLayout>

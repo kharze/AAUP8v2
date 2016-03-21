@@ -1,5 +1,7 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
+import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,6 +9,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import java.util.ArrayList;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Adapter;
 
 import com.example.aaup8v2.aaup8v2.R;
 
@@ -56,10 +62,25 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setContentView(R.layout.fragment_home);
+        ListView view = (ListView) getActivity().findViewById(R.id.playListHome);
+
+        ArrayList<String> testList = new ArrayList<>();
+        testList.add("foo");
+        testList.add("bar");
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                testList);
+
+        view.setAdapter(arrayAdapter);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
