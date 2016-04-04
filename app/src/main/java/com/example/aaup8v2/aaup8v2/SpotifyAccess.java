@@ -6,7 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.Artists;
+import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
+import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 import retrofit.RetrofitError;
 
@@ -17,7 +20,7 @@ public class SpotifyAccess extends AppCompatActivity{
 
     //Spotify instance
     private SpotifyApi mSpotify = new SpotifyApi();
-    private SpotifyService mService = mSpotify.getService();
+    public SpotifyService mService = mSpotify.getService();
 
     public void setAccessToken2(String token){
         mSpotify.setAccessToken(token);
@@ -60,6 +63,31 @@ public class SpotifyAccess extends AppCompatActivity{
 
     }
 
+    public Pager getPlaylistTracks(String userid, String pid) {
+        Pager result;
+        try {
+            //mService.getPlaylist(userid, pid);
+            new asyncGetPlaylistTracks().execute(userid, pid);
+            return new Pager();
+        }
+        catch (RetrofitError e){
+            return new Pager();
+        }
+
+    }
+
+    public Artists getArtists(String userid, String pid) {
+        Pager result;
+        try {
+            //mService.getPlaylist(userid, pid);
+            new asyncGetArtists().execute(userid, pid);
+            return new Artists();
+        }
+        catch (RetrofitError e){
+            return new Artists();
+        }
+
+    }
 
     class getTrack2 implements Runnable {
         @Override
@@ -97,7 +125,7 @@ public class SpotifyAccess extends AppCompatActivity{
 
     }
 
-    private class asyncGetPlaylist extends AsyncTask<String, Void, Playlist> {
+    public class asyncGetPlaylist extends AsyncTask<String, Void, Playlist> {
         private SpotifyApi mSpotifyApi = new SpotifyApi();
         private SpotifyService mSpotifyService = mSpotifyApi.getService();
 
@@ -122,6 +150,74 @@ public class SpotifyAccess extends AppCompatActivity{
         protected void onPostExecute(Playlist p){
             try {
                 MainActivity.mTextView.setText(p.name);
+            }
+            catch (Exception e)
+            {
+                e.getCause();
+            }
+        }
+
+    }
+
+    public class asyncGetArtists extends AsyncTask<String, Void, Artists> {
+        private SpotifyApi mSpotifyApi = new SpotifyApi();
+        private SpotifyService mSpotifyService = mSpotifyApi.getService();
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+
+        @Override
+        protected Artists doInBackground(String... id) {
+            try {
+                Artists mArtists = mService.getArtists(id[0]);
+                return mArtists;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(Artists p){
+            try {
+                MainActivity.mTextView.setText(p.describeContents());
+            }
+            catch (Exception e)
+            {
+                e.getCause();
+            }
+        }
+
+    }
+
+    public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
+        private SpotifyApi mSpotifyApi = new SpotifyApi();
+        private SpotifyService mSpotifyService = mSpotifyApi.getService();
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+
+        @Override
+        protected Pager doInBackground(String... id) {
+            try {
+                Pager mPlaylistTracks = mService.getPlaylistTracks(id[0], id[1]);
+                return mPlaylistTracks;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(Pager p){
+            try {
+                MainActivity.mTextView.setText(p.next.length());
             }
             catch (Exception e)
             {

@@ -27,6 +27,7 @@ import com.example.aaup8v2.aaup8v2.fragments.PlayListFragment;
 import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
+import com.example.aaup8v2.aaup8v2.recommender_pearson.PlaylistRecommend;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -37,6 +38,10 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.Artists;
+import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class MainActivity extends AppCompatActivity
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public SpotifyAccess mSpotifyAccess;
+    public PlaylistRecommend mRecommend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +69,6 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         /**FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,9 +87,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         //navigationView.setNavigationItemSelectedListener(this);
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem){
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
                 selectDrawerItem(menuItem);
                 return true;
             }
@@ -98,8 +103,8 @@ public class MainActivity extends AppCompatActivity
 
         //Temporary TextView used to show playlist and Track.
         mTextView = (TextView)findViewById(R.id.Name_for_song);
-
     }
+
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the planet to show based on
         // position
@@ -303,6 +308,11 @@ public class MainActivity extends AppCompatActivity
         //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");
         try {
             Track b = mSpotifyAccess.new asyncGetTrack().execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
+           // mRecommend.formatPlaylist();
+            Artists x = mSpotifyAccess.new asyncGetArtists().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
+            Pager c = mSpotifyAccess.new asyncGetPlaylistTracks().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
+            Track t = ((Track) c.items.get(1));
+            Playlist z = mSpotifyAccess.new asyncGetPlaylist().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
             String a = b.album.name;
         }
         catch (Exception e){

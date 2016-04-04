@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().setContentView(R.layout.fragment_home);
+/**        getActivity().setContentView(R.layout.fragment_home);
         ListView view = (ListView) getActivity().findViewById(R.id.playListHome);
 
         ArrayList<String> testList = new ArrayList<>();
@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment {
                 testList);
 
         view.setAdapter(arrayAdapter);
-
+**/
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
