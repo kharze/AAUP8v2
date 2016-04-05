@@ -14,14 +14,14 @@ import kaaes.spotify.webapi.android.models.Playlist;
 
 public class PearsonRecommend extends MainActivity{
 
-    public void formatPlaylist (){
+    /*public void formatPlaylist (){
         try {
-            Pager tracks = mSpotifyAccess.new asyncGetPlaylistTracks().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
+            Pager tracks = MainActivity.mSpotifyAccess.new asyncGetPlaylistTracks().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
             int x;
         } catch (Exception e) {
 
         }
 
-    }
+    }*/
 }
 
