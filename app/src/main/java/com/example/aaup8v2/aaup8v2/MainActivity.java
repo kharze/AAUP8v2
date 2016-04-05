@@ -26,6 +26,7 @@ import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
 import com.example.aaup8v2.aaup8v2.recommender_pearson.PearsonRecommend;
+import com.example.aaup8v2.aaup8v2.asyncTasks.*;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
-    public PearsonRecommend mRecommend = new PearsonRecommend();
+    //public PearsonRecommend mRecommend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });**/
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -302,11 +304,23 @@ public class MainActivity extends AppCompatActivity
 
     public void Test_spotify(View view){
         //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");
-        mRecommend.myMethod();
         try {
-            Track b = mSpotifyAccess.new asyncGetTrack().execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
-            Pager c = mSpotifyAccess.new asyncGetPlaylistTracks().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
-            Playlist z = mSpotifyAccess.new asyncGetPlaylist().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
+            Track b = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
+                @Override
+                public void processFinish(Track output){
+                }
+            }).execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
+            Pager c = new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
+                @Override
+                public void processFinish(Pager output){
+                }
+            }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
+            //Track t = ((Track) c.items.get(1));
+            Playlist z = new asyncGetPlaylist(new asyncGetPlaylist.AsyncResponse(){
+                @Override
+                public void processFinish(Playlist output){
+                }
+            }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
             String a = b.album.name;
         }
         catch (Exception e){
