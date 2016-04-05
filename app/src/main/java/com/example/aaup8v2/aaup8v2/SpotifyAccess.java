@@ -63,41 +63,6 @@ public class SpotifyAccess extends AppCompatActivity{
 
     }
 
-    public Pager getPlaylistTracks(String userid, String pid) {
-        Pager result;
-        try {
-            //mService.getPlaylist(userid, pid);
-            new asyncGetPlaylistTracks().execute(userid, pid);
-            return new Pager();
-        }
-        catch (RetrofitError e){
-            return new Pager();
-        }
-
-    }
-
-    public Artists getArtists(String userid, String pid) {
-        Pager result;
-        try {
-            //mService.getPlaylist(userid, pid);
-            new asyncGetArtists().execute(userid, pid);
-            return new Artists();
-        }
-        catch (RetrofitError e){
-            return new Artists();
-        }
-
-    }
-
-    class getTrack2 implements Runnable {
-        @Override
-        public void run() {
-
-        }
-
-
-    }
-
     public class asyncGetTrack extends AsyncTask<String, Void, Track> {
         private SpotifyApi mSpotifyApi = new SpotifyApi();
         private SpotifyService mSpotifyService = mSpotifyApi.getService();

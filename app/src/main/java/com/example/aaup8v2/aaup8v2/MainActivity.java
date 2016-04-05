@@ -4,9 +4,7 @@ package com.example.aaup8v2.aaup8v2;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -27,7 +25,7 @@ import com.example.aaup8v2.aaup8v2.fragments.PlayListFragment;
 import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
-import com.example.aaup8v2.aaup8v2.recommender_pearson.PlaylistRecommend;
+import com.example.aaup8v2.aaup8v2.recommender_pearson.PearsonRecommend;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -38,7 +36,6 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
-import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public SpotifyAccess mSpotifyAccess;
-    public PlaylistRecommend mRecommend;
+    public PearsonRecommend mRecommend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -308,8 +305,6 @@ public class MainActivity extends AppCompatActivity
         //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");
         try {
             Track b = mSpotifyAccess.new asyncGetTrack().execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
-           // mRecommend.formatPlaylist();
-            Artists x = mSpotifyAccess.new asyncGetArtists().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
             Pager c = mSpotifyAccess.new asyncGetPlaylistTracks().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
             Track t = ((Track) c.items.get(1));
             Playlist z = mSpotifyAccess.new asyncGetPlaylist().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();

@@ -12,7 +12,7 @@ import kaaes.spotify.webapi.android.models.Playlist;
  * Created by lasse on 21-03-2016.
  */
 
-public class PlaylistRecommend extends MainActivity{
+public class PearsonRecommend extends MainActivity{
 
     public void formatPlaylist (){
         try {
