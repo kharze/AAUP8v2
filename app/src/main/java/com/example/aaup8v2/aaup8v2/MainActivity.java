@@ -4,6 +4,7 @@ package com.example.aaup8v2.aaup8v2;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
@@ -37,10 +39,16 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
+import java.lang.reflect.Array;
+import java.util.List;
+
 import kaaes.spotify.webapi.android.models.Artists;
+import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.Tracks;
+import kaaes.spotify.webapi.android.models.TracksPager;
 
 public class MainActivity extends AppCompatActivity
         implements /*NavigationView.OnNavigationItemSelectedListener,*/AdminFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, PlayListFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener,
@@ -342,5 +350,41 @@ public class MainActivity extends AppCompatActivity
 
     public void resumeMusic(View view) {
         mPlayer.resume();
+    }
+
+
+    private String searchString = "";
+
+    EditText mText;
+
+
+    Array searchResult;
+    List temp = null;
+    List temp2 = null;
+    int i = 0;
+
+    public void searchMusic(View view){
+        mText = (EditText) findViewById(R.id.Search_Text);
+        searchString = mText.getText().toString();
+
+        new asyncSearchTracks(new asyncSearchTracks.AsyncResponse(){
+            @Override
+            public void processFinish(TracksPager output){
+
+                temp = output.tracks.items;
+
+                i++;
+            }
+        }).execute(searchString);
+
+        new asyncSearchArtists(new asyncSearchArtists.AsyncResponse(){
+            @Override
+            public void processFinish(ArtistsPager output){
+
+                temp2 = output.artists.items;
+                // Artists -> Albums -> simpleTracks
+
+            }
+        }).execute(searchString);
     }
 }
