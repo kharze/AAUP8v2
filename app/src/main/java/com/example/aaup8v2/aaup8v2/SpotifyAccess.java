@@ -174,6 +174,7 @@ public class SpotifyAccess extends AppCompatActivity{
             }
             catch (Exception e)
             {
+                e.getMessage();
                 return null;
             }
 

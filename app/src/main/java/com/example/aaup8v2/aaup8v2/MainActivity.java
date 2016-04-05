@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
-    public SpotifyAccess mSpotifyAccess;
-    public PearsonRecommend mRecommend;
+    public static SpotifyAccess mSpotifyAccess;
+    public PearsonRecommend mRecommend = new PearsonRecommend();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });**/
-
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -303,10 +302,10 @@ public class MainActivity extends AppCompatActivity
 
     public void Test_spotify(View view){
         //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");
+        mRecommend.myMethod();
         try {
             Track b = mSpotifyAccess.new asyncGetTrack().execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
             Pager c = mSpotifyAccess.new asyncGetPlaylistTracks().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
-            Track t = ((Track) c.items.get(1));
             Playlist z = mSpotifyAccess.new asyncGetPlaylist().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
             String a = b.album.name;
         }
