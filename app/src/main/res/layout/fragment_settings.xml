@@ -13,7 +13,8 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mange spotify account:" />
+            android:text="Mange spotify account:"
+            android:textColor="@color/textColor"/>
     </TableRow>
 
 
@@ -44,7 +45,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Genre prefences:" />
+            android:text="Genre prefences:"
+            android:textColor="@color/textColor"/>
 
         <CheckBox
             android:id="@+id/rockCheckbox"
@@ -56,7 +58,8 @@
             android:drawablePadding="0dp"
             android:text="Rock"
             android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/textColor"/>
         <CheckBox
             android:id="@+id/jazzCheckbox"
             android:layout_width="0dp"
@@ -67,7 +70,8 @@
             android:drawablePadding="0dp"
             android:text="Jazz"
             android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/textColor"/>
         <CheckBox
             android:id="@+id/HouseCheckbox"
             android:layout_width="0dp"
@@ -78,7 +82,8 @@
             android:drawablePadding="0dp"
             android:text="House"
             android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/textColor"/>
 
     </TableRow>
 
