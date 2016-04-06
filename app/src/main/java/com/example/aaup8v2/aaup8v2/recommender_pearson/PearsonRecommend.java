@@ -45,44 +45,50 @@ public class PearsonRecommend{
         }
 
         List<String> genres = new ArrayList();
-        do{
-            String artistsRequests = null;
-            int x = 0;
+        try{
             do{
-                if(artistsRequests == null){
-                    artistsRequests = artistsList.get(0);
-                    artistsList.remove(0);
-                    x++;
-                }
-                else {
-                    artistsRequests += "," + artistsList.get(0);
-                    artistsList.remove(0);
-                    x++;
-                }
-            }while (x < 50 && !artistsList.isEmpty());
-            try
-            {
-                mArtists = new asyncGetArtists(new asyncGetArtists.AsyncResponse(){
-                    @Override
-                    public void processFinish(Artists output){
+                String artistsRequests = null;
+                int counter = 0;
+                do{
+                    if(artistsRequests == null){
+                        artistsRequests = artistsList.get(0);
+                        artistsList.remove(0);
+                        counter++;
                     }
-                }).execute(artistsRequests).get();
-            }catch (Exception e){
+                    else {
+                        artistsRequests += "," + artistsList.get(0);
+                        artistsList.remove(0);
+                        counter++;
+                    }
+                }while (counter < 50 && !artistsList.isEmpty());
+                try
+                {
+                    mArtists = new asyncGetArtists(new asyncGetArtists.AsyncResponse(){
+                        @Override
+                        public void processFinish(Artists output){
+                        }
+                    }).execute(artistsRequests).get();
+                }catch (Exception e){
 
-            }
+                }
 
-            for (int i = 0; i < mArtists.artists.size(); i++){
-                int temp = mArtists.artists.get(i).genres.size();
-                for(int j = 0; j < temp; j++){
-                    String[] tempGenres = mArtists.artists.get(i).genres.get(j).split("\\W+");
-                    for(int y = 0; y < tempGenres.length; y++){
-                        genres.add(tempGenres[y]);
+                for (int i = 0; i < mArtists.artists.size(); i++){
+                    int temp = mArtists.artists.get(i).genres.size();
+                    for(int j = 0; j < temp; j++){
+                        String[] tempGenres = mArtists.artists.get(i).genres.get(j).split("\\W+");
+                        for(int y = 0; y < tempGenres.length; y++){
+                            genres.add(tempGenres[y]);
+                        }
                     }
                 }
-            }
-        }while (!artistsList.isEmpty());
+            }while (!artistsList.isEmpty());
 
-        return genres;
+            return genres;
+        }catch (Exception e){
+            return new ArrayList<>();
+        }
+
+
     }
 
     public void calculateWeights(String u_id, String p_id){
@@ -103,6 +109,9 @@ public class PearsonRecommend{
                     occurence = 0;
                 }
                 occurence++;
+                if(i == genres.size()- 1){
+                    occGenre.add(occurence);
+                }
             }
             else{
                 occurence++;
@@ -115,8 +124,6 @@ public class PearsonRecommend{
         for(int i = 0; i < difGenres.size(); i++){
             map.put(difGenres.get(i), occGenre.get(i));
         }
-
-        int o = 10;
     }
 }
 
