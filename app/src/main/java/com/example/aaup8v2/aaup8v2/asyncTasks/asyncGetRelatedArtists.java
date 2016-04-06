@@ -38,7 +38,6 @@ public class asyncGetRelatedArtists extends AsyncTask<String, Void, Artists> {
     @Override
     protected void onPostExecute(Artists p){
         try {
-            MainActivity.mTextView.setText(p.describeContents());
             delegate.processFinish(p);
         }
         catch (Exception e)

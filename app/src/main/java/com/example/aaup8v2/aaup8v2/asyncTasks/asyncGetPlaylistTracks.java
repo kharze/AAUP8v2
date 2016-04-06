@@ -40,7 +40,6 @@ public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
     @Override
     protected void onPostExecute(Pager p){
         try {
-            //MainActivity.mTextView.setText(p.next.length());
             delegate.processFinish(p);
         }
         catch (Exception e)

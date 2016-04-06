@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity
         mSpotifyAccess = new SpotifyAccess();
 
         //Temporary TextView used to show playlist and Track.
-        mTextView = (TextView)findViewById(R.id.Name_for_song);
+        //mTextView = (TextView)findViewById(R.id.Name_for_song);
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
@@ -370,7 +370,7 @@ public class MainActivity extends AppCompatActivity
     int i = 0;
 
     public void searchMusic(View view){
-        mText = (EditText) findViewById(R.id.Search_Text);
+        //mText = (EditText) findViewById(R.id.Search_Text);
         searchString = mText.getText().toString();
 
         new asyncSearchTracks(new asyncSearchTracks.AsyncResponse(){
