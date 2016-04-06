@@ -14,7 +14,10 @@
         android:id="@+id/flContent"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -46,10 +49,7 @@
                 android:src="@drawable/ic_action_playback_next"/>
         </RelativeLayout>
     </LinearLayout>
-
-</RelativeLayout>
-    <!--
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!-- <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
         <TableRow>
@@ -129,9 +129,33 @@
                 android:text="Press to pause music"/>
         </TableRow>
 
+        <TableRow
+            android:minHeight="20dp">
+
+        </TableRow>
+
+        <TableRow>
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/Search_Text"
+                android:layout_column="0"
+                android:text="Search"/>
+        </TableRow>
+
+        <TableRow>
+            <Button
+                android:id="@+id/Test_search_Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="searchMusic"
+                android:text="Search for music"
+                android:layout_column="0" />
+        </TableRow>
 
 
-    </TableLayout>
--->
+    </TableLayout> -->
 
 
+
+</RelativeLayout>

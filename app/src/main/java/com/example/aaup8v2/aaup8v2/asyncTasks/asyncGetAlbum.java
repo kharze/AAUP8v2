@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 
 import kaaes.spotify.webapi.android.models.Album;
-import kaaes.spotify.webapi.android.models.Artists;
 
 public class asyncGetAlbum extends AsyncTask<String, Void, Album> {
 
@@ -39,7 +38,6 @@ public class asyncGetAlbum extends AsyncTask<String, Void, Album> {
     @Override
     protected void onPostExecute(Album p){
         try {
-            MainActivity.mTextView.setText(p.describeContents());
             delegate.processFinish(p);
         }
         catch (Exception e)

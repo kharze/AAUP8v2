@@ -1,6 +1,5 @@
 package com.example.aaup8v2.aaup8v2;
 
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
@@ -9,7 +8,6 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.Playlist;
-import kaaes.spotify.webapi.android.models.Track;
 import retrofit.RetrofitError;
 
 /**

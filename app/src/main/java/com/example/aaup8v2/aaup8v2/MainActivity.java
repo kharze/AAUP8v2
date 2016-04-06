@@ -16,8 +16,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchArtists;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchTracks;
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
 import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
 import com.example.aaup8v2.aaup8v2.fragments.HomeFragment;
@@ -26,7 +32,6 @@ import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
 import com.example.aaup8v2.aaup8v2.recommender_pearson.PearsonRecommend;
-import com.example.aaup8v2.aaup8v2.asyncTasks.*;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -37,10 +42,14 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
-import kaaes.spotify.webapi.android.models.Artists;
+import java.lang.reflect.Array;
+import java.util.List;
+
+import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.TracksPager;
 
 public class MainActivity extends AppCompatActivity
         implements /*NavigationView.OnNavigationItemSelectedListener,*/AdminFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, PlayListFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener,
@@ -58,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
-    //public PearsonRecommend mRecommend;
+    public PearsonRecommend mRecommend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -342,5 +351,41 @@ public class MainActivity extends AppCompatActivity
 
     public void resumeMusic(View view) {
         mPlayer.resume();
+    }
+
+
+    private String searchString = "";
+
+    EditText mText;
+
+
+    Array searchResult;
+    List temp = null;
+    List temp2 = null;
+    int i = 0;
+
+    public void searchMusic(View view){
+        //mText = (EditText) findViewById(R.id.Search_Text);
+        searchString = mText.getText().toString();
+
+        new asyncSearchTracks(new asyncSearchTracks.AsyncResponse(){
+            @Override
+            public void processFinish(TracksPager output){
+
+                temp = output.tracks.items;
+
+                i++;
+            }
+        }).execute(searchString);
+
+        new asyncSearchArtists(new asyncSearchArtists.AsyncResponse(){
+            @Override
+            public void processFinish(ArtistsPager output){
+
+                temp2 = output.artists.items;
+                // Artists -> Albums -> simpleTracks
+
+            }
+        }).execute(searchString);
     }
 }
