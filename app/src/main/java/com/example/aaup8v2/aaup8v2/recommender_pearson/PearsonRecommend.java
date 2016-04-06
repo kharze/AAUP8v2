@@ -1,19 +1,17 @@
 package com.example.aaup8v2.aaup8v2.recommender_pearson;
 
-import com.example.aaup8v2.aaup8v2.MainActivity;
-import com.example.aaup8v2.aaup8v2.SpotifyAccess;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtists;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Album;
-import kaaes.spotify.webapi.android.models.AlbumSimple;
-import kaaes.spotify.webapi.android.models.Artist;
-import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
-import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -22,15 +20,19 @@ import kaaes.spotify.webapi.android.models.Track;
  */
 
 public class PearsonRecommend{
-    public void myMethod(){
+    public List<String> generateGenreList(String u_id, String p_id){
+
         Pager tracksPager= null;
         Track track;
         Track t = null;
         Artists mArtists = null;
-        List artistsList = new ArrayList();
+        List<String> artistsList = new ArrayList<>();
         try{
-            t = MainActivity.mSpotifyAccess.new asyncGetTrack().execute("3Y3gChJoEUTqrtuqJCIPQk").get();
-            tracksPager = MainActivity.mSpotifyAccess.new asyncGetPlaylistTracks().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
+            tracksPager = new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
+                @Override
+                public void processFinish(Pager output){
+                }
+            }).execute(u_id, p_id).get();
         }catch (Exception e){
         }
 
@@ -41,26 +43,80 @@ public class PearsonRecommend{
                 artistsList.add(track.artists.get(i).id);
             }
         }
-        List genres = new ArrayList();
-        for(int i = 0; i < artistsList.size(); i++) {
+
+        List<String> genres = new ArrayList();
+        do{
+            String artistsRequests = null;
+            int x = 0;
+            do{
+                if(artistsRequests == null){
+                    artistsRequests = artistsList.get(0);
+                    artistsList.remove(0);
+                    x++;
+                }
+                else {
+                    artistsRequests += "," + artistsList.get(0);
+                    artistsList.remove(0);
+                    x++;
+                }
+            }while (x < 50 && !artistsList.isEmpty());
+            try
+            {
+                mArtists = new asyncGetArtists(new asyncGetArtists.AsyncResponse(){
+                    @Override
+                    public void processFinish(Artists output){
+                    }
+                }).execute(artistsRequests).get();
+            }catch (Exception e){
+
+            }
+
+            for (int i = 0; i < mArtists.artists.size(); i++){
+                int temp = mArtists.artists.get(i).genres.size();
+                for(int j = 0; j < temp; j++){
+                    String[] tempGenres = mArtists.artists.get(i).genres.get(j).split("\\W+");
+                    for(int y = 0; y < tempGenres.length; y++){
+                        genres.add(tempGenres[y]);
+                    }
+                }
+            }
+        }while (!artistsList.isEmpty());
+
+        return genres;
+    }
+
+    public void calculateWeights(String u_id, String p_id){
+        List<String> genres = generateGenreList(u_id, p_id);
+
+        Collections.sort(genres);
+
+        List<String> difGenres = new ArrayList<>();
+        List<Integer> occGenre = new  ArrayList<>();
+
+        int occurence = 0;
+        String tempGenre = null;
+        for (int i = 0; i < genres.size(); i++){
+            if (!difGenres.contains(genres.get(i))){
+                difGenres.add(genres.get(i));
+                if(occurence != 0){
+                    occGenre.add(occurence);
+                    occurence = 0;
+                }
+                occurence++;
+            }
+            else{
+                occurence++;
+                if(i == genres.size()- 1){
+                    occGenre.add(occurence);
+                }
+            }
         }
-        try
-        {
-            mArtists = MainActivity.mSpotifyAccess.new asyncGetArtists().execute("2qPIOBAKYc1SQI1QHDV4EV").get();
-        }catch (Exception e){
-
-        }
-
-        int temp = mArtists.artists.size();
-        for (Artist artist : mArtists.artists) {
-
-        }
-        for (int i = 0; i < mArtists.artists.size(); i ++){
-
+        Map<String, Integer> map = new HashMap<>();
+        for(int i = 0; i < difGenres.size(); i++){
+            map.put(difGenres.get(i), occGenre.get(i));
         }
 
         int o = 10;
     }
-
 }
 

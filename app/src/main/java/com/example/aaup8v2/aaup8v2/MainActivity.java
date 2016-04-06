@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
-    //public PearsonRecommend mRecommend;
+    public PearsonRecommend mRecommend = new PearsonRecommend();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -303,7 +303,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void Test_spotify(View view){
-        //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");
+        //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");;
+        mRecommend.calculateWeights("aaup8", "1RdQS80EE32zxXBFOfLnNR");
         try {
             Track b = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
                 @Override
