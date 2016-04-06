@@ -32,7 +32,6 @@ public class asyncGetTrack extends AsyncTask<String, Void, Track> {
     @Override
     protected void onPostExecute(Track t){
         try {
-            MainActivity.mTextView.setText(t.name);
             delegate.processFinish(t);
         }
         catch (Exception e)
