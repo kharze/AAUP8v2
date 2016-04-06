@@ -4,7 +4,6 @@ package com.example.aaup8v2.aaup8v2;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,6 +19,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchArtists;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchTracks;
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
 import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
 import com.example.aaup8v2.aaup8v2.fragments.HomeFragment;
@@ -28,7 +32,6 @@ import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
 import com.example.aaup8v2.aaup8v2.recommender_pearson.PearsonRecommend;
-import com.example.aaup8v2.aaup8v2.asyncTasks.*;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -42,12 +45,10 @@ import com.spotify.sdk.android.player.Spotify;
 import java.lang.reflect.Array;
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.Tracks;
 import kaaes.spotify.webapi.android.models.TracksPager;
 
 public class MainActivity extends AppCompatActivity
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
-    //public PearsonRecommend mRecommend;
+    public PearsonRecommend mRecommend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

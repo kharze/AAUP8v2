@@ -41,7 +41,6 @@ public class asyncGetPlaylist extends AsyncTask<String, Void, Playlist> {
     @Override
     protected void onPostExecute(Playlist p){
         try {
-            MainActivity.mTextView.setText(p.name);
             delegate.processFinish(p);
         }
         catch (Exception e)

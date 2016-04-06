@@ -26,10 +26,12 @@ public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
     protected Pager doInBackground(String... id) {
         try {
             Pager mPlaylistTracks = MainActivity.mSpotifyAccess.mService.getPlaylistTracks(id[0], id[1]);
+            mPlaylistTracks.describeContents();
             return mPlaylistTracks;
         }
         catch (Exception e)
         {
+            e.getCause();
             return null;
         }
 
@@ -38,7 +40,6 @@ public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
     @Override
     protected void onPostExecute(Pager p){
         try {
-            MainActivity.mTextView.setText(p.next.length());
             delegate.processFinish(p);
         }
         catch (Exception e)
