@@ -164,6 +164,16 @@
                 android:layout_column="0" />
         </TableRow>
 
+        <TableRow>
+            <Button
+                android:id="@+id/Test_connect_Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="p2P"
+                android:text="PeerToPeer"
+                android:layout_column="0" />
+        </TableRow>
+
 
     </TableLayout> -->
 
