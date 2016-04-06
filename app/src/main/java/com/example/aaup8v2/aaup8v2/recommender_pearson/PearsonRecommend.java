@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +92,7 @@ public class PearsonRecommend{
 
     }
 
-    public void calculateWeights(String u_id, String p_id){
+    public Map<String, Integer> calculateWeights(String u_id, String p_id){
         List<String> genres = generateGenreList(u_id, p_id);
 
         Collections.sort(genres);
@@ -120,10 +121,29 @@ public class PearsonRecommend{
                 }
             }
         }
-        Map<String, Integer> map = new HashMap<>();
+        Map<String, Integer> genresValue = new HashMap<>();
         for(int i = 0; i < difGenres.size(); i++){
-            map.put(difGenres.get(i), occGenre.get(i));
+            genresValue.put(difGenres.get(i), occGenre.get(i));
         }
+
+        return genresValue;
+    }
+
+    public void pearsonRecommender(String u_id, String p_id){
+        Map<String, Integer> genres = calculateWeights(u_id, p_id);
+
+        Iterator iterator = genres.keySet().iterator();
+        List<String> genresTypesList = new ArrayList<>();
+        List<Integer> genresCountList = new ArrayList<>();
+
+        while (iterator.hasNext()){
+            Object key = genres.keySet().iterator();
+            Object value = genres.get(key);
+            genresTypesList.add((String) key);
+            genresCountList.add((int) value);
+        }
+        int o = 10;
+
     }
 }
 
