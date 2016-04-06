@@ -1,7 +1,5 @@
 package com.example.aaup8v2.aaup8v2.recommender_pearson;
 
-import com.example.aaup8v2.aaup8v2.MainActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +21,8 @@ public class PearsonRecommend{
         Artists mArtists = null;
         List artistsList = new ArrayList();
         try{
-            t = MainActivity.mSpotifyAccess.new asyncGetTrack().execute("3Y3gChJoEUTqrtuqJCIPQk").get();
-            tracksPager = MainActivity.mSpotifyAccess.new asyncGetPlaylistTracks().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
+            //t = MainActivity.mSpotifyAccess.new asyncGetTrack().execute("3Y3gChJoEUTqrtuqJCIPQk").get();
+            //tracksPager = MainActivity.mSpotifyAccess.new asyncGetPlaylistTracks().execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
         }catch (Exception e){
         }
 
@@ -40,7 +38,7 @@ public class PearsonRecommend{
         }
         try
         {
-            mArtists = MainActivity.mSpotifyAccess.new asyncGetArtists().execute("2qPIOBAKYc1SQI1QHDV4EV").get();
+            //mArtists = MainActivity.mSpotifyAccess.new asyncGetArtists().execute("2qPIOBAKYc1SQI1QHDV4EV").get();
         }catch (Exception e){
 
         }
