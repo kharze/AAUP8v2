@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     private Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
-    public PearsonRecommend mRecommend;
+    public PearsonRecommend mRecommend = new PearsonRecommend();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -312,7 +312,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void Test_spotify(View view){
-        //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");
+        //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");;
+        /** ID's
+         * Empty list: user:aaup8 :playlist:6B3WEOcvqjEsURp4Icu9vN
+         * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
+         */
+        mRecommend.pearsonRecommender("aaup8", "6B3WEOcvqjEsURp4Icu9vN");
         try {
             Track b = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
                 @Override
@@ -368,11 +373,11 @@ public class MainActivity extends AppCompatActivity
         //mText = (EditText) findViewById(R.id.Search_Text);
         searchString = mText.getText().toString();
 
-        new asyncSearchTracks(new asyncSearchTracks.AsyncResponse(){
+        new asyncSearchMusic(new asyncSearchMusic.AsyncResponse(){
             @Override
-            public void processFinish(TracksPager output){
+            public void processFinish(List output){
 
-                temp = output.tracks.items;
+                //temp = output.tracks.items;
 
                 i++;
             }
@@ -387,5 +392,13 @@ public class MainActivity extends AppCompatActivity
 
             }
         }).execute(searchString);
+    }
+
+
+    //Don't use, doesn't work
+    public void p2P(View view){
+        //Start Peer-to-Peer
+        Intent intent = new Intent(this, PeerToPeer.class);
+        startActivity(intent);
     }
 }

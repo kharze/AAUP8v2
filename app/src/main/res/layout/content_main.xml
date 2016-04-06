@@ -27,26 +27,37 @@
                 android:id="@+id/prevButtonImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="prevMusic"
                 android:layout_marginLeft="0dp"
                 android:src="@drawable/ic_action_playback_prev"/>
             <ImageButton
                 android:id="@+id/playButtonImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="playMusic"
                 android:layout_marginLeft="50dp"
                 android:src="@drawable/ic_action_playback_play"/>
             <ImageButton
                 android:id="@+id/pauseButtonImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="pauseMusic"
                 android:layout_marginLeft="100dp"
                 android:src="@drawable/ic_action_playback_pause"/>
             <ImageButton
                 android:id="@+id/skipButtonImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="skipMusic"
                 android:layout_marginLeft="150dp"
                 android:src="@drawable/ic_action_playback_next"/>
+            <ImageButton
+                android:id="@+id/testButtonImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="Test_spotify"
+                android:layout_marginLeft="200dp"
+                android:src="@drawable/ic_home"/>
         </RelativeLayout>
     </LinearLayout>
     <!--
@@ -151,6 +162,16 @@
                 android:layout_height="wrap_content"
                 android:onClick="searchMusic"
                 android:text="Search for music"
+                android:layout_column="0" />
+        </TableRow>
+
+        <TableRow>
+            <Button
+                android:id="@+id/Test_connect_Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="p2P"
+                android:text="PeerToPeer"
                 android:layout_column="0" />
         </TableRow>
 
