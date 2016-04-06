@@ -14,12 +14,41 @@
         android:id="@+id/flContent"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true">
+        android:layout_height="match_parent">
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom">
+            <ImageButton
+                android:id="@+id/prevButtonImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:src="@drawable/ic_action_playback_prev"/>
+            <ImageButton
+                android:id="@+id/playButtonImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:src="@drawable/ic_action_playback_play"/>
+            <ImageButton
+                android:id="@+id/pauseButtonImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:src="@drawable/ic_action_playback_pause"/>
+            <ImageButton
+                android:id="@+id/skipButtonImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="150dp"
+                android:src="@drawable/ic_action_playback_next"/>
+        </RelativeLayout>
     </LinearLayout>
+
+</RelativeLayout>
+    <!--
     <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
@@ -103,5 +132,6 @@
 
 
     </TableLayout>
+-->
 
-</RelativeLayout>
+

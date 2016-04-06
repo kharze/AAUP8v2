@@ -15,6 +15,7 @@
         <TableRow>
             <TextView
                 android:text="@string/Search"
+                android:textColor="@color/textColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <android.support.design.widget.TextInputEditText

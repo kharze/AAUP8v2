@@ -2,6 +2,8 @@ package com.example.aaup8v2.aaup8v2;
 
 import android.test.InstrumentationTestCase;
 
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,8 +33,8 @@ public class SpotifyAccessTest extends InstrumentationTestCase {
         //Assert.assertEquals("Timber", mService.getTrack("1zHlj4dQ8ZAtrayhuDDmkY").album.name);
         //Assert.assertEquals("Timber", mService.new asyncGetTrack().execute("1zHlj4dQ8ZAtrayhuDDmkY").get().album.name);
         try {
-            Track a = mService.new asyncGetTrack().execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
-            b = a.name;
+            //Track a = new asyncGetTrack().execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
+            //b = a.name;
         }
         catch (Exception e){
             e.getCause();

@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity
         mSpotifyAccess = new SpotifyAccess();
 
         //Temporary TextView used to show playlist and Track.
-        mTextView = (TextView)findViewById(R.id.Name_for_song);
+        //mTextView = (TextView)findViewById(R.id.Name_for_song);
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
