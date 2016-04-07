@@ -14,9 +14,7 @@ public class asyncGetAlbum extends AsyncTask<String, Void, Album> {
 
     public AsyncResponse delegate = null;
 
-    public asyncGetAlbum(AsyncResponse delegate){
-        this.delegate = delegate;
-    }
+    public asyncGetAlbum(AsyncResponse delegate){ this.delegate = delegate; }
 
     @Override
     protected void onProgressUpdate(Void... values) {
