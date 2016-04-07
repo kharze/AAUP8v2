@@ -170,7 +170,6 @@ public class PearsonRecommend{
 
         List<List> weights = calculateWeights(u_id, p_id);
 
-        Collections.sort();
 
         return null;
     }
