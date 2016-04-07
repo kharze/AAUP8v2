@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity
          * Empty list: user:aaup8 :playlist:6B3WEOcvqjEsURp4Icu9vN
          * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
          */
-        mRecommend.recommender("aaup8", "1RdQS80EE32zxXBFOfLnNR");
+        mRecommend.recommender("aaup8", "6B3WEOcvqjEsURp4Icu9vN");
         try {
             Track b = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
                 @Override
