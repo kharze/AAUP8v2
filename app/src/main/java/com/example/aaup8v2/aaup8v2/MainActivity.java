@@ -362,14 +362,10 @@ public class MainActivity extends AppCompatActivity
 
     EditText mText;
 
-
-    Array searchResult;
-    List temp = null;
-    List temp2 = null;
     int i = 0;
-/**
+
     public void searchMusic(View view){
-        //mText = (EditText) findViewById(R.id.Search_Text);
+        mText = (EditText) findViewById(R.id.Search_Text);
         searchString = mText.getText().toString();
 
         new asyncSearchMusic(new asyncSearchMusic.AsyncResponse(){
@@ -382,18 +378,8 @@ public class MainActivity extends AppCompatActivity
             }
         }).execute(searchString);
 
-        new asyncSearchArtists(new asyncSearchArtists.AsyncResponse(){
-            @Override
-            public void processFinish(ArtistsPager output){
-
-                temp2 = output.artists.items;
-                // Artists -> Albums -> simpleTracks
-
-            }
-        }).execute(searchString);
-
     }
-**/
+
 
     //Don't use, doesn't work
     public void p2P(View view){
