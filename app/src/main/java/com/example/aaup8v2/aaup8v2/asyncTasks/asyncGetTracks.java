@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 
-import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
 
 public class asyncGetTracks extends AsyncTask<String, Void, Tracks> {
@@ -26,8 +25,7 @@ public class asyncGetTracks extends AsyncTask<String, Void, Tracks> {
 
     @Override
     protected Tracks doInBackground(String... id) {
-        Tracks mTracks = MainActivity.mSpotifyAccess.mService.getTracks(id[0]);
-        return mTracks;
+        return MainActivity.mSpotifyAccess.mService.getTracks(id[0]);
     }
 
     @Override

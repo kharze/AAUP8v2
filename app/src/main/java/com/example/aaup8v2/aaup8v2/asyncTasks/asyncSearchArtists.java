@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 
 import kaaes.spotify.webapi.android.models.ArtistsPager;
-import kaaes.spotify.webapi.android.models.TracksPager;
 
 /**
  * Created by Claus on 4/5/2016.
@@ -28,8 +27,7 @@ public class asyncSearchArtists extends AsyncTask<String, Void, ArtistsPager> {
 
     @Override
     protected ArtistsPager doInBackground(String... id) {
-        ArtistsPager mArtists = MainActivity.mSpotifyAccess.mService.searchArtists(id[0]);
-        return mArtists;
+        return MainActivity.mSpotifyAccess.mService.searchArtists(id[0]);
     }
 
     @Override

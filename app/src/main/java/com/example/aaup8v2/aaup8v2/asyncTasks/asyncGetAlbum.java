@@ -25,8 +25,7 @@ public class asyncGetAlbum extends AsyncTask<String, Void, Album> {
     @Override
     protected Album doInBackground(String... id) {
         try {
-            Album mAlbum = MainActivity.mSpotifyAccess.mService.getAlbum(id[0]);
-            return mAlbum;
+            return MainActivity.mSpotifyAccess.mService.getAlbum(id[0]);
         }
         catch (Exception e)
         {

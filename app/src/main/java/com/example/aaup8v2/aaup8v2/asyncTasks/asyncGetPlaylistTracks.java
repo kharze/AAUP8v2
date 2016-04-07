@@ -25,9 +25,7 @@ public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
     @Override
     protected Pager doInBackground(String... id) {
         try {
-            Pager mPlaylistTracks = MainActivity.mSpotifyAccess.mService.getPlaylistTracks(id[0], id[1]);
-            mPlaylistTracks.describeContents();
-            return mPlaylistTracks;
+            return MainActivity.mSpotifyAccess.mService.getPlaylistTracks(id[0], id[1]);
         }
         catch (Exception e)
         {

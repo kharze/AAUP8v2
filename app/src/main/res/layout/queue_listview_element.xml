@@ -47,7 +47,8 @@
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:onClick="click_downvote"/>
 
     <ImageView
         android:id="@+id/upVote"
@@ -57,6 +58,7 @@
         android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
-        android:layout_toLeftOf="@id/downVote"/>
+        android:layout_toLeftOf="@id/downVote"
+        android:onClick="click_upvote"/>
 
 </RelativeLayout>
