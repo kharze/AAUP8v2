@@ -17,6 +17,9 @@ import kaaes.spotify.webapi.android.models.Track;
  **/
 
 public class PearsonRecommend{
+
+    List<String> difGenres = new ArrayList<>();
+
     public List<String> generateGenreList(String u_id, String p_id){
 
         Pager tracksPager= null;
@@ -29,14 +32,8 @@ public class PearsonRecommend{
                 public void processFinish(Pager output){
                 }
             }).execute(u_id, p_id).get();
-/**
-            mArtists = new asyncGetArtists(new asyncGetArtists().AsyncResponse(){
-                @Override
-                public void processFinish(Pager output){
-                }
-            }).execute(u_id, p_id).get();
- **/
         }catch (Exception e){
+            e.getMessage();
         }
 
         List<PlaylistTrack> tracksList = tracksPager.items;
@@ -47,7 +44,7 @@ public class PearsonRecommend{
             }
         }
 
-        List<String> genres = new ArrayList();
+        List<String> genres = new ArrayList<>();
         try{
             do{
                 String artistsRequests = null;
@@ -72,21 +69,22 @@ public class PearsonRecommend{
                         }
                     }).execute(artistsRequests).get();
                 }catch (Exception e){
-
+                    e.getMessage();
                 }
 
                 for (int i = 0; i < mArtists.artists.size(); i++){
                     int temp = mArtists.artists.get(i).genres.size();
                     for(int j = 0; j < temp; j++){
                         String[] tempGenres = mArtists.artists.get(i).genres.get(j).split("\\W+");
-                        for(int y = 0; y < tempGenres.length; y++){
-                            genres.add(tempGenres[y]);
+                        for (String genre : tempGenres) {
+                            genres.add(genre);
                         }
                     }
                 }
             }while (!artistsList.isEmpty());
 
             return genres;
+
         }catch (Exception e){
             return new ArrayList<>();
         }
@@ -94,16 +92,14 @@ public class PearsonRecommend{
 
     }
 
-    public List<List> calculateWeights(String u_id, String p_id){
+    public List<List> getGenreCount(String u_id, String p_id){
         List<String> genres = generateGenreList(u_id, p_id);
 
         Collections.sort(genres);
 
-        List<String> difGenres = new ArrayList<>();
         List<Integer> occGenre = new  ArrayList<>();
 
         int occurence = 0;
-        String tempGenre = null;
         for (int i = 0; i < genres.size(); i++){
             if (!difGenres.contains(genres.get(i))){
                 difGenres.add(genres.get(i));
@@ -130,12 +126,11 @@ public class PearsonRecommend{
         return genresValue;
     }
 
-    public void pearsonRecommender(String u_id, String p_id){
+    public List<List> calculateWeights(String u_id, String p_id){
 
-        List<List> genres = calculateWeights(u_id, p_id);
-        List<String> difGenres = genres.get(0);
+        List<List> genres = getGenreCount(u_id, p_id);
         List<Integer> occGenres = genres.get(1);
-        List<Double> genreWeights = new ArrayList<>();
+        List<List> genreWeights = new ArrayList<>();
 /**
         List<Integer> occGenres = new ArrayList<>();
         occGenres.add(5);
@@ -152,7 +147,6 @@ public class PearsonRecommend{
         }
 
         avgGenre = avgGenre / occGenres.size();
-        Double avgDif = 0.0;
 
         for(int i = 0; i < occGenres.size(); i++)
         {
@@ -161,14 +155,24 @@ public class PearsonRecommend{
 
         for(int i = 0; i < occGenres.size(); i++)
         {
-            Double pearson = 0.0;
+            List<Double> weightsAndID = new ArrayList<>();
+            Double pearson;
             pearson = (occGenres.get(i)-avgGenre)/Math.sqrt(summation);
-            genreWeights.add(pearson);
+            weightsAndID.add(pearson);
+            weightsAndID.add((double) i);
+            genreWeights.add(weightsAndID);
         }
 
-
-        int o = 10;
-
+        return genreWeights;
     }
+
+    public List<Pager> recommender(String u_id, String p_id){
+
+        List<List> weights = calculateWeights(u_id, p_id);
+
+
+        return null;
+    }
+
 }
 
