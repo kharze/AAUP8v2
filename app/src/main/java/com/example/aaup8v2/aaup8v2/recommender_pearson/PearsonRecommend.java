@@ -4,12 +4,8 @@ import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtists;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
@@ -17,15 +13,14 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
- * Created by lasse on 21-03-2016.
- */
+ * Created by Lasse on 21-03-2016.
+ **/
 
 public class PearsonRecommend{
     public List<String> generateGenreList(String u_id, String p_id){
 
         Pager tracksPager= null;
         Track track;
-        Track t = null;
         Artists mArtists = null;
         List<String> artistsList = new ArrayList<>();
         try{
@@ -34,6 +29,13 @@ public class PearsonRecommend{
                 public void processFinish(Pager output){
                 }
             }).execute(u_id, p_id).get();
+/**
+            mArtists = new asyncGetArtists(new asyncGetArtists().AsyncResponse(){
+                @Override
+                public void processFinish(Pager output){
+                }
+            }).execute(u_id, p_id).get();
+ **/
         }catch (Exception e){
         }
 
@@ -92,7 +94,7 @@ public class PearsonRecommend{
 
     }
 
-    public Map<String, Integer> calculateWeights(String u_id, String p_id){
+    public List<List> calculateWeights(String u_id, String p_id){
         List<String> genres = generateGenreList(u_id, p_id);
 
         Collections.sort(genres);
@@ -121,27 +123,50 @@ public class PearsonRecommend{
                 }
             }
         }
-        Map<String, Integer> genresValue = new HashMap<>();
-        for(int i = 0; i < difGenres.size(); i++){
-            genresValue.put(difGenres.get(i), occGenre.get(i));
-        }
+        List<List> genresValue = new ArrayList<>();
+        genresValue.add(difGenres);
+        genresValue.add(occGenre);
 
         return genresValue;
     }
 
     public void pearsonRecommender(String u_id, String p_id){
-        Map<String, Integer> genres = calculateWeights(u_id, p_id);
 
-        Iterator iterator = genres.keySet().iterator();
-        List<String> genresTypesList = new ArrayList<>();
-        List<Integer> genresCountList = new ArrayList<>();
+        List<List> genres = calculateWeights(u_id, p_id);
+        List<String> difGenres = genres.get(0);
+        List<Integer> occGenres = genres.get(1);
+        List<Double> genreWeights = new ArrayList<>();
+/**
+        List<Integer> occGenres = new ArrayList<>();
+        occGenres.add(5);
+        occGenres.add(3);
+        occGenres.add(4);
+        occGenres.add(4);
+**/
+        Double avgGenre = 0.0;
+        Double summation = 0.0;
 
-        while (iterator.hasNext()){
-            Object key = genres.keySet().iterator();
-            Object value = genres.get(key);
-            genresTypesList.add((String) key);
-            genresCountList.add((int) value);
+        for(int i = 0; i < occGenres.size(); i++)
+        {
+            avgGenre += occGenres.get(i);
         }
+
+        avgGenre = avgGenre / occGenres.size();
+        Double avgDif = 0.0;
+
+        for(int i = 0; i < occGenres.size(); i++)
+        {
+            summation += Math.pow(occGenres.get(i) - avgGenre, 2);
+        }
+
+        for(int i = 0; i < occGenres.size(); i++)
+        {
+            Double pearson = 0.0;
+            pearson = (occGenres.get(i)-avgGenre)/Math.sqrt(summation);
+            genreWeights.add(pearson);
+        }
+
+
         int o = 10;
 
     }
