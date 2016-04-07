@@ -25,14 +25,6 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link QueueFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {link QueueFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class QueueFragment extends Fragment {
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView mlist;
@@ -61,7 +53,7 @@ public class QueueFragment extends Fragment {
             public void processFinish(Pager output){
 
                 for(int i=0;i < output.items.size();i++){
-                    HashMap<String, String> hm = new HashMap<String,String>();
+                    HashMap<String, String> hm = new HashMap<>();
 
                     PlaylistTrack p = (PlaylistTrack) output.items.get(i);
                     String s = p.track.name;
@@ -130,7 +122,7 @@ public class QueueFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void Upvote_Click(View view){
+    public void click_down_vote(View view){
         FrameLayout vwParentRow = (FrameLayout)view.getParent();
 
         TextView child = (TextView)vwParentRow.getChildAt(0);

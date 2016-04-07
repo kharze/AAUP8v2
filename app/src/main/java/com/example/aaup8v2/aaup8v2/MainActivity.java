@@ -22,8 +22,6 @@ import android.widget.TextView;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchArtists;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
 import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
 import com.example.aaup8v2.aaup8v2.fragments.HomeFragment;
@@ -45,7 +43,6 @@ import com.spotify.sdk.android.player.Spotify;
 import java.lang.reflect.Array;
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.Track;
@@ -400,5 +397,9 @@ public class MainActivity extends AppCompatActivity
         //Start Peer-to-Peer
         Intent intent = new Intent(this, PeerToPeer.class);
         startActivity(intent);
+    }
+
+    public void click_down_vote(View view){
+        String s = "Ss";
     }
 }
