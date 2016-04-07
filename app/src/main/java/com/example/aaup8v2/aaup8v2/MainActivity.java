@@ -373,11 +373,11 @@ public class MainActivity extends AppCompatActivity
         //mText = (EditText) findViewById(R.id.Search_Text);
         searchString = mText.getText().toString();
 
-        new asyncSearchTracks(new asyncSearchTracks.AsyncResponse(){
+        new asyncSearchMusic(new asyncSearchMusic.AsyncResponse(){
             @Override
-            public void processFinish(TracksPager output){
+            public void processFinish(List output){
 
-                temp = output.tracks.items;
+                //temp = output.tracks.items;
 
                 i++;
             }
@@ -392,5 +392,13 @@ public class MainActivity extends AppCompatActivity
 
             }
         }).execute(searchString);
+    }
+
+
+    //Don't use, doesn't work
+    public void p2P(View view){
+        //Start Peer-to-Peer
+        Intent intent = new Intent(this, PeerToPeer.class);
+        startActivity(intent);
     }
 }
