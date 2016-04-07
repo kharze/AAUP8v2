@@ -28,8 +28,7 @@ public class asyncGetPlaylist extends AsyncTask<String, Void, Playlist> {
     @Override
     protected Playlist doInBackground(String... id) {
         try {
-            Playlist mPlaylist = MainActivity.mSpotifyAccess.mService.getPlaylist(id[0], id[1]);
-            return mPlaylist;
+            return MainActivity.mSpotifyAccess.mService.getPlaylist(id[0], id[1]);
         }
         catch (Exception e)
         {

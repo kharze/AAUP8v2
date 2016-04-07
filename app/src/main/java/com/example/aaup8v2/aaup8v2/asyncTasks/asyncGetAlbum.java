@@ -14,9 +14,7 @@ public class asyncGetAlbum extends AsyncTask<String, Void, Album> {
 
     public AsyncResponse delegate = null;
 
-    public asyncGetAlbum(AsyncResponse delegate){
-        this.delegate = delegate;
-    }
+    public asyncGetAlbum(AsyncResponse delegate){ this.delegate = delegate; }
 
     @Override
     protected void onProgressUpdate(Void... values) {
@@ -25,8 +23,7 @@ public class asyncGetAlbum extends AsyncTask<String, Void, Album> {
     @Override
     protected Album doInBackground(String... id) {
         try {
-            Album mAlbum = MainActivity.mSpotifyAccess.mService.getAlbum(id[0]);
-            return mAlbum;
+            return MainActivity.mSpotifyAccess.mService.getAlbum(id[0]);
         }
         catch (Exception e)
         {

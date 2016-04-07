@@ -25,8 +25,7 @@ public class asyncGetArtists extends AsyncTask<String, Void, Artists> {
     @Override
     protected Artists doInBackground(String... id) {
         try {
-            Artists mArtists = MainActivity.mSpotifyAccess.mService.getArtists(id[0]);
-            return mArtists;
+            return MainActivity.mSpotifyAccess.mService.getArtists(id[0]);
         }
         catch (Exception e)
         {

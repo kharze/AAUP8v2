@@ -4,59 +4,81 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
+    <!-- Icon at the start of the line -->
     <ImageView
         android:id="@+id/flag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/Playlist"
-        android:paddingTop="10dp"
+        android:contentDescription="@string/Queue"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
         android:paddingRight="10dp"
-        android:paddingBottom="10dp"
+        android:paddingEnd="10dp"
+        android:paddingStart="5dp"
+        android:paddingLeft="5dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="5dp"/>
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"/>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_toRightOf="@id/flag"
-        android:layout_marginRight="60dp">
-
-        <TextView
-            android:id="@+id/txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15dp"
-            android:textColor="@color/textColor"
-            android:layout_alignParentLeft="true"/>
-
-        <TextView
-            android:id="@+id/cur"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:textColor="@color/textColor"
-            android:layout_below="@id/txt"/>
-
-    </RelativeLayout>
-
+    <!-- down vote image -->
     <ImageView
         android:id="@+id/downVote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/Playlist"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:layout_alignParentRight="true"/>
+        android:contentDescription="@string/Queue"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:onClick="click_down_vote"/>
 
+    <!-- up vote image -->
     <ImageView
         android:id="@+id/upVote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/Playlist"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:layout_toLeftOf="@id/downVote"/>
+        android:contentDescription="@string/Queue"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:layout_toLeftOf="@id/downVote"
+        android:layout_toStartOf="@id/downVote"
+        android:layout_centerVertical="true"
+        android:clickable="true"
+        android:onClick="click_up_vote"/>
+
+    <!-- Text in the middle of element -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/upVote"
+        android:layout_toLeftOf="@id/upVote"
+        android:layout_toEndOf="@id/flag"
+        android:layout_toRightOf="@id/flag">
+
+        <!-- Large text at the top of the field -->
+        <TextView
+            android:id="@+id/txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/textColor"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:lines="1" />
+
+        <!-- Small text at the bottom of the field -->
+        <TextView
+            android:id="@+id/cur"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/textColor"
+            android:layout_below="@id/txt"
+            android:lines="1"/>
+    </RelativeLayout>
 
 </RelativeLayout>

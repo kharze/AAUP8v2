@@ -25,8 +25,7 @@ public class asyncGetTracks extends AsyncTask<String, Void, Tracks> {
 
     @Override
     protected Tracks doInBackground(String... id) {
-        Tracks mTracks = MainActivity.mSpotifyAccess.mService.getTracks(id[0]);
-        return mTracks;
+        return MainActivity.mSpotifyAccess.mService.getTracks(id[0]);
     }
 
     @Override
