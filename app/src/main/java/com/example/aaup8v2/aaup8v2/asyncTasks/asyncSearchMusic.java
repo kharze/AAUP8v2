@@ -52,7 +52,7 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
 
         for(n = 0; n < mTracksHelper.size(); n++){
             myTrack temp = new myTrack(mTracksHelper.get(n).id, mTracksHelper.get(n).name, mTracksHelper.get(n).duration_ms);
-            //mTracksHelper.get(n).artists.get(0).name;
+            temp.setArtist(mTracksHelper.get(n).artists.get(0).name);
             mSearchTracks.add(temp);
         }
 
@@ -90,6 +90,7 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
                 for(k = 0; k < temp3.size(); k++){
                     for(l = 0; l < temp3.get(k).tracks.items.size(); l++){
                         myTrack temp = new myTrack(temp3.get(k).tracks.items.get(l).id, temp3.get(k).tracks.items.get(l).name, temp3.get(k).tracks.items.get(l).duration_ms);
+                        temp.setArtist(temp3.get(k).tracks.items.get(l).artists.get(0).name);
                         mSearchTracks.add(temp);
                     }
                 }
