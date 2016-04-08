@@ -52,6 +52,7 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
 
         for(n = 0; n < mTracksHelper.size(); n++){
             myTrack temp = new myTrack(mTracksHelper.get(n).id, mTracksHelper.get(n).name, mTracksHelper.get(n).duration_ms);
+            //mTracksHelper.get(n).artists.get(0).name;
             mSearchTracks.add(temp);
         }
 

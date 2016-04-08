@@ -8,6 +8,7 @@ package com.example.aaup8v2.aaup8v2;
 public class myTrack {
     public String id;
     public String name;
+    public String artist;
     public long duration_ms;
 
     //public String getId(){return id;}

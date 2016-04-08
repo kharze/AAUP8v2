@@ -59,20 +59,6 @@
                 android:layout_marginLeft="200dp"
                 android:src="@drawable/ic_home"/>
         </RelativeLayout>
-
-        <EditText
-            android:layout_width="160dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/Search_Text"
-            android:layout_gravity="center_horizontal" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Search for Music"
-            android:id="@+id/searchButton"
-            android:onClick="searchMusic"
-            android:layout_gravity="center_horizontal" />
     </LinearLayout>
     <!--
      <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"

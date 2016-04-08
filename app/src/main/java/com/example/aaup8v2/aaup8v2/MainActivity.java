@@ -17,11 +17,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
 import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
 import com.example.aaup8v2.aaup8v2.fragments.HomeFragment;
@@ -355,28 +357,28 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private String searchString = "";
-
     EditText mText;
+    ListView mListView;
 
     int i = 0;
 
     public void searchMusic(View view){
+        String searchString = "";
         mText = (EditText) findViewById(R.id.Search_Text);
         searchString = mText.getText().toString();
+        mListView = (ListView) findViewById(R.id.Search_Results);
 
         new asyncSearchMusic(new asyncSearchMusic.AsyncResponse(){
             @Override
             public void processFinish(List output){
 
-                //temp = output.tracks.items;
+                //mListView;
 
                 i++;
             }
         }).execute(searchString);
 
     }
-
 
     //Don't use, doesn't work
     public void p2P(View view){
