@@ -14,17 +14,20 @@ import android.widget.Spinner;
 
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylists;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.Playlist;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
 
 public class AdminFragment extends Fragment {
-    Spinner spinner;
+    ListView list;
     List<HashMap<String,String>> aList = new ArrayList<>();
     private OnFragmentInteractionListener mListener;
 
@@ -54,38 +57,32 @@ public class AdminFragment extends Fragment {
 
 
 
-        new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
+        new asyncGetPlaylists(new asyncGetPlaylists.AsyncResponse(){
 
             @Override
-            public void processFinish(Pager output){
+            public void processFinish(Pager<PlaylistSimple> output){
 
                 for(int i=0;i < output.items.size();i++){
                     HashMap<String, String> hm = new HashMap<>();
 
-                    PlaylistTrack p = (PlaylistTrack) output.items.get(i);
-                    String s = p.track.name;
+                    PlaylistSimple p = output.items.get(i);
+                    String s = p.name;
                     hm.put("txt", s);
-                    hm.put("cur", "Artist : " + p.track.artists.get(0).name);
                     aList.add(hm);
                 }
 
                 String[] from = { "flag","txt","cur" };
 
                 int[] to = { R.id.flag,R.id.txt,R.id.cur,R.id.textView};
-                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_layout,from,to );
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_playlistshostview_layout,from,to );
 
                // Apply the adapter to the spinner
-                spinner.setAdapter(adapter);
+                list.setAdapter(adapter);
             }
         }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
 
-
-
         View v = inflater.inflate(R.layout.fragment_admin, container,false);
-        spinner = (Spinner) v.findViewById(R.id.playlist_spinner);
-
-
+        list = (ListView)v.findViewById(R.id.playlist_list);
         return v;
     }
 
