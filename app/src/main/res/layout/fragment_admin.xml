@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10dp"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -37,7 +37,6 @@
                 android:textColorHint="@color/textColor"
                 android:textColor="@color/textColor"/>
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -63,7 +62,6 @@
                 android:hint="Enter password.."
                 android:password="true"/>
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -73,18 +71,144 @@
                 android:id="@+id/playlist_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".75"/>
-
+                android:layout_weight="2.90"/>
             <Button
                 android:id="@+id/buttonHost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Host"
-                android:layout_weight="0.25"/>
+                android:layout_weight=".15"/>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Genre prefences:"
+                    android:textColor="@color/textColor"/>
+                <CheckBox
+                    android:id="@+id/rockCheckbox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="3"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="0dp"
+                    android:text="Rock"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textColor"/>
+                <CheckBox
+                    android:id="@+id/jazzCheckbox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="3"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="0dp"
+                    android:text="Jazz"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textColor"/>
+                <CheckBox
+                    android:id="@+id/HouseCheckbox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="3"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="0dp"
+                    android:text="House"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textColor"/>
+            </TableRow>
         </LinearLayout>
 
-
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/connectLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        android:visibility="gone">
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvOnes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Connected users:"
+                android:textColor="@color/textColor" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ListView
+                android:id="@+id/connectedusersListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.90"/>
+            <Button
+                android:id="@+id/buttonsdDropHost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Drop host"
+                android:layout_weight=".15"/>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Genre prefences:"
+                    android:textColor="@color/textColor"/>
+                <CheckBox
+                    android:id="@+id/rockCsdheckbox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="3"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="0dp"
+                    android:text="Rock"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textColor"/>
+                <CheckBox
+                    android:id="@+id/jazzsdCheckbox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="3"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="0dp"
+                    android:text="Jazz"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textColor"/>
+                <CheckBox
+                    android:id="@+id/HouseCsdheckbox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="3"
+                    android:drawableLeft="@android:color/transparent"
+                    android:drawablePadding="0dp"
+                    android:text="House"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textColor"/>
+            </TableRow>
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

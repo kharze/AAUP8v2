@@ -18,7 +18,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Search"
-                android:id="@+id/searchButton"
+                android:id="@+id/searchMusicButton"
                 android:onClick="searchMusic"
                 android:layout_column="0" />
             <android.support.design.widget.TextInputEditText
@@ -31,7 +31,7 @@
 
         <TableRow>
         <ListView android:minWidth="50dp" android:contextClickable="true" android:layout_height="wrap_content"
-            android:layout_width="match_parent" android:id="@+id/Search_Results">
+            android:layout_width="match_parent" android:id="@+id/Search_Results" android:layout_column="1">
         </ListView>
         </TableRow>
 
