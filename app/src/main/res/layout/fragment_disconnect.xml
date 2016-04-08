@@ -2,7 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.DisconnectFragment">
+    tools:context=".fragments.DisconnectFragment"
+    android:layout_below="@+id/toolbar"
+    android:layout_above="@+id/playbarLayout">
 
     <TextView
         android:layout_width="match_parent"

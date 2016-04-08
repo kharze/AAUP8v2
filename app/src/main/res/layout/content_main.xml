@@ -10,19 +10,22 @@
     tools:showIn="@layout/app_bar_main"
     android:background="#282828">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/flContent"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentRight="false"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="false">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom">
+            android:layout_gravity="center|bottom"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/playbarLayout">
             <ImageButton
                 android:id="@+id/prevButtonImage"
                 android:layout_width="wrap_content"
@@ -59,7 +62,21 @@
                 android:layout_marginLeft="200dp"
                 android:src="@drawable/ic_home"/>
         </RelativeLayout>
-    </LinearLayout>
+
+        <EditText
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/Search_Text"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search for Music"
+            android:id="@+id/searchButton"
+            android:onClick="searchMusic"
+            android:layout_gravity="center_horizontal" />
+    </RelativeLayout>
     <!--
      <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"

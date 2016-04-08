@@ -2,11 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.QueueFragment">
+    tools:context=".fragments.QueueFragment"
+    android:layout_below="@+id/toolbar"
+    android:layout_above="@+id/playbarLayout">
 
     <ListView
         android:id="@+id/queue_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
 </FrameLayout>

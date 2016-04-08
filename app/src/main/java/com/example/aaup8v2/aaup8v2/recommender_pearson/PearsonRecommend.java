@@ -2,15 +2,20 @@ package com.example.aaup8v2.aaup8v2.recommender_pearson;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtists;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
+import com.example.aaup8v2.aaup8v2.recommender_pearson.Genre;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtistTopTrack;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.Tracks;
 
 /**
  * Created by Lasse on 21-03-2016.
@@ -92,7 +97,7 @@ public class PearsonRecommend{
 
     }
 
-    public List<List> getGenreCount(String u_id, String p_id){
+    public List<Integer> getGenreCount(String u_id, String p_id){
         List<String> genres = generateGenreList(u_id, p_id);
 
         Collections.sort(genres);
@@ -119,18 +124,15 @@ public class PearsonRecommend{
                 }
             }
         }
-        List<List> genresValue = new ArrayList<>();
-        genresValue.add(difGenres);
-        genresValue.add(occGenre);
 
-        return genresValue;
+        return occGenre;
     }
 
-    public List<List> calculateWeights(String u_id, String p_id){
+    public List<Genre> calculateWeights(String u_id, String p_id){
 
-        List<List> genres = getGenreCount(u_id, p_id);
-        List<Integer> occGenres = genres.get(1);
-        List<List> genreWeights = new ArrayList<>();
+        List<Integer> occGenres = getGenreCount(u_id, p_id);
+        List<Double> weights = new ArrayList<>();
+        List<Genre> genreObjects = new ArrayList<>();
 /**
         List<Integer> occGenres = new ArrayList<>();
         occGenres.add(5);
@@ -155,20 +157,47 @@ public class PearsonRecommend{
 
         for(int i = 0; i < occGenres.size(); i++)
         {
-            List<Double> weightsAndID = new ArrayList<>();
             Double pearson;
             pearson = (occGenres.get(i)-avgGenre)/Math.sqrt(summation);
-            weightsAndID.add(pearson);
-            weightsAndID.add((double) i);
-            genreWeights.add(weightsAndID);
+            weights.add(pearson);
         }
+        for(int i = 0; i < difGenres.size(); i++){
+            genreObjects.add(new Genre(i, difGenres.get(i), weights.get(i)));
+        }
+        difGenres = null;
 
-        return genreWeights;
+        Collections.sort(genreObjects, new Comparator<Genre>() {
+            @Override
+            public int compare(Genre lhs, Genre rhs) {
+                return lhs.weight.compareTo(rhs.weight);
+            }
+        });
+
+        return genreObjects;
     }
 
     public List<Pager> recommender(String u_id, String p_id){
 
-        List<List> weights = calculateWeights(u_id, p_id);
+        List<Genre> genres = calculateWeights(u_id, p_id);
+        Tracks tracks;
+        Track track;
+        try{
+
+            tracks = new asyncGetArtistTopTrack(new asyncGetArtistTopTrack.AsyncResponse(){
+                @Override
+                public void processFinish(Tracks output){
+                }
+            }).execute("6FBDaR13swtiWwGhX1WQsP").get();
+            track = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
+                @Override
+                public void processFinish(Track output){
+                }
+            }).execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
+        }catch (Exception e){
+
+        }
+
+
 
 
         return null;

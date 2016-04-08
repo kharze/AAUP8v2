@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchArtists;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
 import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
@@ -42,10 +41,8 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.ArtistsPager;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.Track;
@@ -316,7 +313,7 @@ public class MainActivity extends AppCompatActivity
          * Empty list: user:aaup8 :playlist:6B3WEOcvqjEsURp4Icu9vN
          * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
          */
-        mRecommend.recommender("aaup8", "1RdQS80EE32zxXBFOfLnNR");
+        mRecommend.recommender("aaup8", "6B3WEOcvqjEsURp4Icu9vN");
         try {
             Track b = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
                 @Override
@@ -362,14 +359,10 @@ public class MainActivity extends AppCompatActivity
 
     EditText mText;
 
-
-    Array searchResult;
-    List temp = null;
-    List temp2 = null;
     int i = 0;
-/**
+
     public void searchMusic(View view){
-        //mText = (EditText) findViewById(R.id.Search_Text);
+        mText = (EditText) findViewById(R.id.Search_Text);
         searchString = mText.getText().toString();
 
         new asyncSearchMusic(new asyncSearchMusic.AsyncResponse(){
@@ -382,23 +375,18 @@ public class MainActivity extends AppCompatActivity
             }
         }).execute(searchString);
 
-        new asyncSearchArtists(new asyncSearchArtists.AsyncResponse(){
-            @Override
-            public void processFinish(ArtistsPager output){
-
-                temp2 = output.artists.items;
-                // Artists -> Albums -> simpleTracks
-
-            }
-        }).execute(searchString);
-
     }
-**/
+
 
     //Don't use, doesn't work
     public void p2P(View view){
         //Start Peer-to-Peer
         Intent intent = new Intent(this, PeerToPeer.class);
         startActivity(intent);
+    }
+
+    //using This to test the buttons in the queue list view.
+    public void click_down_vote(View view){
+        String s = "Ss";
     }
 }
