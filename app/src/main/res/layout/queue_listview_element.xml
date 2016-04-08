@@ -57,8 +57,7 @@
         android:layout_toStartOf="@id/upVote"
         android:layout_toLeftOf="@id/upVote"
         android:layout_toEndOf="@id/flag"
-        android:layout_toRightOf="@id/flag"
-        android:layout_alignTop="">
+        android:layout_toRightOf="@id/flag">
 
         <!-- Large text at the top of the field -->
         <TextView
