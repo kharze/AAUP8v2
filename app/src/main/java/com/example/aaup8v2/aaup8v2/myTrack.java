@@ -19,16 +19,5 @@ public class myTrack {
         this.duration_ms = d;
     }
 
-    //@Override
-    /*public int compareTo(myTrack t) {
-        if (id.compareTo(t.id) > 0) {
-            return 1;
-        }
-        else if (id.compareTo(t.id) < 0) {
-            return -1;
-        }
-        else {
-            return 0;
-        }
-    }*/
+    public void setArtist(String a){this.artist = a;}
 }

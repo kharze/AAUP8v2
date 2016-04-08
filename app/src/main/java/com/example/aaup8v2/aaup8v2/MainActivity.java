@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity
     public static SpotifyAccess mSpotifyAccess;
     public PearsonRecommend mRecommend = new PearsonRecommend();
 
+    public static SearchFragment mSearchFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +107,8 @@ public class MainActivity extends AppCompatActivity
         //Sets the spotify web Api access class
         mSpotifyAccess = new SpotifyAccess();
 
+        mSearchFragment = new SearchFragment();
+
         //Temporary TextView used to show playlist and Track.
         //mTextView = (TextView)findViewById(R.id.Name_for_song);
     }
@@ -143,6 +147,11 @@ public class MainActivity extends AppCompatActivity
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();
+
+            //Special code for SearchFragment
+            if(fragmentClass == SearchFragment.class){
+                mSearchFragment = (SearchFragment) fragment;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -357,15 +366,23 @@ public class MainActivity extends AppCompatActivity
 
 
     EditText mText;
-    ListView mListView;
 
     int i = 0;
 
     public void searchMusic(View view){
-        String searchString = "";
+        String searchString;
         mText = (EditText) findViewById(R.id.Search_Text);
         searchString = mText.getText().toString();
-        mListView = (ListView) findViewById(R.id.Search_Results);
+
+        //ensure searchString has at least 3 characters
+        if(searchString.length() >= 3)
+            mSearchFragment.SearchForMusic(searchString);
+        else
+            i++;
+
+        /*String searchString = "";
+        mText = (EditText) findViewById(R.id.Search_Text);
+        searchString = mText.getText().toString();
 
         new asyncSearchMusic(new asyncSearchMusic.AsyncResponse(){
             @Override
@@ -375,7 +392,7 @@ public class MainActivity extends AppCompatActivity
 
                 i++;
             }
-        }).execute(searchString);
+        }).execute(searchString);*/
 
     }
 
