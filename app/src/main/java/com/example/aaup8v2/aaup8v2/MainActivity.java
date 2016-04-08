@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
 import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
 import com.example.aaup8v2.aaup8v2.fragments.HomeFragment;
@@ -40,7 +41,6 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Pager;
@@ -385,6 +385,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    //using This to test the buttons in the queue list view.
     public void click_down_vote(View view){
         String s = "Ss";
     }
