@@ -42,7 +42,6 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Pager;
@@ -387,6 +386,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    //using This to test the buttons in the queue list view.
     public void click_down_vote(View view){
         String s = "Ss";
     }
