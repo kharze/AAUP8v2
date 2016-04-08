@@ -4,6 +4,9 @@ import android.os.AsyncTask;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import kaaes.spotify.webapi.android.models.Pager;
 
 public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
@@ -25,14 +28,36 @@ public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
     @Override
     protected Pager doInBackground(String... id) {
         try {
-            return MainActivity.mSpotifyAccess.mService.getPlaylistTracks(id[0], id[1]);
+            Pager tracks = null;
+            int offset = 0;
+            Pager temp;
+            /**
+            Map<String, Object> options = new HashMap<>();
+            options.put(MainActivity.mSpotifyAccess.mService.OFFSET, offset);
+            tracks = MainActivity.mSpotifyAccess.mService.getPlaylistTracks(id[0], id[1], options);
+             **/
+            do{
+                Map<String, Object> options = new HashMap<>();
+                options.put(MainActivity.mSpotifyAccess.mService.OFFSET, offset);
+                temp = MainActivity.mSpotifyAccess.mService.getPlaylistTracks(id[0], id[1], options);
+                for(int i = 0; i < temp.items.size(); i++){
+                    if (tracks == null){
+                        tracks = temp;
+                        break;
+                    }
+                    else {
+                        tracks.items.add(temp.items.get(i));
+                    }
+                }
+                offset += 100;
+            }while ((tracks.items.size() % 100) == 0 && temp.items.size() != 0);
+            return tracks;
         }
         catch (Exception e)
         {
             e.getCause();
             return null;
         }
-
     }
 
     @Override
