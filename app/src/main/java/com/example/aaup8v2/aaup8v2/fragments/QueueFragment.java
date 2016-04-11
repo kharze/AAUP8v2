@@ -54,6 +54,9 @@ public class QueueFragment extends Fragment {
                     HashMap<String, String> hm = new HashMap<>();
 
                     PlaylistTrack p = (PlaylistTrack) output.items.get(i);
+                    //myTrack Track = new myTrack("0","0",0);
+                    //Track.setMyTrack(p);
+                    //mTracks.add()
                     String s = p.track.name;
                     hm.put("txt", s);
                     hm.put("cur", "Artist : " + p.track.artists.get(0).name);
@@ -124,7 +127,6 @@ public class QueueFragment extends Fragment {
         // These two lines are used to find out with line of the list the button is in.
         ListView oo = (ListView)view.getParent().getParent();
         int bIdex = oo.indexOfChild((View)view.getParent());
-        view.setBackgroundColor(R.color.errorColor);
     }
 
     public void click_up_vote(View view){
