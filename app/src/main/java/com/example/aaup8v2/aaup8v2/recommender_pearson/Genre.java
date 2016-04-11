@@ -8,7 +8,7 @@ public class Genre{
     public String genre;
     public Double weight;
 
-    public Genre(int id, String genre, Double weight){
+    public Genre(Integer id, String genre, Double weight){
         this.id = id;
         this.genre = genre;
         this.weight = weight;
