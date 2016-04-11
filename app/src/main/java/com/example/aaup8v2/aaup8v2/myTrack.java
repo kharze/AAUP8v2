@@ -14,15 +14,8 @@ public class myTrack {
     public String artist;
     public long duration_ms;
 
-    //public String getId(){return id;}
-
-    public myTrack(String i, String n, long d){
-        this.id = i;
-        this.name = n;
-        this.duration_ms = d;
-    }
-
-    public void setArtist(String a){this.artist = a;}
+    //empty constructor
+    public myTrack(){};
 
     public void setMyTrack(TrackSimple track){
         this.id = track.id;
