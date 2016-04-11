@@ -3,17 +3,15 @@ package com.example.aaup8v2.aaup8v2.recommender_pearson;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtists;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
-import com.example.aaup8v2.aaup8v2.recommender_pearson.Genre;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtistTopTrack;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import kaaes.spotify.webapi.android.models.ArtistSimple;
+import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
@@ -45,7 +43,6 @@ public class PearsonRecommend{
         }catch (Exception e){
             e.getMessage();
         }
-        int temp1 = tracksPager.items.size();
         List<PlaylistTrack> tracksList = tracksPager.items;
         for(int j=0; j < tracksList.size(); j++){
             track = tracksList.get(j).track;
@@ -84,7 +81,14 @@ public class PearsonRecommend{
                     e.getMessage();
                 }
 
+                List<Artist> difArtists = new ArrayList<>();
+                List<Artist> artists = mArtists.artists;
+                artists.get(0);
                 for (int i = 0; i < mArtists.artists.size(); i++){
+                    Artist artist = mArtists.artists.get(i);
+                    if (!difArtists.contains(artist)){
+                        difArtists.add(artist);
+                    }
                     int temp = mArtists.artists.get(i).genres.size();
                     for(int j = 0; j < temp; j++){
                         String[] tempGenres = mArtists.artists.get(i).genres.get(j).split("\\W+");
@@ -186,30 +190,19 @@ public class PearsonRecommend{
         List<Genre> genres = calculateWeights(u_id, p_id);
         Collections.reverse(genres);
         Tracks tracks;
-        Track track;
         artists.size();
         trackList.size();
         try{
-
             tracks = new asyncGetArtistTopTrack(new asyncGetArtistTopTrack.AsyncResponse(){
                 @Override
                 public void processFinish(Tracks output){
                 }
             }).execute("6FBDaR13swtiWwGhX1WQsP").get();
-            track = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
-                @Override
-                public void processFinish(Track output){
-                }
-            }).execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
+
         }catch (Exception e){
-
         }
-
-
-
 
         return null;
     }
 
 }
-

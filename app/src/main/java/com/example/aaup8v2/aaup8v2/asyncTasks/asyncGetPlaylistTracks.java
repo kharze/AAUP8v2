@@ -40,12 +40,11 @@ public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
                 Map<String, Object> options = new HashMap<>();
                 options.put(MainActivity.mSpotifyAccess.mService.OFFSET, offset);
                 temp = MainActivity.mSpotifyAccess.mService.getPlaylistTracks(id[0], id[1], options);
-                for(int i = 0; i < temp.items.size(); i++){
-                    if (tracks == null){
-                        tracks = temp;
-                        break;
-                    }
-                    else {
+                if (tracks == null){
+                    tracks = temp;
+                }
+                else {
+                    for(int i = 0; i < temp.items.size(); i++){
                         tracks.items.add(temp.items.get(i));
                     }
                 }
