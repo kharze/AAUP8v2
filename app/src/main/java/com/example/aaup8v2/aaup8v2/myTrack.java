@@ -1,5 +1,6 @@
 package com.example.aaup8v2.aaup8v2;
 
+import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TrackSimple;
 
@@ -32,6 +33,14 @@ public class myTrack {
     }
 
     public void setMyTrack(Track track){
+        this.id = track.id;
+        this.name = track.name;
+        this.artist = track.artists.get(0).name;
+        this.duration_ms = track.duration_ms;
+    }
+
+    public void setMyTrack(PlaylistTrack playlistTrack){
+        Track track = playlistTrack.track;
         this.id = track.id;
         this.name = track.name;
         this.artist = track.artists.get(0).name;
