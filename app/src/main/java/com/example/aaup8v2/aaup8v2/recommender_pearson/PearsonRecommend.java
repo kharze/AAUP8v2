@@ -23,7 +23,9 @@ import kaaes.spotify.webapi.android.models.Tracks;
 public class PearsonRecommend{
 
     List<Track> trackList = new ArrayList<>();
-
+    /*
+    Getting a list of artist based on tracks from a playlist
+     */
     private List<Artist> getArtists(String u_id, String p_id){
 
         Pager tracksPager= null;
@@ -82,7 +84,9 @@ public class PearsonRecommend{
             return null;
         }
     }
-
+    /*
+    Converting artist list to a list of new artist objects contaning artist and weight of the artist
+     */
     public List<RecommenderArtist> getArtistList(List<Artist> artistsList){
         List<String> difArtists = new ArrayList<>();
         List<Integer> occArtist = new ArrayList<>();
@@ -129,6 +133,9 @@ public class PearsonRecommend{
 
         return artistObjects;
     }
+    /*
+    Generating a list of new genre object which contains id, genre and weight
+     */
 
     public  List<Genre> getGenreList(List<Artist> artistsList){
         List<String> genresList = new ArrayList<>();
@@ -178,6 +185,9 @@ public class PearsonRecommend{
         });
         return genreObjects;
     }
+    /*
+    Pearson weight calculator
+     */
 
     public List<Double> calculateWeights(List<Integer> occurrence){
 
@@ -212,6 +222,9 @@ public class PearsonRecommend{
         }
         return weights;
     }
+    /*
+    Should end up being the recommender
+     */
 
     public List<Pager> recommend(String u_id, String p_id){
         List<Artist> artistsList = getArtists(u_id, p_id);
