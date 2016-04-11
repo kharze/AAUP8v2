@@ -1,21 +1,18 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
+import com.example.aaup8v2.aaup8v2.myTrack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +25,7 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 public class QueueFragment extends Fragment {
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView mlist;
+    List<myTrack> mTracks;
 
     int flag = R.drawable.ic_home;
     int flag2 = R.drawable.ic_star;
@@ -123,16 +121,15 @@ public class QueueFragment extends Fragment {
     }
 
     public void click_down_vote(View view){
-        FrameLayout vwParentRow = (FrameLayout)view.getParent();
+        // These two lines are used to find out with line of the list the button is in.
+        ListView oo = (ListView)view.getParent().getParent();
+        int bIdex = oo.indexOfChild((View)view.getParent());
+        view.setBackgroundColor(R.color.errorColor);
+    }
 
-        TextView child = (TextView)vwParentRow.getChildAt(0);
-        Button btnChild = (Button)vwParentRow.getChildAt(1);
-        btnChild.setText(child.getText());
-        btnChild.setText("I've been clicked!");
-
-        int c = Color.CYAN;
-
-        vwParentRow.setBackgroundColor(c);
-        vwParentRow.refreshDrawableState();
+    public void click_up_vote(View view){
+        // These two lines are used to find out with line of the list the button is in.
+        ListView oo = (ListView)view.getParent().getParent();
+        int bIdex = oo.indexOfChild((View)view.getParent());
     }
 }

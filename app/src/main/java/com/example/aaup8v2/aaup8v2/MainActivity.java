@@ -17,13 +17,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
 import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
 import com.example.aaup8v2.aaup8v2.fragments.HomeFragment;
@@ -41,8 +39,6 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
-
-import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
@@ -67,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     public PearsonRecommend mRecommend = new PearsonRecommend();
 
     public static SearchFragment mSearchFragment;
+    public static QueueFragment mQueueFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +105,7 @@ public class MainActivity extends AppCompatActivity
         mSpotifyAccess = new SpotifyAccess();
 
         mSearchFragment = new SearchFragment();
+        mQueueFragment = new QueueFragment();
 
         //Temporary TextView used to show playlist and Track.
         //mTextView = (TextView)findViewById(R.id.Name_for_song);
@@ -151,6 +149,9 @@ public class MainActivity extends AppCompatActivity
             //Special code for SearchFragment
             if(fragmentClass == SearchFragment.class){
                 mSearchFragment = (SearchFragment) fragment;
+            }
+            if(fragmentClass == QueueFragment.class){
+                mQueueFragment = (QueueFragment) fragment;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -403,8 +404,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    //using This to test the buttons in the queue list view.
-    public void click_down_vote(View view){
-        String s = "Ss";
-    }
+    // Upvote and downvote on click action for the Queue fragment
+    public void click_down_vote(View view){ mQueueFragment.click_down_vote(view); }
+    public void click_up_vote(View view){ mQueueFragment.click_up_vote(view); }
 }
