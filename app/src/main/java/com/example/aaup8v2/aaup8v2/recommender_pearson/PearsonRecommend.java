@@ -2,7 +2,6 @@ package com.example.aaup8v2.aaup8v2.recommender_pearson;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtists;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtistTopTrack;
 
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
@@ -24,16 +22,17 @@ import kaaes.spotify.webapi.android.models.Tracks;
 
 public class PearsonRecommend{
 
-    List<ArtistSimple> artists = new ArrayList<>();
     List<Track> trackList = new ArrayList<>();
-    List<String> difGenres = new ArrayList<>();
-
-    public List<String> generateGenreList(String u_id, String p_id){
+    /*
+    Getting a list of artist based on tracks from a playlist
+     */
+    private List<Artist> getArtists(String u_id, String p_id){
 
         Pager tracksPager= null;
         Track track;
         Artists mArtists = null;
         List<String> artistsIdList = new ArrayList<>();
+        List<Artist> artistsList = new ArrayList<>();
         try{
             tracksPager = new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
                 @Override
@@ -49,100 +48,150 @@ public class PearsonRecommend{
             trackList.add(track);
             for(int i=0; i < track.artists.size(); i++){
                 artistsIdList.add(track.artists.get(i).id);
-                artists.add(track.artists.get(i));
             }
         }
-
-        List<String> genres = new ArrayList<>();
-        try{
-            do{
+        try {
+            do {
                 String artistsRequests = null;
                 int counter = 0;
-                do{
-                    if(artistsRequests == null){
+                do {
+                    if (artistsRequests == null) {
                         artistsRequests = artistsIdList.get(0);
                         artistsIdList.remove(0);
                         counter++;
-                    }
-                    else {
+                    } else {
                         artistsRequests += "," + artistsIdList.get(0);
                         artistsIdList.remove(0);
                         counter++;
                     }
-                }while (counter < 50 && !artistsIdList.isEmpty());
-                try
-                {
-                    mArtists = new asyncGetArtists(new asyncGetArtists.AsyncResponse(){
+                } while (counter < 50 && !artistsIdList.isEmpty());
+                try {
+                    mArtists = new asyncGetArtists(new asyncGetArtists.AsyncResponse() {
                         @Override
-                        public void processFinish(Artists output){
+                        public void processFinish(Artists output) {
                         }
                     }).execute(artistsRequests).get();
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.getMessage();
                 }
-
-                List<Artist> difArtists = new ArrayList<>();
-                List<Artist> artists = mArtists.artists;
-                artists.get(0);
-                for (int i = 0; i < mArtists.artists.size(); i++){
-                    Artist artist = mArtists.artists.get(i);
-                    if (!difArtists.contains(artist)){
-                        difArtists.add(artist);
-                    }
-                    int temp = mArtists.artists.get(i).genres.size();
-                    for(int j = 0; j < temp; j++){
-                        String[] tempGenres = mArtists.artists.get(i).genres.get(j).split("\\W+");
-                        for (String genre : tempGenres) {
-                            genres.add(genre);
-                        }
-                    }
+                for (int i = 0; i < mArtists.artists.size(); i++) {
+                    artistsList.add(mArtists.artists.get(i));
                 }
-            }while (!artistsIdList.isEmpty());
+            } while (!artistsIdList.isEmpty());
 
-            return genres;
+            return artistsList;
+        }catch (Exception e) {
+            return null;
+        }
+    }
+    /*
+    Converting artist list to a list of new artist objects contaning artist and weight of the artist
+     */
+    public List<RecommenderArtist> getArtistList(List<Artist> artistsList){
+        List<String> difArtists = new ArrayList<>();
+        List<Integer> occArtist = new ArrayList<>();
 
-        }catch (Exception e){
-            return new ArrayList<>();
+        Collections.sort(artistsList, new Comparator<Artist>() {
+            @Override
+            public int compare(Artist lhs, Artist rhs) {
+                return lhs.name.compareTo(rhs.name);
+            }
+        });
+
+        int occurrence = 0;
+        for (int i = 0; i < artistsList.size(); i++){
+            if (!difArtists.contains(artistsList.get(i).name)){
+                difArtists.add(artistsList.get(i).name);
+                if(occurrence != 0){
+                    occArtist.add(occurrence);
+                    occurrence = 0;
+                }
+                occurrence++;
+                if(i == artistsList.size()- 1){
+                    occArtist.add(occurrence);
+                }
+            }
+            else{
+                occurrence++;
+                if(i == artistsList.size()- 1){
+                    occArtist.add(occurrence);
+                }
+            }
+        }
+        List<Double> weights = calculateWeights(occArtist);
+        List<RecommenderArtist> artistObjects = new ArrayList<>();
+        for (int i = 0; i < occArtist.size(); i++){
+            artistObjects.add(new RecommenderArtist(difArtists.get(i), weights.get(i)));
         }
 
+        Collections.sort(artistObjects, new Comparator<RecommenderArtist>() {
+            @Override
+            public int compare(RecommenderArtist lhs, RecommenderArtist rhs) {
+                return lhs.weight.compareTo(rhs.weight);
+            }
+        });
 
+        return artistObjects;
     }
+    /*
+    Generating a list of new genre object which contains id, genre and weight
+     */
 
-    public List<Integer> getGenreCount(String u_id, String p_id){
-        List<String> genres = generateGenreList(u_id, p_id);
+    public  List<Genre> getGenreList(List<Artist> artistsList){
+        List<String> genresList = new ArrayList<>();
+        for(int i = 0; i < artistsList.size(); i++){
+            int temp = artistsList.get(i).genres.size();
+            for(int j = 0; j < temp; j++){
+                genresList.add(artistsList.get(i).genres.get(j));
+            }
+        }
 
-        Collections.sort(genres);
+        Collections.sort(genresList);
+
+        List<String> difGenres = new ArrayList<>();
         List<Integer> occGenre = new  ArrayList<>();
 
         int occurrence = 0;
-        for (int i = 0; i < genres.size(); i++){
-            if (!difGenres.contains(genres.get(i))){
-                difGenres.add(genres.get(i));
+        for (int i = 0; i < genresList.size(); i++){
+            if (!difGenres.contains(genresList.get(i))){
+                difGenres.add(genresList.get(i));
                 if(occurrence != 0){
                     occGenre.add(occurrence);
                     occurrence = 0;
                 }
                 occurrence++;
-                if(i == genres.size()- 1){
+                if(i == genresList.size()- 1){
                     occGenre.add(occurrence);
                 }
             }
             else{
                 occurrence++;
-                if(i == genres.size()- 1){
+                if(i == genresList.size()- 1){
                     occGenre.add(occurrence);
                 }
             }
         }
-
-        return occGenre;
-    }
-
-    public List<Genre> calculateWeights(String u_id, String p_id){
-
-        List<Integer> occGenres = getGenreCount(u_id, p_id);
-        List<Double> weights = new ArrayList<>();
+        List<Double> weights = calculateWeights(occGenre);
         List<Genre> genreObjects = new ArrayList<>();
+        for (int i = 0; i < occGenre.size(); i++){
+            genreObjects.add(new Genre(i, difGenres.get(i), weights.get(i)));
+        }
+
+        Collections.sort(genreObjects, new Comparator<Genre>() {
+            @Override
+            public int compare(Genre lhs, Genre rhs) {
+                return lhs.weight.compareTo(rhs.weight);
+            }
+        });
+        return genreObjects;
+    }
+    /*
+    Pearson weight calculator
+     */
+
+    public List<Double> calculateWeights(List<Integer> occurrence){
+
+        List<Double> weights = new ArrayList<>();
 /**
         List<Integer> occGenres = new ArrayList<>();
         occGenres.add(5);
@@ -153,44 +202,38 @@ public class PearsonRecommend{
         Double avgGenre = 0.0;
         Double summation = 0.0;
 
-        for(int i = 0; i < occGenres.size(); i++)
+        for(int i = 0; i < occurrence.size(); i++)
         {
-            avgGenre += occGenres.get(i);
+            avgGenre += occurrence.get(i);
         }
 
-        avgGenre = avgGenre / occGenres.size();
+        avgGenre = avgGenre / occurrence.size();
 
-        for(int i = 0; i < occGenres.size(); i++)
+        for(int i = 0; i < occurrence.size(); i++)
         {
-            summation += Math.pow(occGenres.get(i) - avgGenre, 2);
+            summation += Math.pow(occurrence.get(i) - avgGenre, 2);
         }
 
-        for(int i = 0; i < occGenres.size(); i++)
+        for(int i = 0; i < occurrence.size(); i++)
         {
             Double pearson;
-            pearson = (occGenres.get(i)-avgGenre)/Math.sqrt(summation);
+            pearson = (occurrence.get(i)-avgGenre)/Math.sqrt(summation);
             weights.add(pearson);
         }
-        for(int i = 0; i < difGenres.size(); i++){
-            genreObjects.add(new Genre(i, difGenres.get(i), weights.get(i)));
-        }
-        difGenres = null;
-        Collections.sort(genreObjects, new Comparator<Genre>() {
-            @Override
-            public int compare(Genre lhs, Genre rhs) {
-                return lhs.weight.compareTo(rhs.weight);
-            }
-        });
-
-        return genreObjects;
+        return weights;
     }
+    /*
+    Should end up being the recommender
+     */
 
-    public List<Pager> recommender(String u_id, String p_id){
+    public List<Pager> recommend(String u_id, String p_id){
+        List<Artist> artistsList = getArtists(u_id, p_id);
+        List<RecommenderArtist> artistList = getArtistList(artistsList);
+        List<Genre> genreList = getGenreList(artistsList);
 
-        List<Genre> genres = calculateWeights(u_id, p_id);
-        Collections.reverse(genres);
+        Collections.reverse(genreList);
+        Collections.reverse(artistList);
         Tracks tracks;
-        artists.size();
         trackList.size();
         try{
             tracks = new asyncGetArtistTopTrack(new asyncGetArtistTopTrack.AsyncResponse(){

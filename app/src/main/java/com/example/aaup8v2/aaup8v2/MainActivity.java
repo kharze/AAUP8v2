@@ -324,7 +324,7 @@ public class MainActivity extends AppCompatActivity
          * Empty list: user:aaup8 :playlist:6B3WEOcvqjEsURp4Icu9vN
          * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
          */
-        mRecommend.recommender("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
+        mRecommend.recommend("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
         try {
             Track b = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
                 @Override

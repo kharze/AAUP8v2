@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.myTrack;
@@ -24,12 +25,15 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
 public class QueueFragment extends Fragment {
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
-    ListView mlist;
-    List<myTrack> mTracks;
+    ListView mlist; // The view for this fragment
+    List<QueueElement> mQueueElement = new ArrayList<>();
+    List<myTrack> mTracks = new ArrayList<>(); // A list of all the tracks
 
+    int like = R.drawable.ic_action_like;
+    int dontlike = R.drawable.ic_action_dontlike;
     int flag = R.drawable.ic_home;
-    int flag2 = R.drawable.ic_star;
-    int flag3 = R.drawable.ic_cancel;
+    //int flag2 = R.drawable.ic_star;
+    //int flag3 = R.drawable.ic_cancel;
 
     private OnFragmentInteractionListener mListener;
 
@@ -45,35 +49,23 @@ public class QueueFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
 
+        // only used for test purpose;
+        new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
             @Override
             public void processFinish(Pager output){
 
                 for(int i=0;i < output.items.size();i++){
-                    HashMap<String, String> hm = new HashMap<>();
-
                     PlaylistTrack p = (PlaylistTrack) output.items.get(i);
-                    //myTrack Track = new myTrack("0","0",0);
-                    //Track.setMyTrack(p);
-                    //mTracks.add()
-                    String s = p.track.name;
-                    hm.put("txt", s);
-                    hm.put("cur", "Artist : " + p.track.artists.get(0).name);
-                    hm.put("flag", Integer.toString(flag));
-                    hm.put("upVote", Integer.toString(flag2));
-                    hm.put("downVote", Integer.toString(flag3));
-                    aList.add(hm);
+
+                    // add track to list
+                    myTrack track = new myTrack();
+                    track.setMyTrack(p);
+                    QueueElement element = new QueueElement();
+                    element.track = track;
+                    mQueueElement.add(element);
                 }
-
-                String[] from = { "flag","txt","cur", "upVote", "downVote" };
-
-                int[] to = { R.id.flag,R.id.txt,R.id.cur, R.id.upVote, R.id.downVote};
-                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.queue_listview_element,from,to );
-
-
-                // Assign adapter to ListView
-                mlist.setAdapter(adapter);
+                showQueue();
             }
         }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
 
@@ -121,6 +113,31 @@ public class QueueFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    // function for showing all the tracks in the queue on the list
+    public void showQueue(){
+        // adds all elements to a HashMap
+        aList = new ArrayList<>();
+        for(int i = 0; mQueueElement.size() > i; i++){
+            HashMap<String, String> hm = new HashMap<>();
+            QueueElement element = mQueueElement.get(i);
+            String s = element.track.name;
+            hm.put("txt", element.track.name);
+            hm.put("cur", "Artist : " + element.track.artist);
+            hm.put("flag", Integer.toString(flag));
+            hm.put("upVote", Integer.toString(like));
+            hm.put("downVote", Integer.toString(dontlike));
+            aList.add(hm);
+        }
+
+        // Create a simple adapter for the queue
+        String[] from = { "flag","txt","cur", "upVote", "downVote" };
+        int[] to = { R.id.flag,R.id.txt,R.id.cur, R.id.upVote, R.id.downVote};
+        SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.queue_listview_element,from,to );
+
+        // Assign adapter to ListView
+        mlist.setAdapter(adapter);
     }
 
     public void click_down_vote(View view){
