@@ -398,7 +398,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Don't use, doesn't work
-    public void p2P(View view){
+    public void pToP(View view){
         //Start Peer-to-Peer
         Intent intent = new Intent(this, PeerToPeer.class);
         startActivity(intent);
