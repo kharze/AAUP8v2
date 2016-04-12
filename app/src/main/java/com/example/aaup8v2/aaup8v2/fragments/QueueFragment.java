@@ -155,25 +155,25 @@ public class QueueFragment extends Fragment {
         //Change the icon for the button.
         if(!mQueueElement.get(trackChosenOnList).downvoteFlag)
         {
-            ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlikeActive));
+            ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlikeActive));
             mQueueElement.get(trackChosenOnList).downvoteFlag = true;
             mQueueElement.get(trackChosenOnList).downVotes += 1;
             if ( mQueueElement.get(trackChosenOnList).upvoteFlag)
             {
-                ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("upVote", Integer.toString(like));
+                ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upVote", Integer.toString(like));
                 mQueueElement.get(trackChosenOnList).upvoteFlag = false;
                 mQueueElement.get(trackChosenOnList).upVotes -= 1;
             }
         }
         else
         {
-            ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlike));
+            ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlike));
             mQueueElement.get(trackChosenOnList).downvoteFlag = false;
             mQueueElement.get(trackChosenOnList).downVotes -= 1;
         }
         //Updates the upvote/downvote value in the view.
-        ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("upCount", Integer.toString(mQueueElement.get(trackChosenOnList).upVotes));
-        ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("downCount", Integer.toString(mQueueElement.get(trackChosenOnList).downVotes));
+        ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upCount", Integer.toString(mQueueElement.get(trackChosenOnList).upVotes));
+        ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downCount", Integer.toString(mQueueElement.get(trackChosenOnList).downVotes));
         adapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
     }
 
@@ -187,12 +187,12 @@ public class QueueFragment extends Fragment {
         //Change the icon for the button.
         if(!mQueueElement.get(trackChosenOnList).upvoteFlag)
         {
-            ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("upVote", Integer.toString(likeActive));
+            ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upVote", Integer.toString(likeActive));
             mQueueElement.get(trackChosenOnList).upvoteFlag = true;
             mQueueElement.get(trackChosenOnList).upVotes += 1;
             if ( mQueueElement.get(trackChosenOnList).downvoteFlag)
             {
-                ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlike));
+                ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlike));
                 mQueueElement.get(trackChosenOnList).downvoteFlag = false;
                 mQueueElement.get(trackChosenOnList).downVotes -= 1;
             }
@@ -201,12 +201,12 @@ public class QueueFragment extends Fragment {
         {
             mQueueElement.get(trackChosenOnList).upvoteFlag = false;
             mQueueElement.get(trackChosenOnList).upVotes -= 1;
-            ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("upVote", Integer.toString(like));
+            ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upVote", Integer.toString(like));
 
         }
         //Updates the upvote/downvote value in the view.
-        ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("upCount", Integer.toString(mQueueElement.get(trackChosenOnList).upVotes));
-        ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("downCount", Integer.toString(mQueueElement.get(trackChosenOnList).downVotes));
+        ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upCount", Integer.toString(mQueueElement.get(trackChosenOnList).upVotes));
+        ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downCount", Integer.toString(mQueueElement.get(trackChosenOnList).downVotes));
         adapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
     }
 }
