@@ -128,12 +128,15 @@ public class QueueFragment extends Fragment {
             hm.put("flag", Integer.toString(flag));
             hm.put("upVote", Integer.toString(like));
             hm.put("downVote", Integer.toString(dontlike));
+            hm.put("downCount", Integer.toString(element.downVotes));
+            hm.put("upCount", Integer.toString(element.upVotes));
+
             aList.add(hm);
         }
 
         // Create a simple adapter for the queue
-        String[] from = { "flag","txt","cur", "upVote", "downVote" };
-        int[] to = { R.id.flag,R.id.txt,R.id.cur, R.id.upVote, R.id.downVote};
+        String[] from = { "flag","txt","cur", "upVote", "downVote", "downCount", "upCount" };
+        int[] to = { R.id.flag,R.id.txt,R.id.cur, R.id.upVote, R.id.downVote, R.id.downCount, R.id.upCount};
         SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.queue_listview_element,from,to );
 
         // Assign adapter to ListView
@@ -160,6 +163,7 @@ public class QueueFragment extends Fragment {
             mQueueElement.get(trackChosenOnList).downvoteFlag = false;
             mQueueElement.get(trackChosenOnList).downVotes -= 1;
         }
+        showQueue();
     }
 
     public void click_up_vote(View view){
@@ -183,5 +187,6 @@ public class QueueFragment extends Fragment {
             mQueueElement.get(trackChosenOnList).upvoteFlag = false;
             mQueueElement.get(trackChosenOnList).upVotes -= 1;
         }
+        showQueue();
     }
 }
