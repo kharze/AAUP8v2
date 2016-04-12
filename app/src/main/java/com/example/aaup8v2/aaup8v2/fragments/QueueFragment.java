@@ -32,6 +32,7 @@ public class QueueFragment extends Fragment {
     int like = R.drawable.ic_action_like;
     int dontlike = R.drawable.ic_action_dontlike;
     int flag = R.drawable.ic_home;
+    SimpleAdapter adapter;
     //int flag2 = R.drawable.ic_star;
     //int flag3 = R.drawable.ic_cancel;
 
@@ -122,7 +123,6 @@ public class QueueFragment extends Fragment {
         for(int i = 0; mQueueElement.size() > i; i++){
             HashMap<String, String> hm = new HashMap<>();
             QueueElement element = mQueueElement.get(i);
-            String s = element.track.name;
             hm.put("txt", element.track.name);
             hm.put("cur", "Artist : " + element.track.artist);
             hm.put("flag", Integer.toString(flag));
@@ -137,7 +137,7 @@ public class QueueFragment extends Fragment {
         // Create a simple adapter for the queue
         String[] from = { "flag","txt","cur", "upVote", "downVote", "downCount", "upCount" };
         int[] to = { R.id.flag,R.id.txt,R.id.cur, R.id.upVote, R.id.downVote, R.id.downCount, R.id.upCount};
-        SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.queue_listview_element,from,to );
+        adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.queue_listview_element,from,to );
 
         // Assign adapter to ListView
         mlist.setAdapter(adapter);
@@ -148,11 +148,11 @@ public class QueueFragment extends Fragment {
         ListView listVoteInView = (ListView)view.getParent().getParent();
         int bIndex = listVoteInView.indexOfChild((View)view.getParent());
         int trackChosenOnList = listVoteInView.getFirstVisiblePosition() + bIndex;
-        if(mQueueElement.get(trackChosenOnList).downvoteFlag != true)
+        if(!mQueueElement.get(trackChosenOnList).downvoteFlag)
         {
             mQueueElement.get(trackChosenOnList).downvoteFlag = true;
             mQueueElement.get(trackChosenOnList).downVotes += 1;
-            if ( mQueueElement.get(trackChosenOnList).upvoteFlag == true)
+            if ( mQueueElement.get(trackChosenOnList).upvoteFlag)
             {
                 mQueueElement.get(trackChosenOnList).upvoteFlag = false;
                 mQueueElement.get(trackChosenOnList).upVotes -= 1;
@@ -163,7 +163,9 @@ public class QueueFragment extends Fragment {
             mQueueElement.get(trackChosenOnList).downvoteFlag = false;
             mQueueElement.get(trackChosenOnList).downVotes -= 1;
         }
-        showQueue();
+        ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("upCount", Integer.toString(mQueueElement.get(trackChosenOnList).upVotes));
+        ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("downCount", Integer.toString(mQueueElement.get(trackChosenOnList).downVotes));
+        adapter.notifyDataSetChanged();
     }
 
     public void click_up_vote(View view){
@@ -171,11 +173,11 @@ public class QueueFragment extends Fragment {
         ListView listVoteInView = (ListView)view.getParent().getParent();
         int bIndex = listVoteInView.indexOfChild((View)view.getParent());
         int trackChosenOnList = listVoteInView.getFirstVisiblePosition() + bIndex;
-        if(mQueueElement.get(trackChosenOnList).upvoteFlag != true)
+        if(!mQueueElement.get(trackChosenOnList).upvoteFlag)
         {
             mQueueElement.get(trackChosenOnList).upvoteFlag = true;
             mQueueElement.get(trackChosenOnList).upVotes += 1;
-            if ( mQueueElement.get(trackChosenOnList).downvoteFlag == true)
+            if ( mQueueElement.get(trackChosenOnList).downvoteFlag)
             {
                 mQueueElement.get(trackChosenOnList).downvoteFlag = false;
                 mQueueElement.get(trackChosenOnList).downVotes -= 1;
@@ -187,6 +189,8 @@ public class QueueFragment extends Fragment {
             mQueueElement.get(trackChosenOnList).upvoteFlag = false;
             mQueueElement.get(trackChosenOnList).upVotes -= 1;
         }
-        showQueue();
+        ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("upCount", Integer.toString(mQueueElement.get(trackChosenOnList).upVotes));
+        ((HashMap<String, String>) listVoteInView.getAdapter().getItem(trackChosenOnList)).put("downCount", Integer.toString(mQueueElement.get(trackChosenOnList).downVotes));
+        adapter.notifyDataSetChanged();
     }
 }
