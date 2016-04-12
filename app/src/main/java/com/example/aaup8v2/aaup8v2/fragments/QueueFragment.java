@@ -29,9 +29,11 @@ public class QueueFragment extends Fragment {
     List<QueueElement> mQueueElement = new ArrayList<>();
     List<myTrack> mTracks = new ArrayList<>(); // A list of all the tracks
 
+    int like = R.drawable.ic_action_like;
+    int dontlike = R.drawable.ic_action_dontlike;
     int flag = R.drawable.ic_home;
-    int flag2 = R.drawable.ic_star;
-    int flag3 = R.drawable.ic_cancel;
+    //int flag2 = R.drawable.ic_star;
+    //int flag3 = R.drawable.ic_cancel;
 
     private OnFragmentInteractionListener mListener;
 
@@ -124,8 +126,8 @@ public class QueueFragment extends Fragment {
             hm.put("txt", element.track.name);
             hm.put("cur", "Artist : " + element.track.artist);
             hm.put("flag", Integer.toString(flag));
-            hm.put("upVote", Integer.toString(flag2));
-            hm.put("downVote", Integer.toString(flag3));
+            hm.put("upVote", Integer.toString(like));
+            hm.put("downVote", Integer.toString(dontlike));
             aList.add(hm);
         }
 
