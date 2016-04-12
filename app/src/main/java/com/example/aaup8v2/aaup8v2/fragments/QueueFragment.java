@@ -24,19 +24,17 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
 
 public class QueueFragment extends Fragment {
-    List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
+    List<HashMap<String,String>> aList = new ArrayList<>();
     ListView mlist; // The view for this fragment
     List<QueueElement> mQueueElement = new ArrayList<>();
-    List<myTrack> mTracks = new ArrayList<>(); // A list of all the tracks
 
     int like = R.drawable.ic_action_like;
     int dontlike = R.drawable.ic_action_dontlike;
     int likeActive = R.drawable.ic_action_like_active;
     int dontlikeActive = R.drawable.ic_action_dontlike_active;
     int flag = R.drawable.ic_home;
-    SimpleAdapter adapter;
-    //int flag2 = R.drawable.ic_star;
-    //int flag3 = R.drawable.ic_cancel;
+
+    SimpleAdapter adapter; //Adapter for the list view
 
     private OnFragmentInteractionListener mListener;
 
@@ -77,13 +75,6 @@ public class QueueFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return v;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
