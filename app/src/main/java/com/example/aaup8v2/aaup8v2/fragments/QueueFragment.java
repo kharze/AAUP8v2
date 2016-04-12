@@ -144,17 +144,21 @@ public class QueueFragment extends Fragment {
         // These two lines are used to find out which line of the list the button is in.
         ListView listVoteInView = (ListView)view.getParent().getParent();
         int bIndex = listVoteInView.indexOfChild((View)view.getParent());
-        int trackChosenInList = listVoteInView.getFirstVisiblePosition() + bIndex;
-        if(mQueueElement.get(trackChosenInList).downvoteFlag != true)
+        int trackChosenOnList = listVoteInView.getFirstVisiblePosition() + bIndex;
+        if(mQueueElement.get(trackChosenOnList).downvoteFlag != true)
         {
-            mQueueElement.get(trackChosenInList).downvoteFlag = true;
-            mQueueElement.get(trackChosenInList).downVotes += 1;
-            if ( mQueueElement.get(trackChosenInList).upvoteFlag == true)
+            mQueueElement.get(trackChosenOnList).downvoteFlag = true;
+            mQueueElement.get(trackChosenOnList).downVotes += 1;
+            if ( mQueueElement.get(trackChosenOnList).upvoteFlag == true)
             {
-                mQueueElement.get(trackChosenInList).upvoteFlag = false;
-                mQueueElement.get(trackChosenInList).upVotes -= 1;
+                mQueueElement.get(trackChosenOnList).upvoteFlag = false;
+                mQueueElement.get(trackChosenOnList).upVotes -= 1;
             }
-
+        }
+        else
+        {
+            mQueueElement.get(trackChosenOnList).downvoteFlag = false;
+            mQueueElement.get(trackChosenOnList).downVotes -= 1;
         }
     }
 
@@ -162,18 +166,22 @@ public class QueueFragment extends Fragment {
         // These two lines are used to find out which line of the list the button is in.
         ListView listVoteInView = (ListView)view.getParent().getParent();
         int bIndex = listVoteInView.indexOfChild((View)view.getParent());
-        int trackChosenInList = listVoteInView.getFirstVisiblePosition() + bIndex;
-        if(mQueueElement.get(trackChosenInList).upvoteFlag != true)
+        int trackChosenOnList = listVoteInView.getFirstVisiblePosition() + bIndex;
+        if(mQueueElement.get(trackChosenOnList).upvoteFlag != true)
         {
-            mQueueElement.get(trackChosenInList).upvoteFlag = true;
-            mQueueElement.get(trackChosenInList).upVotes += 1;
-            if ( mQueueElement.get(trackChosenInList).downvoteFlag == true)
+            mQueueElement.get(trackChosenOnList).upvoteFlag = true;
+            mQueueElement.get(trackChosenOnList).upVotes += 1;
+            if ( mQueueElement.get(trackChosenOnList).downvoteFlag == true)
             {
-                mQueueElement.get(trackChosenInList).downvoteFlag = false;
-                mQueueElement.get(trackChosenInList).downVotes -= 1;
+                mQueueElement.get(trackChosenOnList).downvoteFlag = false;
+                mQueueElement.get(trackChosenOnList).downVotes -= 1;
             }
 
         }
-
+        else
+        {
+            mQueueElement.get(trackChosenOnList).upvoteFlag = false;
+            mQueueElement.get(trackChosenOnList).upVotes -= 1;
+        }
     }
 }
