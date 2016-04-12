@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.myTrack;
@@ -25,6 +26,7 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 public class QueueFragment extends Fragment {
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView mlist; // The view for this fragment
+    List<QueueElement> mQueueElement = new ArrayList<>();
     List<myTrack> mTracks = new ArrayList<>(); // A list of all the tracks
 
     int flag = R.drawable.ic_home;
@@ -57,7 +59,9 @@ public class QueueFragment extends Fragment {
                     // add track to list
                     myTrack track = new myTrack();
                     track.setMyTrack(p);
-                    mTracks.add(track);
+                    QueueElement element = new QueueElement();
+                    element.track = track;
+                    mQueueElement.add(element);
                 }
                 showQueue();
             }
@@ -113,12 +117,12 @@ public class QueueFragment extends Fragment {
     public void showQueue(){
         // adds all elements to a HashMap
         aList = new ArrayList<>();
-        for(int i = 0; mTracks.size() > i; i++){
+        for(int i = 0; mQueueElement.size() > i; i++){
             HashMap<String, String> hm = new HashMap<>();
-            myTrack track = mTracks.get(i);
-            String s = track.name;
-            hm.put("txt", track.name);
-            hm.put("cur", "Artist : " + track.artist);
+            QueueElement element = mQueueElement.get(i);
+            String s = element.track.name;
+            hm.put("txt", element.track.name);
+            hm.put("cur", "Artist : " + element.track.artist);
             hm.put("flag", Integer.toString(flag));
             hm.put("upVote", Integer.toString(flag2));
             hm.put("downVote", Integer.toString(flag3));
