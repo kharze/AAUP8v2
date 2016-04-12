@@ -141,14 +141,39 @@ public class QueueFragment extends Fragment {
     }
 
     public void click_down_vote(View view){
-        // These two lines are used to find out with line of the list the button is in.
-        ListView oo = (ListView)view.getParent().getParent();
-        int bIdex = oo.indexOfChild((View)view.getParent());
+        // These two lines are used to find out which line of the list the button is in.
+        ListView listVoteInView = (ListView)view.getParent().getParent();
+        int bIndex = listVoteInView.indexOfChild((View)view.getParent());
+        int trackChosenInList = listVoteInView.getFirstVisiblePosition() + bIndex;
+        if(mQueueElement.get(trackChosenInList).downvoteFlag != true)
+        {
+            mQueueElement.get(trackChosenInList).downvoteFlag = true;
+            mQueueElement.get(trackChosenInList).downVotes += 1;
+            if ( mQueueElement.get(trackChosenInList).upvoteFlag == true)
+            {
+                mQueueElement.get(trackChosenInList).upvoteFlag = false;
+                mQueueElement.get(trackChosenInList).upVotes -= 1;
+            }
+
+        }
     }
 
     public void click_up_vote(View view){
-        // These two lines are used to find out with line of the list the button is in.
-        ListView oo = (ListView)view.getParent().getParent();
-        int bIdex = oo.indexOfChild((View)view.getParent());
+        // These two lines are used to find out which line of the list the button is in.
+        ListView listVoteInView = (ListView)view.getParent().getParent();
+        int bIndex = listVoteInView.indexOfChild((View)view.getParent());
+        int trackChosenInList = listVoteInView.getFirstVisiblePosition() + bIndex;
+        if(mQueueElement.get(trackChosenInList).upvoteFlag != true)
+        {
+            mQueueElement.get(trackChosenInList).upvoteFlag = true;
+            mQueueElement.get(trackChosenInList).upVotes += 1;
+            if ( mQueueElement.get(trackChosenInList).downvoteFlag == true)
+            {
+                mQueueElement.get(trackChosenInList).downvoteFlag = false;
+                mQueueElement.get(trackChosenInList).downVotes -= 1;
+            }
+
+        }
+
     }
 }
