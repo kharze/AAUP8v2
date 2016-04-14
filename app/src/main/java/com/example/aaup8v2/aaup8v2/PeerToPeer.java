@@ -3,6 +3,7 @@ package com.example.aaup8v2.aaup8v2;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -31,6 +32,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -226,7 +228,7 @@ public class PeerToPeer extends AppCompatActivity {
             @Override
             public void onFailure(int reasonCode) {
                 // Code for when the discovery initiation fails goes here.
-                // Alert the user that something went wrong.
+                // Alert the User that something went wrong.
             }
         });
     }
@@ -423,6 +425,9 @@ public class PeerToPeer extends AppCompatActivity {
         Log.e("IP in Mask Integer", mWifiInfo.getIpAddress()+"");
         Log.e("IP Address", intToIP(mWifiInfo.getIpAddress()) + "");
 
+        EditText temp = (EditText) findViewById(R.id.editText);
+        String some = temp.getText().toString();
+
         new TestConnectionSend(context, groupOwnerAddress).execute();
 
         //new FileTransferAsyncTask(context, groupOwnerAddress).execute();
@@ -451,8 +456,10 @@ public class PeerToPeer extends AppCompatActivity {
 
         @Override
         protected Object doInBackground(Object[] params) {
+
+
             int port = 8888;
-            host = "172.17.74.151";
+            host = "127.0.0.1";
 
             try {
                 Socket socket = new Socket();
@@ -473,6 +480,7 @@ public class PeerToPeer extends AppCompatActivity {
 
             return null;
         }
+
     }
 
     public static class TestConnectionReceive extends AsyncTask{
@@ -637,17 +645,19 @@ public class PeerToPeer extends AppCompatActivity {
 
     }
 
-    public static void copyFile(InputStream is, OutputStream os) {
-        final int buffer_size = 1024;
+    public static boolean copyFile(InputStream inputStream, OutputStream out) {
+        byte buf[] = new byte[1024];
+        int len;
         try {
-            byte[] bytes = new byte[buffer_size];
-            for (;;) {
-                int count = is.read(bytes, 0, buffer_size);
-                if (count == -1)
-                    break;
-                os.write(bytes, 0, count);
+            while ((len = inputStream.read(buf)) != -1) {
+                out.write(buf, 0, len);
             }
-        } catch (Exception ex) {
+            out.close();
+            inputStream.close();
+        } catch (IOException e) {
+            Log.d(PeerToPeer.TAG, e.toString());
+            return false;
         }
+        return true;
     }
 }
