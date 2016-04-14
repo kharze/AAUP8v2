@@ -190,6 +190,7 @@ public class QueueFragment extends Fragment {
     public void playNextSong(){
         MainActivity.mPlayer.play("spotify:track:"+mQueueElementList.get(0).track.id);
         //Add function to add information to the playbar or make a Player class that does the job
+        //If the player is made into a class the code has to be completely changed.
         deleteTrack(0);
     }
 
@@ -228,7 +229,6 @@ public class QueueFragment extends Fragment {
         if(!mQueueElementList.get(trackChosenOnList).downvoteFlag)
         {
             elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlikeActive));
-            //((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlikeActive));
             mQueueElementList.get(trackChosenOnList).downvoteFlag = true;
             mQueueElementList.get(trackChosenOnList).downVotes += 1;
             mQueueElementList.get(trackChosenOnList).rank -= 1;
