@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private static final String CLIENT_ID = "8d04022ead4444d0b005d171e5941922";
     // Replace with your redirect URI
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
-    private Player mPlayer;
+    public static Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
     public PearsonRecommend mRecommend = new PearsonRecommend();

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
@@ -183,9 +184,13 @@ public class QueueFragment extends Fragment {
 
     public List<QueueElement> sortQueue(List<QueueElement> queueElementList){
 
-
-
         return queueElementList;
+    }
+
+    public void playNextSong(){
+        MainActivity.mPlayer.play("spotify:track:"+mQueueElementList.get(0).track.id);
+        //Add function to add information to the playbar or make a Player class that does the job
+        deleteTrack(0);
     }
 
     public void deleteTrack(int i){
