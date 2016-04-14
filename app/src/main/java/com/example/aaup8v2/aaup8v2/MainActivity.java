@@ -30,6 +30,7 @@ import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
 import com.example.aaup8v2.aaup8v2.recommender_pearson.PearsonRecommend;
+import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private static final String CLIENT_ID = "8d04022ead4444d0b005d171e5941922";
     // Replace with your redirect URI
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
-    private Player mPlayer;
+    public static Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
     public PearsonRecommend mRecommend = new PearsonRecommend();
@@ -400,7 +401,9 @@ public class MainActivity extends AppCompatActivity
     //Don't use, doesn't work
     public void pToP(View view){
         //Start Peer-to-Peer
-        Intent intent = new Intent(this, PeerToPeer.class);
+        //Intent intent = new Intent(this, PeerToPeer.class);
+
+        Intent intent = new Intent(this, WifiDirectActivity.class);
         startActivity(intent);
     }
 

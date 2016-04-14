@@ -5,4 +5,6 @@
     <color name="colorAccent">#7D7B7C</color>
     <color name="errorColor">#f00</color>
     <color name="textColor">#ffffff</color>
+    <color name="status_bar_color">#FF000000</color>
+    <color name="layout_border_color">#FF111111</color>
 </resources>
