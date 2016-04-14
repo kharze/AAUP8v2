@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
@@ -43,6 +44,7 @@ public class PearsonRecommend{
             e.getMessage();
         }
         List<PlaylistTrack> tracksList = tracksPager.items;
+
         for(int j=0; j < tracksList.size(); j++){
             track = tracksList.get(j).track;
             trackList.add(track);
@@ -90,6 +92,7 @@ public class PearsonRecommend{
     public List<RecommenderArtist> getArtistList(List<Artist> artistsList){
         List<String> difArtists = new ArrayList<>();
         List<Integer> occArtist = new ArrayList<>();
+        List<List<String>> genresList = new ArrayList<>();
 
         Collections.sort(artistsList, new Comparator<Artist>() {
             @Override
@@ -102,6 +105,14 @@ public class PearsonRecommend{
         for (int i = 0; i < artistsList.size(); i++){
             if (!difArtists.contains(artistsList.get(i).name)){
                 difArtists.add(artistsList.get(i).name);
+                List<String> temp = new ArrayList<>();
+                for(int j = 0; j < artistsList.get(i).genres.size(); j++){
+                    String[] split = artistsList.get(i).genres.get(j).split("\\W+");
+                    for (int k = 0; k < split.length; k++){
+                        temp.add(split[k]);
+                    }
+                }
+                genresList.add(temp);
                 if(occurrence != 0){
                     occArtist.add(occurrence);
                     occurrence = 0;
@@ -121,7 +132,7 @@ public class PearsonRecommend{
         List<Double> weights = calculateWeights(occArtist);
         List<RecommenderArtist> artistObjects = new ArrayList<>();
         for (int i = 0; i < occArtist.size(); i++){
-            artistObjects.add(new RecommenderArtist(difArtists.get(i), weights.get(i)));
+            artistObjects.add(new RecommenderArtist(difArtists.get(i), weights.get(i), genresList.get(i), null));
         }
 
         Collections.sort(artistObjects, new Comparator<RecommenderArtist>() {
@@ -142,7 +153,10 @@ public class PearsonRecommend{
         for(int i = 0; i < artistsList.size(); i++){
             int temp = artistsList.get(i).genres.size();
             for(int j = 0; j < temp; j++){
-                genresList.add(artistsList.get(i).genres.get(j));
+                String[] split = artistsList.get(i).genres.get(j).split("\\W+");
+                for (int k = 0; k < split.length; k++){
+                    genresList.add(split[k]);
+                }
             }
         }
 
@@ -192,13 +206,7 @@ public class PearsonRecommend{
     public List<Double> calculateWeights(List<Integer> occurrence){
 
         List<Double> weights = new ArrayList<>();
-/**
-        List<Integer> occGenres = new ArrayList<>();
-        occGenres.add(5);
-        occGenres.add(3);
-        occGenres.add(4);
-        occGenres.add(4);
-**/
+
         Double avgGenre = 0.0;
         Double summation = 0.0;
 
@@ -226,26 +234,64 @@ public class PearsonRecommend{
     Should end up being the recommender
      */
 
-    public List<Pager> recommend(String u_id, String p_id){
+    public List<RecommenderArtist> recommend(String u_id, String p_id) {
         List<Artist> artistsList = getArtists(u_id, p_id);
         List<RecommenderArtist> artistList = getArtistList(artistsList);
         List<Genre> genreList = getGenreList(artistsList);
+        List<RecommenderArtist> recommended = new ArrayList<>();
 
-        Collections.reverse(genreList);
-        Collections.reverse(artistList);
-        Tracks tracks;
-        trackList.size();
-        try{
-            tracks = new asyncGetArtistTopTrack(new asyncGetArtistTopTrack.AsyncResponse(){
-                @Override
-                public void processFinish(Tracks output){
+        for (int i = 0; i < artistList.size(); i++) {
+            double artistWeight = artistList.get(i).weight;
+            double genreWeight = 0;
+            for (int j = 0; j < genreList.size(); j++) {
+
+                double tempWeight = genreList.get(j).weight;
+                if (artistList.get(i).genre.contains(genreList.get(j).genre) && tempWeight > genreWeight ) {
+                    genreWeight = tempWeight;
                 }
-            }).execute("6FBDaR13swtiWwGhX1WQsP").get();
-
-        }catch (Exception e){
+            }
+            double newWeight = genreWeight + artistWeight;
+            artistList.get(i).setWeight(newWeight);
         }
+        /**
+        for(int i = 0; i < artistList.size(); i++){
+            double newWeight = 0;
+            for(int j = 0; j < genreList.size(); j++){
+                if (artistList.get(i).genre.contains(genreList.get(j).genre)) {
+                    newWeight += genreList.get(j).weight;
+                }
+            }
+            artistList.get(i).setWeight(newWeight);
+        }
+         **/
 
-        return null;
+        Collections.sort(artistList, new Comparator<RecommenderArtist>() {
+            @Override
+            public int compare(RecommenderArtist lhs, RecommenderArtist rhs) {
+                return lhs.weight.compareTo(rhs.weight);
+            }
+        });
+        Collections.reverse(artistList);
+    /**
+        for (int i = 0; i < artistList.size(); i++) {
+            List<String> artistTracks = new ArrayList<>();
+            String artist = artistList.get(i).name;
+            for (int j = 0; j < trackList.size(); j++) {
+                for (ArtistSimple trackArtist: trackList.get(j).artists) {
+                    String trackArtistName = trackArtist.name;
+                    if(trackArtistName.equals(artist)){
+                        String temp = trackList.get(j).name;
+                        if (!artistTracks.contains(temp)){
+                            artistTracks.add(temp);
+                        }
+                    }
+                }
+            }
+            artistList.get(i).setTracks(artistTracks);
+            recommended.add(artistList.get(i));
+        }
+     **/
+        int x = 0;
+        return recommended;
     }
-
 }

@@ -58,7 +58,7 @@
                 android:id="@+id/testButtonImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="pToP"
+                android:onClick="Test_spotify"
                 android:layout_marginLeft="200dp"
                 android:src="@drawable/ic_home"/>
         </RelativeLayout>
