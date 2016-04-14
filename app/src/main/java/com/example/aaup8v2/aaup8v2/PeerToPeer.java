@@ -226,7 +226,7 @@ public class PeerToPeer extends AppCompatActivity {
             @Override
             public void onFailure(int reasonCode) {
                 // Code for when the discovery initiation fails goes here.
-                // Alert the user that something went wrong.
+                // Alert the User that something went wrong.
             }
         });
     }

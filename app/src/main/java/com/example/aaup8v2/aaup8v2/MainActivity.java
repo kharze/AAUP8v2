@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, //authentication
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
+        builder.setScopes(new String[]{"User-read-private", "streaming"});
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
@@ -321,8 +321,8 @@ public class MainActivity extends AppCompatActivity
     public void Test_spotify(View view){
         //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");;
         /** ID's
-         * Empty list: user:aaup8 :playlist:6B3WEOcvqjEsURp4Icu9vN
-         * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
+         * Empty list: User:aaup8 :playlist:6B3WEOcvqjEsURp4Icu9vN
+         * Our test list: User:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
          */
         mRecommend.recommend("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
         try {
