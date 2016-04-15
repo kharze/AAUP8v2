@@ -70,7 +70,6 @@ public class QueueFragment extends Fragment {
                     track.setMyTrack(p);
                     addTrack(track);
                 }
-                //showQueue();
             }
         }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
 
@@ -79,8 +78,8 @@ public class QueueFragment extends Fragment {
         mlistView = (ListView)v.findViewById(R.id.queue_list);
 
         // Initialize adapter for the list
-        String[] from = { "flag","txt","cur", "upVote", "downVote", "downCount", "upCount" };
-        int[] to = { R.id.flag,R.id.txt,R.id.cur, R.id.upVote, R.id.downVote, R.id.downCount, R.id.upCount};
+        String[]    from    = { "flag",         "txt",      "cur",      "upVote",       "downVote",     "downCount",    "upCount" };
+        int[]       to      = { R.id.flag,      R.id.txt,   R.id.cur,   R.id.upVote,    R.id.downVote,  R.id.downCount, R.id.upCount};
         adapter = new SimpleAdapter(getActivity().getBaseContext(), elementList, R.layout.queue_listview_element,from,to );
         mlistView.setAdapter(adapter);
 
@@ -180,6 +179,7 @@ public class QueueFragment extends Fragment {
             elementList.get(i).put("upCount", Integer.toString(mQueueElementList.get(i).upVotes));
         }
         adapter.notifyDataSetChanged();
+
     }
 
     public List<QueueElement> sortQueue(List<QueueElement> queueElementList){
