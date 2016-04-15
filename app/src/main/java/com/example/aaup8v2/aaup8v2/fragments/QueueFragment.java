@@ -148,9 +148,8 @@ public class QueueFragment extends Fragment {
     }
 
     public void sortQueue(){
-        Boolean change;
 
-        //
+        // Comparator for the sorting
         Comparator<QueueElement> compareRank = new Comparator<QueueElement>() {
             @Override
             public int compare(QueueElement lhs, QueueElement rhs) {
@@ -165,12 +164,12 @@ public class QueueFragment extends Fragment {
             elementList.get(i).put("txt", mQueueElementList.get(i).track.name);
             elementList.get(i).put("cur", "Artist : " + mQueueElementList.get(i).track.artist);
             elementList.get(i).put("flag", Integer.toString(flag));
-            if(mQueueElementList.get(i).upvoteFlag == true){
+            if(mQueueElementList.get(i).upvoteFlag){
                 elementList.get(i).put("upVote", Integer.toString(likeActive));
             }else{
                 elementList.get(i).put("upVote", Integer.toString(like));
             }
-            if(mQueueElementList.get(i).downvoteFlag == true){
+            if(mQueueElementList.get(i).downvoteFlag){
                 elementList.get(i).put("downVote", Integer.toString(dontlikeActive));
             }else{
                 elementList.get(i).put("downVote", Integer.toString(dontlike));
@@ -179,12 +178,6 @@ public class QueueFragment extends Fragment {
             elementList.get(i).put("upCount", Integer.toString(mQueueElementList.get(i).upVotes));
         }
         adapter.notifyDataSetChanged();
-
-    }
-
-    public List<QueueElement> sortQueue(List<QueueElement> queueElementList){
-
-        return queueElementList;
     }
 
     public void playNextSong(){
