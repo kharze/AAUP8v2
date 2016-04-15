@@ -240,10 +240,14 @@ public class QueueFragment extends Fragment {
             mQueueElementList.get(trackChosenOnList).downVotes -= 1;
             mQueueElementList.get(trackChosenOnList).rank += 1;
         }
+
+        trackWeight(trackChosenOnList);
+
         //Updates the upvote/downvote value in the view.
         elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
         elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downVotes));
         adapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
+        voteThreshold(trackChosenOnList);
         sortQueue();
     }
 
@@ -277,10 +281,34 @@ public class QueueFragment extends Fragment {
             mQueueElementList.get(trackChosenOnList).rank -= 1;
 
         }
+
+        trackWeight(trackChosenOnList);
+
         //Updates the upvote/downvote value in the view.
         elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
         elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downVotes));
         adapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
         sortQueue();
     }
+
+    int numberOfPeers = 6;  //Number of people on the network, needs to be replaced
+    double threshold = numberOfPeers * 0.66;
+
+    public void trackWeight(int trackWeightChange) {
+        //Substract the number of downvotes made by the users from the threshold, decreasing the track weight
+        int test = mQueueElementList.get(trackWeightChange).rank;
+        mQueueElementList.get(trackWeightChange).weight = threshold + mQueueElementList.get(trackWeightChange).rank;
+        double test2 = mQueueElementList.get(trackWeightChange).weight;
+    }
+
+    public void voteThreshold(int downVotedTrack) {
+        //If track weight gets below the set threshold it will be removed from the list
+        if(mQueueElementList.get(downVotedTrack).weight <= 0)
+        {
+            deleteTrack(downVotedTrack);
+        }
+    }
+
+
+
 }
