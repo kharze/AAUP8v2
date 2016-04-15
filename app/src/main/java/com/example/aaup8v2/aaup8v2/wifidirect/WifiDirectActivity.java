@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
@@ -18,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.R;
@@ -37,6 +40,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     private final IntentFilter intentFilter = new IntentFilter();
     private Channel channel;
     private BroadcastReceiver receiver = null;
+    WifiP2pManager.PeerListListener myPeerListListener;
+    SimpleAdapter adapter;
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
      */
@@ -54,12 +59,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
     }
     /** register the BroadcastReceiver with the intent values to be matched */
     @Override
     public void onResume() {
         super.onResume();
-        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
+        //receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         registerReceiver(receiver, intentFilter);
     }
     @Override
@@ -102,7 +108,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
-    public void discoverPeers(View view){
+    public void discoverPeers(final View view){
         if (!isWifiP2pEnabled) {
             Toast.makeText(WifiDirectActivity.this, R.string.p2p_off_warning,
                     Toast.LENGTH_SHORT).show();
@@ -115,6 +121,37 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             public void onSuccess() {
                 Toast.makeText(WifiDirectActivity.this, "Discovery Initiated",
                         Toast.LENGTH_SHORT).show();
+
+                    // request available peers from the wifi p2p manager. This is an
+                    // asynchronous call and the calling activity is notified with a
+                    // callback on PeerListListener.onPeersAvailable()
+                    if (manager != null) {
+                        manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
+
+                            public void onPeersAvailable(WifiP2pDeviceList peers) {
+                                Log.d(TAG, String.format("PeerListListener: %d peers available, updating device list", peers.getDeviceList().size()));
+
+                                // DO WHATEVER YOU WANT HERE
+                                // YOU CAN GET ACCESS TO ALL THE DEVICES YOU FOUND FROM peers OBJECT
+                                // vi mangler og få smidt vores peers på listen, men de er her..
+
+
+                               /* ListView v = (ListView) view.findViewById(R.id.listViewPeers);
+                                String[] from = { "flag","txt","cur" };
+
+                                int[] to = { R.id.flag,R.id.txt,R.id.cur,R.id.textView};
+                                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_layout, from, to);
+
+
+                                // Assign adapter to ListView
+                                list.setAdapter(adapter);
+                                ListView v = (ListView) view.findViewById(R.id.listViewPeers);
+                                list = (ListView)v.findViewById(R.id.list);*/
+                            }
+                        });
+
+                    }
+
             }
             @Override
             public void onFailure(int reasonCode) {
@@ -180,6 +217,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             public void onSuccess() {
                 // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
             }
+
             @Override
             public void onFailure(int reason) {
                 Toast.makeText(WifiDirectActivity.this, "Connect failed. Retry.",
@@ -197,6 +235,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             public void onFailure(int reasonCode) {
                 Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
             }
+
             @Override
             public void onSuccess() {
                 fragment.getView().setVisibility(View.GONE);
