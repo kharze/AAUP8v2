@@ -2,7 +2,6 @@ package com.example.aaup8v2.aaup8v2.recommender_pearson;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtists;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtistTopTrack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,12 +9,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
-import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.Tracks;
 
 /**
  * Created by Lasse on 21-03-2016.
@@ -148,7 +145,7 @@ public class PearsonRecommend{
     Generating a list of new genre object which contains id, genre and weight
      */
 
-    public  List<Genre> getGenreList(List<Artist> artistsList){
+    public  List<RecommenderGenre> getGenreList(List<Artist> artistsList){
         List<String> genresList = new ArrayList<>();
         for(int i = 0; i < artistsList.size(); i++){
             int temp = artistsList.get(i).genres.size();
@@ -186,14 +183,14 @@ public class PearsonRecommend{
             }
         }
         List<Double> weights = calculateWeights(occGenre);
-        List<Genre> genreObjects = new ArrayList<>();
+        List<RecommenderGenre> genreObjects = new ArrayList<>();
         for (int i = 0; i < occGenre.size(); i++){
-            genreObjects.add(new Genre(i, difGenres.get(i), weights.get(i)));
+            genreObjects.add(new RecommenderGenre(i, difGenres.get(i), weights.get(i)));
         }
 
-        Collections.sort(genreObjects, new Comparator<Genre>() {
+        Collections.sort(genreObjects, new Comparator<RecommenderGenre>() {
             @Override
-            public int compare(Genre lhs, Genre rhs) {
+            public int compare(RecommenderGenre lhs, RecommenderGenre rhs) {
                 return lhs.weight.compareTo(rhs.weight);
             }
         });
@@ -237,7 +234,7 @@ public class PearsonRecommend{
     public List<RecommenderArtist> recommend(String u_id, String p_id) {
         List<Artist> artistsList = getArtists(u_id, p_id);
         List<RecommenderArtist> artistList = getArtistList(artistsList);
-        List<Genre> genreList = getGenreList(artistsList);
+        List<RecommenderGenre> genreList = getGenreList(artistsList);
         List<RecommenderArtist> recommended = new ArrayList<>();
 
         for (int i = 0; i < artistList.size(); i++) {

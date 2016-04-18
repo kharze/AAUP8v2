@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
@@ -350,13 +351,28 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-    public void playMusic(View view){
-        mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N");
+    public void playPause(View view){
+        final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
+        button.setOnClickListener(new View.OnClickListener() {
+            int buttonValue = 0;
+            public void onClick(View v) {
+                if (buttonValue == 0) {
+                    playMusic(v);
+                    button.setImageResource(R.drawable.ic_action_playback_pause);
+                    buttonValue = 1;
+                } else if (buttonValue == 1) {
+                    pauseMusic(v);
+                    button.setImageResource(R.drawable.ic_action_playback_play);
+                    buttonValue = 0;
+                }
+            }
+        });
     }
+    public void playMusic(View view){ mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N"); }
     public void pauseMusic(View view){
         mPlayer.pause();
     }
-    public void skipMusic(View view){
+    /**public void skipMusic(View view){
         mPlayer.skipToNext();
     }
     public void prevMusic(View view){
@@ -366,7 +382,7 @@ public class MainActivity extends AppCompatActivity
     public void resumeMusic(View view) {
         mPlayer.resume();
     }
-
+**/
 
     EditText mText;
 
