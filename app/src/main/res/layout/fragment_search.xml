@@ -9,31 +9,32 @@
 
 
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <TableRow>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Search"
-                android:id="@+id/searchMusicButton"
-                android:onClick="searchMusic"
-                android:layout_column="0" />
-            <android.support.design.widget.TextInputEditText
-                android:hint="Search"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:width="300dp"
-                android:id="@+id/Search_Text"/>
-        </TableRow>
+        <Button
+            android:id="@+id/searchMusicButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:onClick="searchMusic"
+            android:layout_column="0" />
 
-        <TableRow>
-        <ListView android:minWidth="50dp" android:contextClickable="true" android:layout_height="wrap_content"
-            android:layout_width="match_parent" android:id="@+id/Search_Results" android:layout_column="1">
-        </ListView>
-        </TableRow>
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/Search_Text"
+            android:hint="Search"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:width="300dp"
+            android:layout_toRightOf="@id/searchMusicButton"/>
 
-    </TableLayout>
+        <ListView
+            android:id="@+id/Search_Results"
+            android:layout_below="@id/Search_Text"
+            android:contextClickable="true"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+    </RelativeLayout>
 </FrameLayout>
