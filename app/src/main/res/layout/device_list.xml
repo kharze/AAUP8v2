@@ -68,6 +68,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:text="@string/label_peers" />
+
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
@@ -77,13 +78,16 @@
     <ListView
         android:id="@id/android:list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:drawSelectorOnTop="false" />
     <TextView
         android:id="@id/android:empty"
         android:layout_width="match_parent"
         android:layout_gravity="center"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/empty_message" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
