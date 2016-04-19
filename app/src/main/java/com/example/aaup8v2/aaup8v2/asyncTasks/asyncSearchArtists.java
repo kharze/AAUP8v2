@@ -8,7 +8,7 @@ import kaaes.spotify.webapi.android.models.ArtistsPager;
 
 /**
  * Created by Claus on 4/5/2016.
- */
+ **/
 public class asyncSearchArtists extends AsyncTask<String, Void, ArtistsPager> {
     public interface AsyncResponse {
         void processFinish(ArtistsPager output);

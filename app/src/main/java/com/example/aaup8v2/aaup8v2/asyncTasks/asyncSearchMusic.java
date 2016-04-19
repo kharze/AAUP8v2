@@ -28,11 +28,9 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
     }
 
     public AsyncResponse delegate = null;
-
     public asyncSearchMusic(AsyncResponse delegate){
         this.delegate = delegate;
     }
-
 
     @Override
     protected void onProgressUpdate(Void... values) {
@@ -41,8 +39,6 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
     @Override
     protected List doInBackground(String... id) {
         List<myTrack> mSearchTracks = new ArrayList<>();
-
-        int i, j, k, l, m, n;
         Pager mArtistAlbums;
         List<String> albumsList = new ArrayList<>();
 
@@ -53,9 +49,9 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
         List<Track> mTracksHelper = mTracks.tracks.items;
 
         //Add found tracks to the return list.
-        for(n = 0; n < mTracksHelper.size(); n++){
+        for(int i = 0; i < mTracksHelper.size(); i++){
             myTrack temp = new myTrack();
-            temp.setMyTrack(mTracksHelper.get(n));
+            temp.setMyTrack(mTracksHelper.get(i));
             mSearchTracks.add(temp);
         }
 
@@ -63,7 +59,7 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
         ArtistsPager mArtists = MainActivity.mSpotifyAccess.mService.searchArtists(id[0]);
 
         //Go through each result from the artist search.
-        for(i = 0; i < mArtists.artists.items.size(); i++){
+        for(int i = 0; i < mArtists.artists.items.size(); i++){
             //Get the albums an artist have made, as this is the only way to find which tracks an artist have made.
             //Call to the Spotify API getArtistAlbums function, returns a Pager object.
             mArtistAlbums = MainActivity.mSpotifyAccess.mService.getArtistAlbums(mArtists.artists.items.get(i).id);
@@ -72,7 +68,7 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
             List<Album> mArtistAlbumsHelper = mArtistAlbums.items;
 
             //Populate the list of albums ids
-            for(j=0; j < mArtistAlbumsHelper.size(); j++){
+            for(int j=0; j < mArtistAlbumsHelper.size(); j++){
                 albumsList.add(mArtistAlbumsHelper.get(j).id);
             }
 
@@ -97,21 +93,17 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
 
                 //Call to Spotify API getAlbums function with the request string, returns the albums.
                 Albums mAlbums = MainActivity.mSpotifyAccess.mService.getAlbums(albumRequests);
-
-
                 List<Album> mAlbumsHelper = mAlbums.albums;
 
                 //Go through all the albums, extract the tracks, and add them to the return list.
-                for(k = 0; k < mAlbumsHelper.size(); k++){
-                    for(l = 0; l < mAlbumsHelper.get(k).tracks.items.size(); l++){
+                for(int j = 0; j < mAlbumsHelper.size(); j++){
+                    for(int l = 0; l < mAlbumsHelper.get(j).tracks.items.size(); l++){
                         myTrack temp = new myTrack();
-                        temp.setMyTrack(mAlbumsHelper.get(k).tracks.items.get(l));
+                        temp.setMyTrack(mAlbumsHelper.get(j).tracks.items.get(l));
                         mSearchTracks.add(temp);
                     }
                 }
-
             }while (!albumsList.isEmpty());
-
         }
 
         //Sort on id
@@ -123,12 +115,11 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
         });
 
         //Remove duplicates
-        for(m = 0; m < mSearchTracks.size()-1; m++){
-            if(mSearchTracks.get(m).id.equals(mSearchTracks.get(m+1).id)){
-                mSearchTracks.remove(m+1);
+        for(int i = 0; i < mSearchTracks.size()-1; i++){
+            if(mSearchTracks.get(i).id.equals(mSearchTracks.get(i+1).id)){
+                mSearchTracks.remove(i+1);
             }
         }
-
         return mSearchTracks;
     }
 
