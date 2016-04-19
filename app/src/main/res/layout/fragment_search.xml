@@ -32,9 +32,7 @@
         <ListView
             android:id="@+id/Search_Results"
             android:layout_below="@id/Search_Text"
-            android:contextClickable="true"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
-
     </RelativeLayout>
 </FrameLayout>

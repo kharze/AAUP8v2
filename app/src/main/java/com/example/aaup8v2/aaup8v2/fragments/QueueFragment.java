@@ -1,6 +1,7 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,36 +14,40 @@ import android.widget.SimpleAdapter;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.myTrack;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TrackSimple;
 
 
 public class QueueFragment extends Fragment {
-    List<HashMap<String,String>> elementList = new ArrayList<>();
-    ListView mlistView; // The view for this fragment
-    List<QueueElement> mQueueElementList = new ArrayList<>();
+    private List<HashMap<String,String>> elementList = new ArrayList<>();
+    private ListView mlistView; // The view for this fragment
+    private List<QueueElement> mQueueElementList = new ArrayList<>();
 
     // Icons used for the ListView
-    int like = R.drawable.ic_action_like;
-    int dontlike = R.drawable.ic_action_dontlike;
-    int likeActive = R.drawable.ic_action_like_active;
-    int dontlikeActive = R.drawable.ic_action_dontlike_active;
-    int flag = R.drawable.ic_home;
+    private int like = R.drawable.ic_action_like;
+    private int dontlike = R.drawable.ic_action_dontlike;
+    private int likeActive = R.drawable.ic_action_like_active;
+    private int dontlikeActive = R.drawable.ic_action_dontlike_active;
+    private int flag = R.drawable.ic_home; //Should be changed at some point
 
-    SimpleAdapter adapter; //Adapter for the list view
+    private SimpleAdapter queueAdapter; //Adapter for the list view
 
     private OnFragmentInteractionListener mListener;
+
+    private Gson gson;
+    private SharedPreferences mPrefs;
 
     public QueueFragment() {
         // Required empty public constructor
@@ -51,40 +56,56 @@ public class QueueFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        gson = new Gson();
+        Context context = getContext();
+
+        mPrefs = context.getSharedPreferences("Queue", 1);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // only used for test purpose;
-        new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
-            @Override
-            public void processFinish(Pager output){
-
-                for(int i=0;i < output.items.size();i++){
-                    PlaylistTrack p = (PlaylistTrack) output.items.get(i);
-
-                    // add track to list track list and adapter
-                    myTrack track = new myTrack();
-                    track.setMyTrack(p);
-                    addTrack(track);
-                }
-            }
-        }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
+        // Initialize adapter for the list
+        String[]    from    = { "flag",         "txt",      "cur",      "upVote",       "downVote",     "downCount",    "upCount" };
+        int[]       to      = { R.id.flag,      R.id.txt,   R.id.cur,   R.id.upVote,    R.id.downVote,  R.id.downCount, R.id.upCount};
+        queueAdapter = new SimpleAdapter(getActivity().getBaseContext(), elementList, R.layout.queue_listview_element,from,to );
 
         //Specifies the ListView
         View v = inflater.inflate(R.layout.fragment_queue, container,false);
         mlistView = (ListView)v.findViewById(R.id.queue_list);
 
-        // Initialize adapter for the list
-        String[]    from    = { "flag",         "txt",      "cur",      "upVote",       "downVote",     "downCount",    "upCount" };
-        int[]       to      = { R.id.flag,      R.id.txt,   R.id.cur,   R.id.upVote,    R.id.downVote,  R.id.downCount, R.id.upCount};
-        adapter = new SimpleAdapter(getActivity().getBaseContext(), elementList, R.layout.queue_listview_element,from,to );
-        mlistView.setAdapter(adapter);
+        mlistView.setAdapter(queueAdapter);
 
         // Inflate the layout for this fragment
         return v;
+    }
+
+    public void onResume(){
+        super.onResume();
+
+        String listJSon = mPrefs.getString("mQueueElementList", "");
+        Type c = new TypeToken<List<QueueElement>>(){}.getType();
+        mQueueElementList = gson.fromJson(listJSon, c);
+
+        //Resets the playqueue after resuming
+        if(mQueueElementList != null){
+            for(int i=0;i < mQueueElementList.size();i++) {
+                QueueElement element = mQueueElementList.get(i);
+                // add track to adapter
+                addToAdapter(element);
+            }
+            sortQueue();
+        }
+    }
+
+    public void onPause() {
+        super.onPause();
+
+        SharedPreferences.Editor ed = mPrefs.edit();
+        String listJSon = gson.toJson(mQueueElementList);
+        ed.putString("mQueueElementList", listJSon);
+        ed.commit();
     }
 
     @Override
@@ -126,7 +147,7 @@ public class QueueFragment extends Fragment {
 
         //adds the track to the adapter
         addToAdapter(element);
-        adapter.notifyDataSetChanged();
+        queueAdapter.notifyDataSetChanged();
     }
     public void addTrack(Track track){
         myTrack mytrack = new myTrack();
@@ -177,7 +198,7 @@ public class QueueFragment extends Fragment {
             elementList.get(i).put("downCount", Integer.toString(mQueueElementList.get(i).downVotes));
             elementList.get(i).put("upCount", Integer.toString(mQueueElementList.get(i).upVotes));
         }
-        adapter.notifyDataSetChanged();
+        queueAdapter.notifyDataSetChanged();
     }
 
     public void playNextSong(){
@@ -190,7 +211,7 @@ public class QueueFragment extends Fragment {
     public void deleteTrack(int i){
         mQueueElementList.remove(i);
         elementList.remove(i);
-        adapter.notifyDataSetChanged();
+        queueAdapter.notifyDataSetChanged();
     }
 
 
@@ -200,8 +221,16 @@ public class QueueFragment extends Fragment {
         hMap.put("txt", element.track.name);
         hMap.put("cur", "Artist : " + element.track.artist);
         hMap.put("flag", Integer.toString(flag));
-        hMap.put("upVote", Integer.toString(like));
-        hMap.put("downVote", Integer.toString(dontlike));
+        if(element.upvoteFlag) {
+            hMap.put("upVote", Integer.toString(likeActive));
+        }else{
+            hMap.put("upVote", Integer.toString(like));
+        }
+        if(element.downvoteFlag){
+            hMap.put("downVote", Integer.toString(dontlikeActive));
+        }else{
+            hMap.put("downVote", Integer.toString(dontlike));
+        }
         hMap.put("downCount", Integer.toString(element.downVotes));
         hMap.put("upCount", Integer.toString(element.upVotes));
 
@@ -246,7 +275,7 @@ public class QueueFragment extends Fragment {
         //Updates the upvote/downvote value in the view.
         elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
         elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downVotes));
-        adapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
+        queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
         voteThreshold(trackChosenOnList);
         sortQueue();
     }
@@ -287,7 +316,7 @@ public class QueueFragment extends Fragment {
         //Updates the upvote/downvote value in the view.
         elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
         elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downVotes));
-        adapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
+        queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
         sortQueue();
     }
 
