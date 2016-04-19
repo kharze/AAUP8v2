@@ -19,18 +19,20 @@
         android:orientation="vertical" >
 
         <TextView
-        android:id="@+id/trackName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="@color/textColor"/>
+            android:id="@+id/trackName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/textColor"
+            android:lines="1"/>
 
     <TextView
         android:id="@+id/artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="12sp"
-        android:textColor="@color/textColor"/>
+        android:textColor="@color/textColor"
+        android:lines="1"/>
     </LinearLayout>
 
 </LinearLayout>

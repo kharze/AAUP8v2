@@ -1,14 +1,12 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -131,6 +129,10 @@ public class SearchFragment extends Fragment{
         new asyncSearchMusic(new asyncSearchMusic.AsyncResponse() {
             @Override
             public void processFinish(List output) {
+
+                while(!aList.isEmpty()){
+                    aList.remove(0);
+                }
 
                 for (int i = 0; i < output.size(); i++) {
                     HashMap<String, String> hm = new HashMap<String, String>();

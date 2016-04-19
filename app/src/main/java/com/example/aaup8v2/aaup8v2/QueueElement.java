@@ -12,6 +12,8 @@ public class QueueElement {
     public int rank;
     public boolean upvoteFlag;
     public boolean downvoteFlag;
+    public boolean tooManyDownvotes;
+    public double weight;
 
     // makes sure the values are always 0 at creation;
     public void onCreate(){
@@ -21,5 +23,7 @@ public class QueueElement {
         this.rank = 0;
         this.upvoteFlag = false;
         this.downvoteFlag = false;
+        this.tooManyDownvotes = false;
+        this.weight = 0;
     }
 }

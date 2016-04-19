@@ -10,24 +10,30 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.myTrack;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
+import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.TrackSimple;
 
 
 public class QueueFragment extends Fragment {
-    List<HashMap<String,String>> aList = new ArrayList<>();
-    ListView mlist; // The view for this fragment
-    List<QueueElement> mQueueElement = new ArrayList<>();
+    List<HashMap<String,String>> elementList = new ArrayList<>();
+    ListView mlistView; // The view for this fragment
+    List<QueueElement> mQueueElementList = new ArrayList<>();
 
+    // Icons used for the ListView
     int like = R.drawable.ic_action_like;
     int dontlike = R.drawable.ic_action_dontlike;
     int likeActive = R.drawable.ic_action_like_active;
@@ -59,19 +65,23 @@ public class QueueFragment extends Fragment {
                 for(int i=0;i < output.items.size();i++){
                     PlaylistTrack p = (PlaylistTrack) output.items.get(i);
 
-                    // add track to list
+                    // add track to list track list and adapter
                     myTrack track = new myTrack();
                     track.setMyTrack(p);
-                    QueueElement element = new QueueElement();
-                    element.track = track;
-                    mQueueElement.add(element);
+                    addTrack(track);
                 }
-                showQueue();
             }
         }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
 
+        //Specifies the ListView
         View v = inflater.inflate(R.layout.fragment_queue, container,false);
-        mlist = (ListView)v.findViewById(R.id.queue_list);
+        mlistView = (ListView)v.findViewById(R.id.queue_list);
+
+        // Initialize adapter for the list
+        String[]    from    = { "flag",         "txt",      "cur",      "upVote",       "downVote",     "downCount",    "upCount" };
+        int[]       to      = { R.id.flag,      R.id.txt,   R.id.cur,   R.id.upVote,    R.id.downVote,  R.id.downCount, R.id.upCount};
+        adapter = new SimpleAdapter(getActivity().getBaseContext(), elementList, R.layout.queue_listview_element,from,to );
+        mlistView.setAdapter(adapter);
 
         // Inflate the layout for this fragment
         return v;
@@ -109,32 +119,97 @@ public class QueueFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    // function for showing all the tracks in the queue on the list
-    public void showQueue(){
-        // adds all elements to a HashMap
-        aList = new ArrayList<>();
-        for(int i = 0; mQueueElement.size() > i; i++){
-            HashMap<String, String> hm = new HashMap<>();
-            QueueElement element = mQueueElement.get(i);
-            hm.put("txt", element.track.name);
-            hm.put("cur", "Artist : " + element.track.artist);
-            hm.put("flag", Integer.toString(flag));
-            hm.put("upVote", Integer.toString(like));
-            hm.put("downVote", Integer.toString(dontlike));
-            hm.put("downCount", Integer.toString(element.downVotes));
-            hm.put("upCount", Integer.toString(element.upVotes));
+    public void addTrack(myTrack track){
+        QueueElement element = new QueueElement();
+        element.track = track;
+        mQueueElementList.add(element);
 
-            aList.add(hm);
-        }
-
-        // Create a simple adapter for the queue
-        String[] from = { "flag","txt","cur", "upVote", "downVote", "downCount", "upCount" };
-        int[] to = { R.id.flag,R.id.txt,R.id.cur, R.id.upVote, R.id.downVote, R.id.downCount, R.id.upCount};
-        adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.queue_listview_element,from,to );
-
-        // Assign adapter to ListView
-        mlist.setAdapter(adapter);
+        //adds the track to the adapter
+        addToAdapter(element);
+        adapter.notifyDataSetChanged();
     }
+    public void addTrack(Track track){
+        myTrack mytrack = new myTrack();
+        mytrack.setMyTrack(track);
+
+        addTrack(mytrack);
+    }
+    public void addTrack(TrackSimple track){
+        myTrack mytrack = new myTrack();
+        mytrack.setMyTrack(track);
+
+        addTrack(mytrack);
+    }
+    public void addTrack(PlaylistTrack track){
+        myTrack mytrack = new myTrack();
+        mytrack.setMyTrack(track);
+
+        addTrack(mytrack);
+    }
+
+    public void sortQueue(){
+
+        // Comparator for the sorting
+        Comparator<QueueElement> compareRank = new Comparator<QueueElement>() {
+            @Override
+            public int compare(QueueElement lhs, QueueElement rhs) {
+                return (rhs.rank - lhs.rank);
+            }
+        };
+
+        Collections.sort(mQueueElementList,compareRank);
+
+
+        for(int i = 0; mQueueElementList.size() > i; i++){
+            elementList.get(i).put("txt", mQueueElementList.get(i).track.name);
+            elementList.get(i).put("cur", "Artist : " + mQueueElementList.get(i).track.artist);
+            elementList.get(i).put("flag", Integer.toString(flag));
+            if(mQueueElementList.get(i).upvoteFlag){
+                elementList.get(i).put("upVote", Integer.toString(likeActive));
+            }else{
+                elementList.get(i).put("upVote", Integer.toString(like));
+            }
+            if(mQueueElementList.get(i).downvoteFlag){
+                elementList.get(i).put("downVote", Integer.toString(dontlikeActive));
+            }else{
+                elementList.get(i).put("downVote", Integer.toString(dontlike));
+            }
+            elementList.get(i).put("downCount", Integer.toString(mQueueElementList.get(i).downVotes));
+            elementList.get(i).put("upCount", Integer.toString(mQueueElementList.get(i).upVotes));
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    public void playNextSong(){
+        MainActivity.mPlayer.play("spotify:track:"+mQueueElementList.get(0).track.id);
+        //Add function to add information to the playbar or make a Player class that does the job
+        //If the player is made into a class the code has to be completely changed.
+        deleteTrack(0);
+    }
+
+    public void deleteTrack(int i){
+        mQueueElementList.remove(i);
+        elementList.remove(i);
+        adapter.notifyDataSetChanged();
+    }
+
+
+    public void addToAdapter(QueueElement element){
+
+        HashMap<String, String> hMap = new HashMap<>();
+        hMap.put("txt", element.track.name);
+        hMap.put("cur", "Artist : " + element.track.artist);
+        hMap.put("flag", Integer.toString(flag));
+        hMap.put("upVote", Integer.toString(like));
+        hMap.put("downVote", Integer.toString(dontlike));
+        hMap.put("downCount", Integer.toString(element.downVotes));
+        hMap.put("upCount", Integer.toString(element.upVotes));
+
+        elementList.add(hMap);
+    }
+
+
+
 
     public void click_down_vote(View view){
         // These two lines are used to find out which line of the list the button is in.
@@ -144,28 +219,36 @@ public class QueueFragment extends Fragment {
 
         //Change the value of the up/down votes depending if the button has already been pressed.
         //Change the icon for the button.
-        if(!mQueueElement.get(trackChosenOnList).downvoteFlag)
+        if(!mQueueElementList.get(trackChosenOnList).downvoteFlag)
         {
-            ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlikeActive));
-            mQueueElement.get(trackChosenOnList).downvoteFlag = true;
-            mQueueElement.get(trackChosenOnList).downVotes += 1;
-            if ( mQueueElement.get(trackChosenOnList).upvoteFlag)
+            elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlikeActive));
+            mQueueElementList.get(trackChosenOnList).downvoteFlag = true;
+            mQueueElementList.get(trackChosenOnList).downVotes += 1;
+            mQueueElementList.get(trackChosenOnList).rank -= 1;
+            if ( mQueueElementList.get(trackChosenOnList).upvoteFlag)
             {
-                ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upVote", Integer.toString(like));
-                mQueueElement.get(trackChosenOnList).upvoteFlag = false;
-                mQueueElement.get(trackChosenOnList).upVotes -= 1;
+                elementList.get(trackChosenOnList).put("upVote", Integer.toString(like));
+                mQueueElementList.get(trackChosenOnList).upvoteFlag = false;
+                mQueueElementList.get(trackChosenOnList).upVotes -= 1;
+                mQueueElementList.get(trackChosenOnList).rank -= 1;
             }
         }
         else
         {
-            ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlike));
-            mQueueElement.get(trackChosenOnList).downvoteFlag = false;
-            mQueueElement.get(trackChosenOnList).downVotes -= 1;
+            elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlike));
+            mQueueElementList.get(trackChosenOnList).downvoteFlag = false;
+            mQueueElementList.get(trackChosenOnList).downVotes -= 1;
+            mQueueElementList.get(trackChosenOnList).rank += 1;
         }
+
+        trackWeight(trackChosenOnList);
+
         //Updates the upvote/downvote value in the view.
-        ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upCount", Integer.toString(mQueueElement.get(trackChosenOnList).upVotes));
-        ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downCount", Integer.toString(mQueueElement.get(trackChosenOnList).downVotes));
+        elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
+        elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downVotes));
         adapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
+        voteThreshold(trackChosenOnList);
+        sortQueue();
     }
 
     public void click_up_vote(View view){
@@ -176,28 +259,56 @@ public class QueueFragment extends Fragment {
 
         //Change the value of the up/down votes depending if the button has already been pressed.
         //Change the icon for the button.
-        if(!mQueueElement.get(trackChosenOnList).upvoteFlag)
+        if(!mQueueElementList.get(trackChosenOnList).upvoteFlag)
         {
-            ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upVote", Integer.toString(likeActive));
-            mQueueElement.get(trackChosenOnList).upvoteFlag = true;
-            mQueueElement.get(trackChosenOnList).upVotes += 1;
-            if ( mQueueElement.get(trackChosenOnList).downvoteFlag)
+            elementList.get(trackChosenOnList).put("upVote", Integer.toString(likeActive));
+            mQueueElementList.get(trackChosenOnList).upvoteFlag = true;
+            mQueueElementList.get(trackChosenOnList).upVotes += 1;
+            mQueueElementList.get(trackChosenOnList).rank += 1;
+            if ( mQueueElementList.get(trackChosenOnList).downvoteFlag)
             {
-                ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downVote", Integer.toString(dontlike));
-                mQueueElement.get(trackChosenOnList).downvoteFlag = false;
-                mQueueElement.get(trackChosenOnList).downVotes -= 1;
+                elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlike));
+                mQueueElementList.get(trackChosenOnList).downvoteFlag = false;
+                mQueueElementList.get(trackChosenOnList).downVotes -= 1;
+                mQueueElementList.get(trackChosenOnList).rank += 1;
             }
         }
         else
         {
-            mQueueElement.get(trackChosenOnList).upvoteFlag = false;
-            mQueueElement.get(trackChosenOnList).upVotes -= 1;
-            ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upVote", Integer.toString(like));
+            mQueueElementList.get(trackChosenOnList).upvoteFlag = false;
+            mQueueElementList.get(trackChosenOnList).upVotes -= 1;
+            elementList.get(trackChosenOnList).put("upVote", Integer.toString(like));
+            mQueueElementList.get(trackChosenOnList).rank -= 1;
 
         }
+
+        trackWeight(trackChosenOnList);
+
         //Updates the upvote/downvote value in the view.
-        ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("upCount", Integer.toString(mQueueElement.get(trackChosenOnList).upVotes));
-        ((HashMap<String, String>) adapter.getItem(trackChosenOnList)).put("downCount", Integer.toString(mQueueElement.get(trackChosenOnList).downVotes));
+        elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
+        elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downVotes));
         adapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
+        sortQueue();
     }
+
+    int numberOfPeers = 6;  //Number of people on the network, needs to be replaced
+    double threshold = numberOfPeers * 0.66;
+
+    public void trackWeight(int trackWeightChange) {
+        //Substract the number of downvotes made by the users from the threshold, decreasing the track weight
+        int test = mQueueElementList.get(trackWeightChange).rank;
+        mQueueElementList.get(trackWeightChange).weight = threshold + mQueueElementList.get(trackWeightChange).rank;
+        double test2 = mQueueElementList.get(trackWeightChange).weight;
+    }
+
+    public void voteThreshold(int downVotedTrack) {
+        //If track weight gets below the set threshold it will be removed from the list
+        if(mQueueElementList.get(downVotedTrack).weight <= 0)
+        {
+            deleteTrack(downVotedTrack);
+        }
+    }
+
+
+
 }

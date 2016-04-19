@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity
     private static final String CLIENT_ID = "8d04022ead4444d0b005d171e5941922";
     // Replace with your redirect URI
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
-    private Player mPlayer;
+    public static Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
     public PearsonRecommend mRecommend = new PearsonRecommend();
@@ -324,8 +325,9 @@ public class MainActivity extends AppCompatActivity
         /** ID's
          * Empty list: user:aaup8 :playlist:6B3WEOcvqjEsURp4Icu9vN
          * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
+         *https://play.spotify.com/user/117012207/playlist/4cFMwqkMGdO2OBAjxGZDyl
          */
-        mRecommend.recommend("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
+        mRecommend.recommend("117012207", "4cFMwqkMGdO2OBAjxGZDyl");
         try {
             Track b = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
                 @Override
@@ -349,13 +351,28 @@ public class MainActivity extends AppCompatActivity
 
         }
     }
-    public void playMusic(View view){
-        mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N");
+    public void playPause(View view){
+        final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
+        button.setOnClickListener(new View.OnClickListener() {
+            int buttonValue = 0;
+            public void onClick(View v) {
+                if (buttonValue == 0) {
+                    playMusic(v);
+                    button.setImageResource(R.drawable.ic_action_playback_pause);
+                    buttonValue = 1;
+                } else if (buttonValue == 1) {
+                    pauseMusic(v);
+                    button.setImageResource(R.drawable.ic_action_playback_play);
+                    buttonValue = 0;
+                }
+            }
+        });
     }
+    public void playMusic(View view){ mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N"); }
     public void pauseMusic(View view){
         mPlayer.pause();
     }
-    public void skipMusic(View view){
+    /**public void skipMusic(View view){
         mPlayer.skipToNext();
     }
     public void prevMusic(View view){
@@ -365,7 +382,7 @@ public class MainActivity extends AppCompatActivity
     public void resumeMusic(View view) {
         mPlayer.resume();
     }
-
+**/
 
     EditText mText;
 
