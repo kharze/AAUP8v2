@@ -11,12 +11,20 @@
         android:contentDescription="@string/Playlist"
         android:paddingTop="10dp"
         android:paddingRight="10dp"
-        android:paddingBottom="10dp" />
+        android:paddingBottom="10dp"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="vertical" >
+        android:layout_height="40dp">
+
+        <ImageView
+            android:id="@+id/add_track"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:onClick="click_search_add_track"/>
 
         <TextView
             android:id="@+id/trackName"
@@ -24,15 +32,20 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:textColor="@color/textColor"
-            android:lines="1"/>
+            android:lines="1"
+            android:layout_alignParentLeft="true"
+            android:layout_toStartOf="@id/add_track"
+            android:layout_toLeftOf="@id/add_track"/>
 
-    <TextView
-        android:id="@+id/artist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="@color/textColor"
-        android:lines="1"/>
-    </LinearLayout>
+        <TextView
+            android:id="@+id/artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/textColor"
+            android:lines="1"
+            android:layout_below="@id/trackName"/>
+
+    </RelativeLayout>
 
 </LinearLayout>
