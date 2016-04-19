@@ -181,9 +181,9 @@ public class SearchFragment extends Fragment{
         Context context = getContext();
         SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
         Gson gson = new Gson();
-        Type c = new TypeToken<List<QueueElement>>(){}.getType();
         String listJSon = mPrefs.getString("mQueueElementList", "");
-        List<QueueElement> queueList = gson.fromJson(listJSon, c);
+        Type mClass = new TypeToken<List<QueueElement>>(){}.getType();
+        List<QueueElement> queueList = gson.fromJson(listJSon, mClass);
         if(queueList == null){
             queueList = new ArrayList<>();
         }

@@ -85,8 +85,8 @@ public class QueueFragment extends Fragment {
         super.onResume();
 
         String listJSon = mPrefs.getString("mQueueElementList", "");
-        Type c = new TypeToken<List<QueueElement>>(){}.getType();
-        mQueueElementList = gson.fromJson(listJSon, c);
+        Type mClass = new TypeToken<List<QueueElement>>(){}.getType();
+        mQueueElementList = gson.fromJson(listJSon, mClass);
 
         //Resets the playqueue after resuming
         if(mQueueElementList != null){
