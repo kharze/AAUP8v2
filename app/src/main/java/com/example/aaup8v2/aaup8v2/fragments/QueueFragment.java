@@ -34,7 +34,7 @@ import kaaes.spotify.webapi.android.models.TrackSimple;
 public class QueueFragment extends Fragment {
     List<HashMap<String,String>> elementList = new ArrayList<>();
     ListView mlistView; // The view for this fragment
-    List<QueueElement> mQueueElementList = new ArrayList<>();
+    public List<QueueElement> mQueueElementList = new ArrayList<>();
     MusicPlayer musicPlayer = new MusicPlayer();
 
     // Icons used for the ListView
@@ -74,7 +74,7 @@ public class QueueFragment extends Fragment {
         queueAdapter = new SimpleAdapter(getActivity().getBaseContext(), elementList, R.layout.queue_listview_element,from,to );
 
         //Specifies the ListView
-        View v = inflater.inflate(R.layout.fragment_queue, container,false);
+        View v = inflater.inflate(R.layout.fragment_queue, container, false);
         mlistView = (ListView)v.findViewById(R.id.queue_list);
 
         mlistView.setAdapter(queueAdapter);

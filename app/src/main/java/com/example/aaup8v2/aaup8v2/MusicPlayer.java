@@ -16,19 +16,26 @@ import com.spotify.sdk.android.player.PlayerState;
  **/
 public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationCallback {
 
+    public static Player mPlayer;
     public Activity activity;
     boolean isPlaying = false;
+
     public void play(){
-        if(isPlaying) {
-            MainActivity.mPlayer.resume();
-        }
-        else {
-            MainActivity.mPlayer.play(MainActivity.mQueueFragment.nextSong());
-            isPlaying = true;
+
+        try{
+            if(isPlaying) {
+                mPlayer.resume();
+            }
+            else {
+                mPlayer.play("spotify:track:" + MainActivity.mQueueFragment.nextSong());
+                isPlaying = true;
+            }
+        } catch (Exception e){
+            e.getMessage();
         }
     }
 
-    public void pause(){ MainActivity.mPlayer.pause(); }
+    public void pause(){ mPlayer.pause(); }
 
     @Override
     public void onLoggedIn() { Log.d("MusicPlayer", "User logged in"); }
@@ -57,11 +64,9 @@ public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationC
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
         Log.d("MusicPlayer", "Playback event received: " + eventType.name());
         switch (eventType) {
-            // Handle event type as necessary
-            case TRACK_CHANGED:
+            case TRACK_END:
                 isPlaying = false;
                 play();
-
             default:
                 break;
         }

@@ -50,7 +50,7 @@ import kaaes.spotify.webapi.android.models.Track;
 
 public class MainActivity extends AppCompatActivity
         implements /*NavigationView.OnNavigationItemSelectedListener,*/AdminFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, PlayListFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener,
-        QueueFragment.OnFragmentInteractionListener, DisconnectFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener, ConnectionStateCallback, PlayerNotificationCallback {
+        QueueFragment.OnFragmentInteractionListener, DisconnectFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener {
 
     TextView textView;
     DrawerLayout drawer;
@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity
     private static final String CLIENT_ID = "8d04022ead4444d0b005d171e5941922";
     // Replace with your redirect URI
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
-    public static Player mPlayer;
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
     public PearsonRecommend mRecommend = new PearsonRecommend();
@@ -69,6 +68,12 @@ public class MainActivity extends AppCompatActivity
 
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
+
+    /**
+     * State of the play/pause button
+     */
+    //boolean buttonState;
+    int buttonState = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,16 +127,16 @@ public class MainActivity extends AppCompatActivity
 
         final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
         button.setOnClickListener(new View.OnClickListener() {
-            int buttonValue = 0;
+
             public void onClick(View v) {
-                if (buttonValue == 0) {
+                if (buttonState == 0 && !mQueueFragment.mQueueElementList.isEmpty()) {
                     musicPlayer.play();
                     button.setImageResource(R.drawable.ic_action_playback_pause);
-                    buttonValue = 1;
-                } else if (buttonValue == 1) {
+                    buttonState = 1;
+                } else if (buttonState == 1) {
                     musicPlayer.pause();
                     button.setImageResource(R.drawable.ic_action_playback_play);
-                    buttonValue = 0;
+                    buttonState = 0;
                 }
             }
         });
@@ -271,11 +276,11 @@ public class MainActivity extends AppCompatActivity
                mSpotifyAccess.setAccessToken2(response.getAccessToken());
 
                 Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
+                musicPlayer.mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                     @Override
                     public void onInitialized(Player player) {
-                        mPlayer.addConnectionStateCallback(MainActivity.this);
-                        mPlayer.addPlayerNotificationCallback(MainActivity.this);
+                        musicPlayer.mPlayer.addConnectionStateCallback(musicPlayer);
+                        musicPlayer.mPlayer.addPlayerNotificationCallback(musicPlayer);
                         //mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N");
                     }
 
@@ -285,50 +290,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
             }
-        }
-    }
-
-    //Spotify functions
-    @Override
-    public void onLoggedIn() { Log.d("MainActivity", "User logged in"); }
-
-    @Override
-    public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
-    }
-
-    @Override
-    public void onLoginFailed(Throwable error) {
-        Log.d("MainActivity", "Login failed" + error);
-    }
-
-    @Override
-    public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
-    }
-
-    @Override
-    public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
-        Log.d("MainActivity", "Playback event received: " + eventType.name());
-        switch (eventType) {
-            // Handle event type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onPlaybackError(ErrorType errorType, String errorDetails) {
-        Log.d("MainActivity", "Playback error received: " + errorType.name());
-        switch (errorType) {
-            // Handle error type as necessary
-            default:
-                break;
         }
     }
 
@@ -431,7 +392,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, WifiDirectActivity.class);
         startActivity(intent);
     }
-
 
     //Sends the button click to the search fragment
     public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
