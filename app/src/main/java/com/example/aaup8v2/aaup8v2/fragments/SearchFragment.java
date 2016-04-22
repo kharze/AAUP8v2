@@ -1,6 +1,7 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,10 +12,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
 import com.example.aaup8v2.aaup8v2.myTrack;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +42,10 @@ public class SearchFragment extends Fragment{
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private List<myTrack> mTracklist;
+    private int add_track = R.drawable.ic_playlist_add;
+    private int add_track_check = R.drawable.ic_playlist_add_check;
+    private SimpleAdapter searchAdapter;
 
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView Search_Results;
@@ -64,6 +73,7 @@ public class SearchFragment extends Fragment{
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -80,6 +90,14 @@ public class SearchFragment extends Fragment{
         View v = inflater.inflate(R.layout.fragment_search, container,false);
         Search_Results = (ListView)v.findViewById(R.id.Search_Results);
 
+        String[] from = {"trackName", "artist", "add"};
+
+        int[] to = {R.id.trackName, R.id.artist, R.id.add_track};
+        searchAdapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_search_layout, from, to);
+
+
+        // Assign adapter to ListView
+        Search_Results.setAdapter(searchAdapter);
         // Inflate the layout for this fragment
         return v;
     }
@@ -137,25 +155,47 @@ public class SearchFragment extends Fragment{
                 for (int i = 0; i < output.size(); i++) {
                     HashMap<String, String> hm = new HashMap<String, String>();
 
+                    mTracklist = (List<myTrack>)output;
                     myTrack track = (myTrack) output.get(i);
                     String s = track.name;
                     hm.put("trackName", s);
                     hm.put("artist", "Artist : " + track.artist);
+                    hm.put("add", Integer.toString(add_track));
                     aList.add(hm);
                 }
 
-                String[] from = {"trackName", "artist"};
-
-                int[] to = {R.id.trackName, R.id.artist, R.id.textView};
-                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_search_layout, from, to);
-
-
-                // Assign adapter to ListView
-                Search_Results.setAdapter(adapter);
+                searchAdapter.notifyDataSetChanged();
             }
         }).execute(searchString);
     }
 
 
+    public void click_search_add_track(View view){
+        // These two lines are used to find out which line of the list the button is in.
+        ListView listVoteInView = (ListView)view.getParent().getParent().getParent();
+        int bIndex = listVoteInView.indexOfChild((View)view.getParent().getParent());
+        int trackChosenOnList = listVoteInView.getFirstVisiblePosition() + bIndex;
+
+        //MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
+
+        Context context = getContext();
+        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
+        Gson gson = new Gson();
+        String listJSon = mPrefs.getString("mQueueElementList", "");
+        Type mClass = new TypeToken<List<QueueElement>>(){}.getType();
+        List<QueueElement> queueList = gson.fromJson(listJSon, mClass);
+        if(queueList == null){
+            queueList = new ArrayList<>();
+        }
+        QueueElement queueEmelemt = new QueueElement();
+        queueEmelemt.track = mTracklist.get(trackChosenOnList);
+        queueList.add(queueEmelemt);
+
+
+        SharedPreferences.Editor ed = mPrefs.edit();
+        String listJSon2 = gson.toJson(queueList);
+        ed.putString("mQueueElementList", listJSon2);
+        ed.commit();
+    }
 
 }

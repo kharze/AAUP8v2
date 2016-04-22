@@ -1,7 +1,9 @@
 package com.example.aaup8v2.aaup8v2;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -112,6 +114,11 @@ public class MainActivity extends AppCompatActivity
 
         //Temporary TextView used to show playlist and Track.
         //mTextView = (TextView)findViewById(R.id.Name_for_song);
+
+        //This is only a test
+        Context context = getApplicationContext();
+        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
+        mPrefs.edit().clear().commit();
 
         final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
         button.setOnClickListener(new View.OnClickListener() {
@@ -424,6 +431,10 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, WifiDirectActivity.class);
         startActivity(intent);
     }
+
+
+    //Sends the button click to the search fragment
+    public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
 
     // Upvote and downvote on click action for the Queue fragment
     public void click_down_vote(View view){ mQueueFragment.click_down_vote(view); }

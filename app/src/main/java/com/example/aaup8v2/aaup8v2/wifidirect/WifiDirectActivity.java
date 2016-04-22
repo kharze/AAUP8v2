@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.DataSetObserver;
+import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -15,16 +17,29 @@ import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import static android.app.PendingIntent.getActivity;
+
 /**
  * An activity that uses WiFi Direct APIs to discover and connect with available
  * devices. WiFi Direct APIs are asynchronous and rely on callback mechanism
@@ -40,8 +55,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     private final IntentFilter intentFilter = new IntentFilter();
     private Channel channel;
     private BroadcastReceiver receiver = null;
-    WifiP2pManager.PeerListListener myPeerListListener;
-    SimpleAdapter adapter;
+    Collection<WifiP2pDevice> peersCollection;
+    List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
+    ListView list;
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
      */
@@ -59,13 +75,15 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
-        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
+        //receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
+        list = (ListView) findViewById(R.id.listviewPeers);
+
     }
     /** register the BroadcastReceiver with the intent values to be matched */
     @Override
     public void onResume() {
         super.onResume();
-        //receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         registerReceiver(receiver, intentFilter);
     }
     @Override
@@ -89,12 +107,12 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             fragmentDetails.resetViews();
         }
     }
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.action_items, menu);
         return true;
-    }
+    }*/
 
 
     public void enableP2P(View view){
@@ -130,23 +148,33 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             public void onPeersAvailable(WifiP2pDeviceList peers) {
                                 Log.d(TAG, String.format("PeerListListener: %d peers available, updating device list", peers.getDeviceList().size()));
+                                fragment.onPeersAvailable(peers);
 
                                 // DO WHATEVER YOU WANT HERE
                                 // YOU CAN GET ACCESS TO ALL THE DEVICES YOU FOUND FROM peers OBJECT
                                 // vi mangler og få smidt vores peers på listen, men de er her..
+                                aList.clear();
+                                peersCollection = peers.getDeviceList();
 
+                                for(Iterator<WifiP2pDevice> i = peersCollection.iterator(); i.hasNext();){
+                                    HashMap<String, String> hm = new HashMap<String,String>();
 
-                               /* ListView v = (ListView) view.findViewById(R.id.listViewPeers);
+                                    String s = i.next().deviceName;
+                                    hm.put("txt", s);
+                                    //hm.put("cur", "Artist : " + p.track.artists.get(0).name);
+                                    //hm.put("flag", Integer.toString(flags[5]));
+                                    aList.add(hm);
+                                }
+
                                 String[] from = { "flag","txt","cur" };
 
                                 int[] to = { R.id.flag,R.id.txt,R.id.cur,R.id.textView};
-                                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_layout, from, to);
-
+                                SimpleAdapter a = new SimpleAdapter(view.getContext(),aList,R.layout.listview_layout_p2p,from,to);
 
                                 // Assign adapter to ListView
-                                list.setAdapter(adapter);
-                                ListView v = (ListView) view.findViewById(R.id.listViewPeers);
-                                list = (ListView)v.findViewById(R.id.list);*/
+                                list = (ListView) findViewById(R.id.listviewPeers);
+                                list.setAdapter(a);
+
                             }
                         });
 
@@ -160,12 +188,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             }
         });
     }
-
     /*
      * (non-Javadoc)
      * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
      */
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.atn_direct_enable:
@@ -203,7 +230,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
     @Override
     public void showDetails(WifiP2pDevice device) {
         DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager()
@@ -285,6 +312,28 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                     }
                 });
             }
+        }
+    }
+
+    public void on_listViewClik(View view) {
+        // These two lines are used to find out which line of the list the button is in.
+        ListView listviewconteasdnt = (ListView)view.getParent().getParent().getParent();
+        int bIndex = listviewconteasdnt.indexOfChild((View) view.getParent().getParent());
+        int index = 0;
+
+        for(Iterator<WifiP2pDevice> i = peersCollection.iterator(); i.hasNext();){
+
+            if (index == bIndex)
+            {
+                //String s = i.next().deviceName;
+                WifiP2pDevice dev = i.next();
+                WifiP2pConfig conf = new WifiP2pConfig();
+                conf.deviceAddress = i.next().deviceAddress;
+                conf.wps.setup = WpsInfo.PBC;
+                connect(conf);
+                break;
+            }
+            index++;
         }
     }
 }
