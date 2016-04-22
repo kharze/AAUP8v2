@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
+import com.example.aaup8v2.aaup8v2.MusicPlayer;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
@@ -32,6 +33,7 @@ public class QueueFragment extends Fragment {
     List<HashMap<String,String>> elementList = new ArrayList<>();
     ListView mlistView; // The view for this fragment
     List<QueueElement> mQueueElementList = new ArrayList<>();
+    MusicPlayer musicPlayer = new MusicPlayer();
 
     // Icons used for the ListView
     int like = R.drawable.ic_action_like;
@@ -180,11 +182,10 @@ public class QueueFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    public void playNextSong(){
-        MainActivity.mPlayer.play("spotify:track:"+mQueueElementList.get(0).track.id);
-        //Add function to add information to the playbar or make a Player class that does the job
-        //If the player is made into a class the code has to be completely changed.
+    public String nextSong(){
+        String trackId = mQueueElementList.get(0).track.id;
         deleteTrack(0);
+        return trackId;
     }
 
     public void deleteTrack(int i){

@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
     public PearsonRecommend mRecommend = new PearsonRecommend();
+    public MusicPlayer musicPlayer = new MusicPlayer();
 
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
@@ -111,20 +112,17 @@ public class MainActivity extends AppCompatActivity
 
         //Temporary TextView used to show playlist and Track.
         //mTextView = (TextView)findViewById(R.id.Name_for_song);
-        /*
-        The play/pause button function. Placed here in order to avoid double tap first time it should play.
-         */
 
         final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
         button.setOnClickListener(new View.OnClickListener() {
             int buttonValue = 0;
             public void onClick(View v) {
                 if (buttonValue == 0) {
-                    playMusic(v);
+                    musicPlayer.play();
                     button.setImageResource(R.drawable.ic_action_playback_pause);
                     buttonValue = 1;
                 } else if (buttonValue == 1) {
-                    pauseMusic(v);
+                    musicPlayer.pause();
                     button.setImageResource(R.drawable.ic_action_playback_play);
                     buttonValue = 0;
                 }
@@ -371,29 +369,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
     /**
-    public void playPause(){
-        final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
-        button.setOnClickListener(new View.OnClickListener() {
-            int buttonValue = 0;
-            public void onClick(View v) {
-                if (buttonValue == 0) {
-                    playMusic(v);
-                    button.setImageResource(R.drawable.ic_action_playback_pause);
-                    buttonValue = 1;
-                } else if (buttonValue == 1) {
-                    pauseMusic(v);
-                    button.setImageResource(R.drawable.ic_action_playback_play);
-                    buttonValue = 0;
-                }
-            }
-        });
-    }
-     **/
     public void playMusic(View view){ mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N"); }
     public void pauseMusic(View view){
         mPlayer.pause();
     }
-    /**public void skipMusic(View view){
+    public void skipMusic(View view){
         mPlayer.skipToNext();
     }
     public void prevMusic(View view){
