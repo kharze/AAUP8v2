@@ -43,6 +43,10 @@
             android:label="@string/title_activity_peer_to_peer"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
+
+        <service android:enabled="true" android:name=".wifidirect.DataTransferService" />
+        <service android:enabled="true" android:name=".wifidirect.IPTransferService" />
+
     </application>
 
 </manifest>

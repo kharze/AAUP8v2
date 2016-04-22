@@ -138,10 +138,6 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
     }
 
-    public void fillList(List peers){
-
-
-    }
 
     /**
      *
