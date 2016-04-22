@@ -69,12 +69,6 @@ public class MainActivity extends AppCompatActivity
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
 
-    /**
-     * State of the play/pause button
-     */
-    //boolean buttonState;
-    int buttonState = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,7 +121,7 @@ public class MainActivity extends AppCompatActivity
 
         final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
         button.setOnClickListener(new View.OnClickListener() {
-
+            int buttonValue = 0;
             public void onClick(View v) {
                 if (buttonState == 0 && !mQueueFragment.mQueueElementList.isEmpty()) {
                     musicPlayer.play();
@@ -392,6 +386,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, WifiDirectActivity.class);
         startActivity(intent);
     }
+
 
     //Sends the button click to the search fragment
     public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }

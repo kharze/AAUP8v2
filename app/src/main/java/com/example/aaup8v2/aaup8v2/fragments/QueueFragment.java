@@ -150,6 +150,7 @@ public class QueueFragment extends Fragment {
         //adds the track to the adapter
         addToAdapter(element);
         queueAdapter.notifyDataSetChanged();
+        applyWeight();
     }
     public void addTrack(Track track){
         myTrack mytrack = new myTrack();
@@ -181,7 +182,6 @@ public class QueueFragment extends Fragment {
         };
 
         Collections.sort(mQueueElementList,compareRank);
-
 
         for(int i = 0; mQueueElementList.size() > i; i++){
             elementList.get(i).put("txt", mQueueElementList.get(i).track.name);
@@ -215,7 +215,6 @@ public class QueueFragment extends Fragment {
         queueAdapter.notifyDataSetChanged();
     }
 
-
     public void addToAdapter(QueueElement element){
 
         HashMap<String, String> hMap = new HashMap<>();
@@ -237,9 +236,6 @@ public class QueueFragment extends Fragment {
 
         elementList.add(hMap);
     }
-
-
-
 
     public void click_down_vote(View view){
         // These two lines are used to find out which line of the list the button is in.
@@ -322,13 +318,16 @@ public class QueueFragment extends Fragment {
     }
 
     int numberOfPeers = 6;  //Number of people on the network, needs to be replaced
-    double threshold = numberOfPeers * 0.66;
+
+    public void applyWeight(){
+        //Applies a basic weight to each track represented on the playlist
+        double threshold = numberOfPeers * 0.66; //Setting the threshold limit
+        mQueueElementList.get(mQueueElementList.size()-1).weight = threshold;
+    }
 
     public void trackWeight(int trackWeightChange) {
-        //Substract the number of downvotes made by the users from the threshold, decreasing the track weight
-        int test = mQueueElementList.get(trackWeightChange).rank;
-        mQueueElementList.get(trackWeightChange).weight = threshold + mQueueElementList.get(trackWeightChange).rank;
-        double test2 = mQueueElementList.get(trackWeightChange).weight;
+        //Adds the up- and downvotes made by the users to the weight given to the tracks
+        mQueueElementList.get(trackWeightChange).weight += mQueueElementList.get(trackWeightChange).rank;
     }
 
     public void voteThreshold(int downVotedTrack) {
@@ -339,6 +338,24 @@ public class QueueFragment extends Fragment {
         }
     }
 
+    public void trackWeightIncrease(){
+        //Increases the weight of the individual tracks on the playlist everytime a track has been played
+        int i = 0;
+        int listCount = mQueueElementList.size();
 
+        while(i <  listCount) {
+            mQueueElementList.get(i).weight *= 1.1;
 
+            if(i == 1){
+                mQueueElementList.get(i).weight *= 50;
+            }
+            if(i == 2){
+                mQueueElementList.get(i).weight *= 40;
+            }
+            if(i == 3){
+                mQueueElementList.get(i).weight *= 30;
+            }
+            i++;
+        }
+    }
 }
