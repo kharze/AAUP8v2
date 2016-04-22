@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.MusicPlayer;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
@@ -145,11 +144,16 @@ public class QueueFragment extends Fragment {
     public void addTrack(myTrack track){
         QueueElement element = new QueueElement();
         element.track = track;
+
+        //Safety measure
+        if(mQueueElementList == null){
+            mQueueElementList = new ArrayList<>();
+        }
         mQueueElementList.add(element);
 
         //adds the track to the adapter
         addToAdapter(element);
-        queueAdapter.notifyDataSetChanged();
+        //queueAdapter.notifyDataSetChanged();
         applyWeight();
     }
     public void addTrack(Track track){
@@ -183,6 +187,8 @@ public class QueueFragment extends Fragment {
 
         Collections.sort(mQueueElementList,compareRank);
 
+        //Change the view to fit the new sorted list.
+        //Would be nice if we had a custom adapter that could use the other list.
         for(int i = 0; mQueueElementList.size() > i; i++){
             elementList.get(i).put("txt", mQueueElementList.get(i).track.name);
             elementList.get(i).put("cur", "Artist : " + mQueueElementList.get(i).track.artist);
@@ -212,7 +218,7 @@ public class QueueFragment extends Fragment {
     public void deleteTrack(int i){
         mQueueElementList.remove(i);
         elementList.remove(i);
-        queueAdapter.notifyDataSetChanged();
+        //queueAdapter.notifyDataSetChanged();
     }
 
     public void addToAdapter(QueueElement element){

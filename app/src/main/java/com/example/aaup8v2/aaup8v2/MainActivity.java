@@ -38,10 +38,7 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerNotificationCallback;
-import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
 import kaaes.spotify.webapi.android.models.Pager;
@@ -114,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         //Temporary TextView used to show playlist and Track.
         //mTextView = (TextView)findViewById(R.id.Name_for_song);
 
-        //This is only a test
+        //Clears the queue on startup, to prevent stored queue between sessions.
         Context context = getApplicationContext();
         SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
         mPrefs.edit().clear().commit();
@@ -123,7 +120,7 @@ public class MainActivity extends AppCompatActivity
         button.setOnClickListener(new View.OnClickListener() {
             int buttonState = 0;
             public void onClick(View v) {
-                if (buttonState == 0 && !mQueueFragment.mQueueElementList.isEmpty()) {
+                if (buttonState == 0 && (!mQueueFragment.mQueueElementList.isEmpty() || musicPlayer.isPlaying)) {
                     musicPlayer.play();
                     button.setImageResource(R.drawable.ic_action_playback_pause);
                     buttonState = 1;

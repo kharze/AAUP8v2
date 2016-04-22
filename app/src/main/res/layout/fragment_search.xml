@@ -21,18 +21,20 @@
             android:onClick="searchMusic"
             android:layout_column="0" />
 
-        <android.support.design.widget.TextInputEditText
+        <EditText
             android:id="@+id/Search_Text"
             android:hint="Search"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:width="300dp"
-            android:layout_toRightOf="@id/searchMusicButton"/>
+            android:layout_toRightOf="@id/searchMusicButton"
+            android:singleLine="true"/>
 
         <ListView
             android:id="@+id/Search_Results"
             android:layout_below="@id/Search_Text"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
+
     </RelativeLayout>
 </FrameLayout>
