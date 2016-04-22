@@ -317,6 +317,13 @@ public class MainActivity extends AppCompatActivity
         Log.d("MainActivity", "Playback event received: " + eventType.name());
         switch (eventType) {
             // Handle event type as necessary
+            //case TRACK_CHANGED:
+            //    break;
+            //case TRACK_START:
+            //    break;
+            case TRACK_END:
+                mQueueFragment.trackWeightIncrease();
+                break;
             default:
                 break;
         }
