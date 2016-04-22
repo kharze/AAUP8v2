@@ -67,6 +67,8 @@ public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationC
             case TRACK_END:
                 isPlaying = false;
                 play();
+                MainActivity.mQueueFragment.trackWeightIncrease();
+                break;
             default:
                 break;
         }

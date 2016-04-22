@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
 
         final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
         button.setOnClickListener(new View.OnClickListener() {
-            int buttonValue = 0;
+            int buttonState = 0;
             public void onClick(View v) {
                 if (buttonState == 0 && !mQueueFragment.mQueueElementList.isEmpty()) {
                     musicPlayer.play();
