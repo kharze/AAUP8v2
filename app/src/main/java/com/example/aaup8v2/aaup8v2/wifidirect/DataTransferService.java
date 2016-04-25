@@ -6,27 +6,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+
 /**
  * A service that process each file transfer request i.e Intent by opening a
  * socket connection with the WiFi Direct Group Owner and writing the file
  */
-public class FileTransferService extends IntentService {
+public class DataTransferService extends IntentService {
     private static final int SOCKET_TIMEOUT = 5000;
     public static final String ACTION_SEND_FILE = "com.example.aaup8v2.aaup8v2.wifidirect.SEND_FILE";
     public static final String EXTRAS_FILE_PATH = "file_url";
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
     public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
-    public FileTransferService(String name) {
+    public DataTransferService(String name) {
         super(name);
     }
-    public FileTransferService() {
-        super("FileTransferService");
+    public DataTransferService() {
+        super("DataTransferService");
     }
     /*
      * (non-Javadoc)
@@ -46,14 +49,16 @@ public class FileTransferService extends IntentService {
                 socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
                 Log.d(WifiDirectActivity.TAG, "Client socket - " + socket.isConnected());
                 OutputStream stream = socket.getOutputStream();
-                ContentResolver cr = context.getContentResolver();
+                ObjectOutputStream oos = new ObjectOutputStream(stream);
+                oos.writeObject(new String("BROFIST"));
+                /*ContentResolver cr = context.getContentResolver();
                 InputStream is = null;
                 try {
                     is = cr.openInputStream(Uri.parse(fileUri));
                 } catch (FileNotFoundException e) {
                     Log.d(WifiDirectActivity.TAG, e.toString());
                 }
-                DeviceDetailFragment.copyFile(is, stream);
+                DeviceDetailFragment.copyFile(is, stream);*/
                 Log.d(WifiDirectActivity.TAG, "Client: Data written");
             } catch (IOException e) {
                 Log.e(WifiDirectActivity.TAG, e.getMessage());

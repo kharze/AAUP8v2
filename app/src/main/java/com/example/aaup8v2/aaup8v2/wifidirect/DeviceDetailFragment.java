@@ -108,6 +108,8 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+        WifiDirectActivity wda = (WifiDirectActivity) getActivity();
+        wda.onConnectionInfoAvailable(info);
         this.info = info;
         this.getView().setVisibility(View.VISIBLE);
         // The owner IP is now known.

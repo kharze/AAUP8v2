@@ -19,9 +19,14 @@
 
         <Button
             android:text="Connect"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:onClick="on_listViewClik"/>
+        <Button
+            android:text="Send Info"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="sendInfo"/>
         <TextView
             android:id="@+id/cur"
             android:layout_width="wrap_content"

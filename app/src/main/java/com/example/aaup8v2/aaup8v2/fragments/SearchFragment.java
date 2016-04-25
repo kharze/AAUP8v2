@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
@@ -189,6 +190,7 @@ public class SearchFragment extends Fragment{
         }
         QueueElement queueEmelemt = new QueueElement();
         queueEmelemt.track = mTracklist.get(trackChosenOnList);
+        MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
         queueList.add(queueEmelemt);
 
 
