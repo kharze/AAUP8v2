@@ -2,10 +2,7 @@ package com.example.aaup8v2.aaup8v2;
 
 import android.app.Activity;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 
-import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;

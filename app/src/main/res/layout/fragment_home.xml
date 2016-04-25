@@ -37,4 +37,5 @@
                 android:id="@+id/listView2" />
         </ScrollView>
     </LinearLayout>
+
 </FrameLayout>

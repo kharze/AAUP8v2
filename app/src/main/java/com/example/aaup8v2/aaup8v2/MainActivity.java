@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         button.setOnClickListener(new View.OnClickListener() {
             int buttonState = 0;
             public void onClick(View v) {
-                if (buttonState == 0 && !mQueueFragment.mQueueElementList.isEmpty()) {
+                if (buttonState == 0 && (!mQueueFragment.mQueueElementList.isEmpty() || musicPlayer.isPlaying)) {
                     musicPlayer.play();
                     button.setImageResource(R.drawable.ic_action_playback_pause);
                     buttonState = 1;
