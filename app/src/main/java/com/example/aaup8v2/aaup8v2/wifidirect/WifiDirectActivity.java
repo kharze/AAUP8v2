@@ -17,6 +17,7 @@ import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import android.widget.Toast;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncDataTransfer;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGatherNetworkDevices;
+import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
 
 import java.util.ArrayList;
@@ -66,7 +68,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     //Collection<WifiP2pDevice> peersCollection;
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView list;
-    List<String> ipsOnNetwork = new ArrayList<>();
+    public List<String> ipsOnNetwork = new ArrayList<>();
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
      */
@@ -218,18 +220,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             progressDialog.dismiss();
         }
         this.info = info;
-        //this.getView().setVisibility(View.VISIBLE);
-        // The owner IP is now known.
-        //TextView view = (TextView) mContentView.findViewById(R.id.group_owner);
-        //view.setText(getResources().getString(R.string.group_owner_text)
-        // + ((info.isGroupOwner == true) ? getResources().getString(R.string.yes)
-        // : getResources().getString(R.string.no)));
-        // InetAddress from WifiP2pInfo struct.
-        //view = (TextView) mContentView.findViewById(R.id.device_info);
-        //view.setText("Group Owner IP - " + info.groupOwnerAddress.getHostAddress());
-        // After the group negotiation, we assign the group owner as the file
-        // server. The file server is single threaded, single connection server
-        // socket.
+
         if (info.groupFormed && info.isGroupOwner) {
             //new asyncDataTransfer(this).execute();
             new asyncGatherNetworkDevices(new asyncGatherNetworkDevices.AsyncResponse() {
@@ -241,14 +232,15 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 }
             }).execute();
         } else if (info.groupFormed) {
-            // The other device acts as the client. In this case, we enable the
-            // get file button.
-            //mContentView.findViewById(R.id.btn_start_client).setVisibility(View.VISIBLE);
-            //((TextView) mContentView.findViewById(R.id.status_text)).setText(getResources()
-            // .getString(R.string.client_text));
+            new asyncDataTransfer(new asyncDataTransfer.AsyncResponse() {
+                @Override
+                public void processFinish(String output){
+                    //do something with the new data here.
+                }
+            }).execute();
+
         }
-        // hide the connect button
-        //mContentView.findViewById(R.id.btn_connect).setVisibility(View.GONE);
+
     }
 
     @Override
@@ -369,20 +361,24 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
             if (index == bIndex)
             {
-                Intent serviceIntent = new Intent(this, IPTransferService.class);
-                serviceIntent.setAction(IPTransferService.ACTION_SEND_FILE);
-                serviceIntent.putExtra(IPTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
-                        info.groupOwnerAddress.getHostAddress());
-                serviceIntent.putExtra(IPTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
-                startService(serviceIntent);
+                if (!info.isGroupOwner) {
+                    Intent serviceIntent = new Intent(this, IPTransferService.class);
+                    serviceIntent.setAction(IPTransferService.ACTION_SEND_FILE);
+                    serviceIntent.putExtra(IPTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                            info.groupOwnerAddress.getHostAddress());
+                    serviceIntent.putExtra(IPTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
+                    startService(serviceIntent);
+                } else {
+                    for(int j = 0; j < ipsOnNetwork.size(); j++){
+                        Intent dataIntent = new Intent(this, DataTransferService.class);
+                        dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+                        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
+                        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
+                        dataIntent.putExtra(DataTransferService.EXTRAS_DATA, "I'm number" + i);
+                        startService(dataIntent);
+                    }
+                }
 
-                /*Intent serviceIntent = new Intent(this, DataTransferService.class);
-                serviceIntent.setAction(DataTransferService.ACTION_SEND_FILE);
-                serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
-                        info.groupOwnerAddress.getHostAddress());
-                serviceIntent.putExtra(DataTransferService.EXTRAS_GROUP_OWNER_PORT, 8988);
-                startService(serviceIntent);
-                break;*/
             }
             index++;
         }

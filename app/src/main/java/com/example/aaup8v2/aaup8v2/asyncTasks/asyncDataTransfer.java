@@ -11,7 +11,6 @@ import android.util.Log;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -22,12 +21,21 @@ import java.net.Socket;
  */
 public class asyncDataTransfer extends AsyncTask<Void, Void, String> {
     private Context context;
-    /**
-     * @param context
-     */
+
+    public interface AsyncResponse {
+        void processFinish(String output);
+    }
+
+    public AsyncResponse delegate = null;
+
+    public asyncDataTransfer(AsyncResponse delegate){
+        this.delegate = delegate;
+    }
+
     public asyncDataTransfer(Context context) {
         this.context = context;
     }
+
     @Override
     protected String doInBackground(Void... params) {
         try {
@@ -35,24 +43,16 @@ public class asyncDataTransfer extends AsyncTask<Void, Void, String> {
             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
             Socket client = serverSocket.accept();
             Log.d(WifiDirectActivity.TAG, "Server: connection done");
-            //final File f = new File(Environment.getExternalStorageDirectory() + "/"
-            // + context.getPackageName() + "/wifip2pshared-" + System.currentTimeMillis()
-            // + ".jpg");
-            //File dirs = new File(f.getParent());
-            //if (!dirs.exists())
-                //dirs.mkdirs();
-            //f.createNewFile();
-            //Log.d(WifiDirectActivity.TAG, "server: copying files " + f.toString());
+
             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
             Object object = objectInputStream.readObject();
-            if (object.getClass().equals(String.class) && ((String) object).equals("BROFIST")) {
-                Log.d(WifiDirectActivity.TAG, "Connected");
+            if (object.getClass().equals(String.class)) {
+                Log.d(WifiDirectActivity.TAG, "Data received");
             }
 
-            InputStream inputstream = client.getInputStream();
-            //copyFile(inputstream, new FileOutputStream(f));
+            objectInputStream.close();
             serverSocket.close();
-            return null;//f.getAbsolutePath();
+            return (String) object;
         } catch (IOException e) {
             Log.e(WifiDirectActivity.TAG, e.getMessage());
             return null;
@@ -66,9 +66,13 @@ public class asyncDataTransfer extends AsyncTask<Void, Void, String> {
      * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
      */
     @Override
-    protected void onPostExecute(String result) {
-        if (result != null) {
-
+    protected void onPostExecute(String data) {
+        try {
+            delegate.processFinish(data);
+        }
+        catch (Exception e)
+        {
+            e.getCause();
         }
     }
 }
