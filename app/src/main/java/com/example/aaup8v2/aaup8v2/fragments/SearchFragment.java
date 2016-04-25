@@ -177,25 +177,16 @@ public class SearchFragment extends Fragment{
         int bIndex = listVoteInView.indexOfChild((View)view.getParent().getParent());
         int trackChosenOnList = listVoteInView.getFirstVisiblePosition() + bIndex;
 
-        //MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
-
         Context context = getContext();
         SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
         Gson gson = new Gson();
-        String listJSon = mPrefs.getString("mQueueElementList", "");
-        Type mClass = new TypeToken<List<QueueElement>>(){}.getType();
-        List<QueueElement> queueList = gson.fromJson(listJSon, mClass);
-        if(queueList == null){
-            queueList = new ArrayList<>();
-        }
+
         QueueElement queueEmelemt = new QueueElement();
         queueEmelemt.track = mTracklist.get(trackChosenOnList);
         MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
-        queueList.add(queueEmelemt);
-
 
         SharedPreferences.Editor ed = mPrefs.edit();
-        String listJSon2 = gson.toJson(queueList);
+        String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
         ed.putString("mQueueElementList", listJSon2);
         ed.commit();
     }

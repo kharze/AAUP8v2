@@ -9,7 +9,6 @@ public class QueueElement {
     public myTrack track;
     public int upVotes;
     public int downVotes;
-    public int rank;
     public boolean upvoteFlag;
     public boolean downvoteFlag;
     public boolean tooManyDownvotes;
@@ -20,7 +19,6 @@ public class QueueElement {
         this.track = null;
         this.upVotes = 0;
         this.downVotes = 0;
-        this.rank = 0;
         this.upvoteFlag = false;
         this.downvoteFlag = false;
         this.tooManyDownvotes = false;
