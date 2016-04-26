@@ -26,16 +26,11 @@ import android.widget.Toast;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncDataTransfer;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncHostTransfer;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncHostTransferCopy;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import static android.app.PendingIntent.getActivity;
 
 /**
  * An activity that uses WiFi Direct APIs to discover and connect with available
