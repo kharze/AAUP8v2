@@ -28,6 +28,7 @@ public class DataTransferService extends IntentService {
     public static final String EXTRAS_PEER_ADDRESS = "go_host";
     public static final String EXTRAS_PEER_PORT = "go_port";
     public static final String EXTRAS_DATA = "data_to_send";
+    public static final String EXTRAS_TYPE = "data_type";
     public DataTransferService(String name) {
         super(name);
     }
@@ -45,6 +46,7 @@ public class DataTransferService extends IntentService {
             Socket socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_PEER_PORT);
             String data = intent.getExtras().getString(EXTRAS_DATA);
+            String dataType = intent.getExtras().getString(EXTRAS_TYPE);
             try {
                 Log.d(WifiDirectActivity.TAG, "Opening client socket - ");
                 socket.bind(null);
@@ -52,6 +54,7 @@ public class DataTransferService extends IntentService {
                 Log.d(WifiDirectActivity.TAG, "Client socket - " + socket.isConnected());
                 OutputStream stream = socket.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(stream);
+                oos.writeObject(dataType);
                 oos.writeObject(data);
                 /*ContentResolver cr = context.getContentResolver();
                 InputStream is = null;

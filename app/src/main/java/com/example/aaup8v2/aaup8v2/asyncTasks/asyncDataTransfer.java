@@ -14,16 +14,18 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple server socket that accepts connection and writes some data on
  * the stream.
  */
-public class asyncDataTransfer extends AsyncTask<Void, Void, String> {
+public class asyncDataTransfer extends AsyncTask<Void, Void, List<String>> {
     private Context context;
 
     public interface AsyncResponse {
-        void processFinish(String output);
+        void processFinish(List<String> output);
     }
 
     public AsyncResponse delegate = null;
@@ -37,7 +39,7 @@ public class asyncDataTransfer extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... params) {
+    protected List<String> doInBackground(Void... params) {
         try {
             ServerSocket serverSocket = new ServerSocket(8988);
             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
@@ -45,14 +47,18 @@ public class asyncDataTransfer extends AsyncTask<Void, Void, String> {
             Log.d(WifiDirectActivity.TAG, "Server: connection done");
 
             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
+            Object type = objectInputStream.readObject();
             Object object = objectInputStream.readObject();
             if (object.getClass().equals(String.class)) {
                 Log.d(WifiDirectActivity.TAG, "Data received");
             }
+            List<String> data = new ArrayList<>();
+            data.add((String) type);
+            data.add((String) object);
 
             objectInputStream.close();
             serverSocket.close();
-            return (String) object;
+            return data;
         } catch (IOException e) {
             Log.e(WifiDirectActivity.TAG, e.getMessage());
             return null;
@@ -66,7 +72,7 @@ public class asyncDataTransfer extends AsyncTask<Void, Void, String> {
      * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
      */
     @Override
-    protected void onPostExecute(String data) {
+    protected void onPostExecute(List<String> data) {
         try {
             delegate.processFinish(data);
         }

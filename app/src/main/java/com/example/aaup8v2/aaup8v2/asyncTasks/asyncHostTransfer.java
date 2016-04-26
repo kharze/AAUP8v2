@@ -10,18 +10,20 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
 
-public class asyncGatherNetworkDevices extends AsyncTask<String, Void, String> {
+public class asyncHostTransfer extends AsyncTask<Void, Void, List<String>> {
 
     public interface AsyncResponse {
-        void processFinish(String output);
+        void processFinish(List<String> output);
     }
 
     public AsyncResponse delegate = null;
 
-    public asyncGatherNetworkDevices(AsyncResponse delegate){
+    public asyncHostTransfer(AsyncResponse delegate){
         this.delegate = delegate;
     }
 
@@ -30,21 +32,22 @@ public class asyncGatherNetworkDevices extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... id) {
-        String ip = "";
+    protected List<String> doInBackground(Void... id) {
         try {
             ServerSocket serverSocket = new ServerSocket(8888);
             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
             Socket client = serverSocket.accept();
             Log.d(WifiDirectActivity.TAG, "Server: connection done");
             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
+            Object type = objectInputStream.readObject();
             Object object = objectInputStream.readObject();
-            if (object.getClass().equals(String.class)) {
-                ip = (String) object;
-                Log.d(WifiDirectActivity.TAG, "Got ip address");
-            }
+
+            List<String> data = new ArrayList<>();
+            data.add((String) type);
+            data.add((String) object);
+
             serverSocket.close();
-            return ip;
+            return data;
         }
         catch (Exception e)
         {
@@ -54,7 +57,7 @@ public class asyncGatherNetworkDevices extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String deviceIP){
+    protected void onPostExecute(List<String> deviceIP){
         try {
             delegate.processFinish(deviceIP);
         }

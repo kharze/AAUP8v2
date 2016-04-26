@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.DataSetObserver;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -17,32 +16,20 @@ import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncDataTransfer;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGatherNetworkDevices;
-import com.example.aaup8v2.aaup8v2.myTrack;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncHostTransfer;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import static android.app.PendingIntent.getActivity;
@@ -176,20 +163,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     String s = peersCollection.get(i).deviceName;
                                     hm.put("txt", s);
-                                    //hm.put("cur", "Artist : " + p.track.artists.get(0).name);
-                                    //hm.put("flag", Integer.toString(flags[5]));
                                     aList.add(hm);
                                 }
 
-                                /*for(Iterator<WifiP2pDevice> i = peersCollection.iterator(); i.hasNext();){
-                                    HashMap<String, String> hm = new HashMap<String,String>();
-
-                                    String s = i.next().deviceName;
-                                    hm.put("txt", s);
-                                    //hm.put("cur", "Artist : " + p.track.artists.get(0).name);
-                                    //hm.put("flag", Integer.toString(flags[5]));
-                                    aList.add(hm);
-                                }*/
 
                                 String[] from = { "flag","txt","cur" };
 
@@ -223,24 +199,70 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
         if (info.groupFormed && info.isGroupOwner) {
             //new asyncDataTransfer(this).execute();
-            new asyncGatherNetworkDevices(new asyncGatherNetworkDevices.AsyncResponse() {
-                @Override
-                public void processFinish(String output) {
-                    if (!ipsOnNetwork.contains(output)){
-                        ipsOnNetwork.add(output);
-                    }
-                }
-            }).execute();
-        } else if (info.groupFormed) {
-            new asyncDataTransfer(new asyncDataTransfer.AsyncResponse() {
-                @Override
-                public void processFinish(String output){
-                    //do something with the new data here.
-                }
-            }).execute();
+            receiveHostSpawn();
 
+        } else if (info.groupFormed) {
+            Intent serviceIntent = new Intent(this, HostTransferService.class);
+            serviceIntent.setAction(HostTransferService.ACTION_FIRST_TIME);
+            serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                    info.groupOwnerAddress.getHostAddress());
+            serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
+            startService(serviceIntent);
+
+            receiveDataSpawn();
         }
 
+    }
+
+    public void receiveHostSpawn(){
+        new asyncHostTransfer(new asyncHostTransfer.AsyncResponse() {
+            @Override
+            public void processFinish(List<String> output) {
+                String type = output.get(0);
+                String data = output.get(1);
+
+                switch (type){
+                    case "ip_sent":
+                        if (!ipsOnNetwork.contains(data)){
+                            ipsOnNetwork.add(data);
+                        }
+                        break;
+                    case "up_vote":
+                        break;
+                    case "down_vote":
+                        break;
+                    case "track_added":
+                        break;
+                }
+
+                receiveHostSpawn();
+            }
+        }).execute();
+    }
+
+    public void receiveDataSpawn(){
+        new asyncDataTransfer(new asyncDataTransfer.AsyncResponse() {
+            @Override
+            public void processFinish(List<String> output){
+                String type = output.get(0);
+                String data = output.get(1);
+
+                switch (type){
+                    case "up_vote":
+                        break;
+                    case "down_vote":
+                        break;
+                    case "track_added":
+                        break;
+                    default:
+                        break;
+                }
+                //do something with the new data here.
+                //first element of list is an indicator of which type of data was sent.
+                //second element is the string of data
+                receiveDataSpawn();
+            }
+        }).execute();
     }
 
     @Override
@@ -362,11 +384,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             if (index == bIndex)
             {
                 if (!info.isGroupOwner) {
-                    Intent serviceIntent = new Intent(this, IPTransferService.class);
-                    serviceIntent.setAction(IPTransferService.ACTION_SEND_FILE);
-                    serviceIntent.putExtra(IPTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                    Intent serviceIntent = new Intent(this, HostTransferService.class);
+                    serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
+                    serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
                             info.groupOwnerAddress.getHostAddress());
-                    serviceIntent.putExtra(IPTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
+                    serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
                     startService(serviceIntent);
                 } else {
                     for(int j = 0; j < ipsOnNetwork.size(); j++){
