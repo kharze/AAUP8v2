@@ -320,18 +320,17 @@ public class QueueFragment extends Fragment {
     }
 
     int numberOfPeers = 6;  //Number of people on the network, needs to be replaced
+    double threshold = numberOfPeers * 0.66; //Setting the threshold limit
 
     public void applyWeight(){
         //Applies a basic weight to each track represented on the playlist
-        double threshold = numberOfPeers * 0.66; //Setting the threshold limit
         mQueueElementList.get(mQueueElementList.size()-1).weight = threshold;
         double test = mQueueElementList.get(mQueueElementList.size()-1).weight;
     }
 
     public void voteThreshold(int downVotedTrack) {
         //If track weight gets below the set threshold it will be removed from the list
-        double test = mQueueElementList.get(downVotedTrack).weight;
-        if(mQueueElementList.get(downVotedTrack).weight <= 0)
+        if((threshold + mQueueElementList.get(downVotedTrack).upVotes - mQueueElementList.get(downVotedTrack).downVotes) <= 0)
         {
             deleteTrack(downVotedTrack);
         }
