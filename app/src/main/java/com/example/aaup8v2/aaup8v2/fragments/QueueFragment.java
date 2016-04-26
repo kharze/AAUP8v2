@@ -178,14 +178,14 @@ public class QueueFragment extends Fragment {
     public void sortQueue(){
 
         // Comparator for the sorting
-        Comparator<QueueElement> compareRank = new Comparator<QueueElement>() {
+        Comparator<QueueElement> compareWeight = new Comparator<QueueElement>() {
             @Override
             public int compare(QueueElement lhs, QueueElement rhs) {
-                return (rhs.rank - lhs.rank);
+                return (int)(rhs.weight - lhs.weight);
             }
         };
 
-        Collections.sort(mQueueElementList,compareRank);
+        Collections.sort(mQueueElementList,compareWeight);
 
         //Change the view to fit the new sorted list.
         //Would be nice if we had a custom adapter that could use the other list.
@@ -218,7 +218,7 @@ public class QueueFragment extends Fragment {
     public void deleteTrack(int i){
         mQueueElementList.remove(i);
         elementList.remove(i);
-        //queueAdapter.notifyDataSetChanged();
+        queueAdapter.notifyDataSetChanged();
     }
 
     public void addToAdapter(QueueElement element){
@@ -256,13 +256,13 @@ public class QueueFragment extends Fragment {
             elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlikeActive));
             mQueueElementList.get(trackChosenOnList).downvoteFlag = true;
             mQueueElementList.get(trackChosenOnList).downVotes += 1;
-            mQueueElementList.get(trackChosenOnList).rank -= 1;
+            mQueueElementList.get(trackChosenOnList).weight -= 1;
             if ( mQueueElementList.get(trackChosenOnList).upvoteFlag)
             {
                 elementList.get(trackChosenOnList).put("upVote", Integer.toString(like));
                 mQueueElementList.get(trackChosenOnList).upvoteFlag = false;
                 mQueueElementList.get(trackChosenOnList).upVotes -= 1;
-                mQueueElementList.get(trackChosenOnList).rank -= 1;
+                mQueueElementList.get(trackChosenOnList).weight -= 1;
             }
         }
         else
@@ -270,10 +270,8 @@ public class QueueFragment extends Fragment {
             elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlike));
             mQueueElementList.get(trackChosenOnList).downvoteFlag = false;
             mQueueElementList.get(trackChosenOnList).downVotes -= 1;
-            mQueueElementList.get(trackChosenOnList).rank += 1;
+            mQueueElementList.get(trackChosenOnList).weight += 1;
         }
-
-        trackWeight(trackChosenOnList);
 
         //Updates the upvote/downvote value in the view.
         elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
@@ -296,13 +294,13 @@ public class QueueFragment extends Fragment {
             elementList.get(trackChosenOnList).put("upVote", Integer.toString(likeActive));
             mQueueElementList.get(trackChosenOnList).upvoteFlag = true;
             mQueueElementList.get(trackChosenOnList).upVotes += 1;
-            mQueueElementList.get(trackChosenOnList).rank += 1;
+            mQueueElementList.get(trackChosenOnList).weight += 1;
             if ( mQueueElementList.get(trackChosenOnList).downvoteFlag)
             {
                 elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlike));
                 mQueueElementList.get(trackChosenOnList).downvoteFlag = false;
                 mQueueElementList.get(trackChosenOnList).downVotes -= 1;
-                mQueueElementList.get(trackChosenOnList).rank += 1;
+                mQueueElementList.get(trackChosenOnList).weight += 1;
             }
         }
         else
@@ -310,11 +308,9 @@ public class QueueFragment extends Fragment {
             mQueueElementList.get(trackChosenOnList).upvoteFlag = false;
             mQueueElementList.get(trackChosenOnList).upVotes -= 1;
             elementList.get(trackChosenOnList).put("upVote", Integer.toString(like));
-            mQueueElementList.get(trackChosenOnList).rank -= 1;
+            mQueueElementList.get(trackChosenOnList).weight -= 1;
 
         }
-
-        trackWeight(trackChosenOnList);
 
         //Updates the upvote/downvote value in the view.
         elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
@@ -324,21 +320,17 @@ public class QueueFragment extends Fragment {
     }
 
     int numberOfPeers = 6;  //Number of people on the network, needs to be replaced
+    double threshold = numberOfPeers * 0.66; //Setting the threshold limit
 
     public void applyWeight(){
         //Applies a basic weight to each track represented on the playlist
-        double threshold = numberOfPeers * 0.66; //Setting the threshold limit
         mQueueElementList.get(mQueueElementList.size()-1).weight = threshold;
-    }
-
-    public void trackWeight(int trackWeightChange) {
-        //Adds the up- and downvotes made by the users to the weight given to the tracks
-        mQueueElementList.get(trackWeightChange).weight += mQueueElementList.get(trackWeightChange).rank;
+        double test = mQueueElementList.get(mQueueElementList.size()-1).weight;
     }
 
     public void voteThreshold(int downVotedTrack) {
         //If track weight gets below the set threshold it will be removed from the list
-        if(mQueueElementList.get(downVotedTrack).weight <= 0)
+        if((threshold + mQueueElementList.get(downVotedTrack).upVotes - mQueueElementList.get(downVotedTrack).downVotes) <= 0)
         {
             deleteTrack(downVotedTrack);
         }
@@ -352,15 +344,16 @@ public class QueueFragment extends Fragment {
         while(i <  listCount) {
             mQueueElementList.get(i).weight *= 1.1;
 
-            if(i == 1){
+            if(i == 0){
                 mQueueElementList.get(i).weight *= 50;
             }
-            if(i == 2){
+            if(i == 1){
                 mQueueElementList.get(i).weight *= 40;
             }
-            if(i == 3){
+            if(i == 2){
                 mQueueElementList.get(i).weight *= 30;
             }
+            double test = mQueueElementList.get(i).weight;
             i++;
         }
     }
