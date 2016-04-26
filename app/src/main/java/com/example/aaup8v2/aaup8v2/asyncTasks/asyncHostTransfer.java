@@ -15,7 +15,7 @@ import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
 
-public class asyncHostTransfer extends AsyncTask<Void, Void, List<String>> {
+public class asyncHostTransfer extends AsyncTask<Void, List<String>, Void> {
 
     public interface AsyncResponse {
         void processFinish(List<String> output);
@@ -28,43 +28,48 @@ public class asyncHostTransfer extends AsyncTask<Void, Void, List<String>> {
     }
 
     @Override
-    protected void onProgressUpdate(Void... values) {
-    }
-
-    @Override
-    protected List<String> doInBackground(Void... id) {
+    protected void onProgressUpdate(List<String>... values) {
+        List<String> list = values[0];
         try {
-            ServerSocket serverSocket = new ServerSocket(8888);
-            Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
-            Socket client = serverSocket.accept();
-            Log.d(WifiDirectActivity.TAG, "Server: connection done");
-            ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
-            Object type = objectInputStream.readObject();
-            Object object = objectInputStream.readObject();
-
-            List<String> data = new ArrayList<>();
-            data.add((String) type);
-            data.add((String) object);
-
-            serverSocket.close();
-            return data;
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
-
-    }
-
-    @Override
-    protected void onPostExecute(List<String> deviceIP){
-        try {
-            delegate.processFinish(deviceIP);
+            delegate.processFinish(list);
         }
         catch (Exception e)
         {
             e.getCause();
         }
+    }
+
+    @Override
+    protected Void doInBackground(Void... id) {
+        while (true) {
+            try {
+                ServerSocket serverSocket = new ServerSocket(8888);
+                Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
+                Socket client = serverSocket.accept();
+                Log.d(WifiDirectActivity.TAG, "Server: connection done");
+                ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
+                Object type = objectInputStream.readObject();
+                Object object = objectInputStream.readObject();
+
+                List<String> data = new ArrayList<>();
+                data.add((String) type);
+                data.add((String) object);
+                publishProgress(data);
+
+                serverSocket.close();
+                //return data;
+            }
+            catch (Exception e)
+            {
+                //return null;
+            }
+        }
+
+    }
+
+    @Override
+    protected void onPostExecute(Void deviceIP){
+
     }
 
 }

@@ -26,11 +26,14 @@ import android.widget.Toast;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncDataTransfer;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncHostTransfer;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncHostTransferCopy;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.app.PendingIntent.getActivity;
 
@@ -56,6 +59,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView list;
     public List<String> ipsOnNetwork = new ArrayList<>();
+    private boolean isHostAsyncNotRunning = true;
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
      */
@@ -221,9 +225,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 String type = output.get(0);
                 String data = output.get(1);
 
-                switch (type){
+                switch (type) {
                     case "ip_sent":
-                        if (!ipsOnNetwork.contains(data)){
+                        if (!ipsOnNetwork.contains(data)) {
                             ipsOnNetwork.add(data);
                         }
                         break;
@@ -233,11 +237,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                         break;
                     case "track_added":
                         break;
+                    default:
+                        break;
                 }
 
-                receiveHostSpawn();
             }
         }).execute();
+
     }
 
     public void receiveDataSpawn(){
@@ -260,7 +266,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 //do something with the new data here.
                 //first element of list is an indicator of which type of data was sent.
                 //second element is the string of data
-                receiveDataSpawn();
             }
         }).execute();
     }
@@ -389,6 +394,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                     serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
                             info.groupOwnerAddress.getHostAddress());
                     serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
+                    serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, "I sent something");
                     startService(serviceIntent);
                 } else {
                     for(int j = 0; j < ipsOnNetwork.size(); j++){

@@ -45,7 +45,7 @@
 
 
         <service android:enabled="true" android:name=".wifidirect.DataTransferService" />
-        <service android:enabled="true" android:name=".wifidirect.IPTransferService" />
+        <service android:enabled="true" android:name=".wifidirect.HostTransferService" />
 
     </application>
 

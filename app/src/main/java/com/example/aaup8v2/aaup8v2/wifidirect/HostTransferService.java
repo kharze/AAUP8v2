@@ -40,7 +40,7 @@ public class HostTransferService extends IntentService {
             String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
             Socket socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
-            String localIp = socket.getLocalAddress().getHostAddress();
+            String localIp = "";
             try {
                 Log.d(WifiDirectActivity.TAG, "Opening client socket - ");
                 socket.bind(null);
@@ -49,6 +49,7 @@ public class HostTransferService extends IntentService {
                 OutputStream stream = socket.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(stream);
                 oos.writeObject("ip_sent");
+                localIp = socket.getLocalAddress().getHostAddress();
                 oos.writeObject(localIp);
                 oos.close();
                 socket.close();
