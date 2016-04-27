@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.example.aaup8v2.aaup8v2.MusicPlayer;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.myTrack;
@@ -34,7 +33,6 @@ public class QueueFragment extends Fragment {
     List<HashMap<String,String>> elementList = new ArrayList<>();
     ListView mlistView; // The view for this fragment
     public List<QueueElement> mQueueElementList = new ArrayList<>();
-    MusicPlayer musicPlayer = new MusicPlayer();
 
     // Icons used for the ListView
     private int like = R.drawable.ic_action_like;
@@ -45,7 +43,7 @@ public class QueueFragment extends Fragment {
 
     private SimpleAdapter queueAdapter; //Adapter for the list view
 
-    private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener; //Is is needed to be here, get an error if removed.
 
     private Gson gson;
     private SharedPreferences mPrefs;
@@ -106,7 +104,7 @@ public class QueueFragment extends Fragment {
         SharedPreferences.Editor ed = mPrefs.edit();
         String listJSon = gson.toJson(mQueueElementList);
         ed.putString("mQueueElementList", listJSon);
-        ed.commit();
+        ed.apply();
     }
 
     @Override
@@ -139,6 +137,7 @@ public class QueueFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void click_up_vote(View view);
     }
 
     public void addTrack(myTrack track){

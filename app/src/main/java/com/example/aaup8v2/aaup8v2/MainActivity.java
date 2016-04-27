@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
@@ -49,10 +48,8 @@ public class MainActivity extends AppCompatActivity
         implements /*NavigationView.OnNavigationItemSelectedListener,*/AdminFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, PlayListFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener,
         QueueFragment.OnFragmentInteractionListener, DisconnectFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener {
 
-    TextView textView;
     DrawerLayout drawer;
     Toolbar toolbar;
-    public static TextView mTextView;
 
     // Replace with your client ID
     private static final String CLIENT_ID = "8d04022ead4444d0b005d171e5941922";
@@ -114,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         //Clears the queue on startup, to prevent stored queue between sessions.
         Context context = getApplicationContext();
         SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
-        mPrefs.edit().clear().commit();
+        mPrefs.edit().clear().apply();
 
         final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
         button.setOnClickListener(new View.OnClickListener() {
@@ -172,7 +169,7 @@ public class MainActivity extends AppCompatActivity
             if(fragmentClass == SearchFragment.class){
                 mSearchFragment = (SearchFragment) fragment;
             }
-            if(fragmentClass == QueueFragment.class){
+            else if(fragmentClass == QueueFragment.class){
                 mQueueFragment = (QueueFragment) fragment;
             }
         } catch (Exception e) {

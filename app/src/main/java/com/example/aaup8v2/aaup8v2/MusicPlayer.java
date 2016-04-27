@@ -13,7 +13,7 @@ import com.spotify.sdk.android.player.PlayerState;
  **/
 public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationCallback {
 
-    public static Player mPlayer;
+    public Player mPlayer;
     public Activity activity;
     boolean isPlaying = false;
 
