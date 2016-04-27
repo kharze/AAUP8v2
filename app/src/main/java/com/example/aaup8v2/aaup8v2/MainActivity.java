@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity
 
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
+    public static WifiDirectActivity mWifiDirectActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +102,8 @@ public class MainActivity extends AppCompatActivity
         authenticate();
         //Sets the spotify web Api access class
         mSpotifyAccess = new SpotifyAccess();
+
+        mWifiDirectActivity = new WifiDirectActivity();
 
         mSearchFragment = new SearchFragment();
         mQueueFragment = new QueueFragment();
@@ -377,7 +380,7 @@ public class MainActivity extends AppCompatActivity
         //Start Peer-to-Peer
         //Intent intent = new Intent(this, PeerToPeer.class);
 
-        Intent intent = new Intent(this, WifiDirectActivity.class);
+        Intent intent = new Intent(this, mWifiDirectActivity.getClass());
         startActivity(intent);
     }
 

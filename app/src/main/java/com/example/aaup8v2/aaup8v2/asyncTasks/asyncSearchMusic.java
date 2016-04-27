@@ -42,85 +42,90 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
         Pager mArtistAlbums;
         List<String> albumsList = new ArrayList<>();
 
-        //Call to the Spotify API searchTracks function, returns a TracksPager object containing the search result.
-        TracksPager mTracks = MainActivity.mSpotifyAccess.mService.searchTracks(id[0]);
+        try {
+            //Call to the Spotify API searchTracks function, returns a TracksPager object containing the search result.
+            TracksPager mTracks = MainActivity.mSpotifyAccess.mService.searchTracks(id[0]);
 
-        //Extracting the list of tracks to make code cleaner.
-        List<Track> mTracksHelper = mTracks.tracks.items;
+            //Extracting the list of tracks to make code cleaner.
+            List<Track> mTracksHelper = mTracks.tracks.items;
 
-        //Add found tracks to the return list.
-        for(int i = 0; i < mTracksHelper.size(); i++){
-            myTrack temp = new myTrack();
-            temp.setMyTrack(mTracksHelper.get(i));
-            mSearchTracks.add(temp);
-        }
-
-        //Call to the Spotify API searchArtists function, returns a ArtistsPager object containing the search result.
-        ArtistsPager mArtists = MainActivity.mSpotifyAccess.mService.searchArtists(id[0]);
-
-        //Go through each result from the artist search.
-        for(int i = 0; i < mArtists.artists.items.size(); i++){
-            //Get the albums an artist have made, as this is the only way to find which tracks an artist have made.
-            //Call to the Spotify API getArtistAlbums function, returns a Pager object.
-            mArtistAlbums = MainActivity.mSpotifyAccess.mService.getArtistAlbums(mArtists.artists.items.get(i).id);
-
-            //Helper to make cleaner code, the call is safe despite the warning.
-            List<Album> mArtistAlbumsHelper = mArtistAlbums.items;
-
-            //Populate the list of albums ids
-            for(int j=0; j < mArtistAlbumsHelper.size(); j++){
-                albumsList.add(mArtistAlbumsHelper.get(j).id);
+            //Add found tracks to the return list.
+            for(int i = 0; i < mTracksHelper.size(); i++){
+                myTrack temp = new myTrack();
+                temp.setMyTrack(mTracksHelper.get(i));
+                mSearchTracks.add(temp);
             }
 
-            //To reduce the number of requests to Spotify we get multiple albums in one request, limit of 50 albums, so we loop it.
-            do{
-                String albumRequests = null;
-                int counter = 0;
+            //Call to the Spotify API searchArtists function, returns a ArtistsPager object containing the search result.
+            ArtistsPager mArtists = MainActivity.mSpotifyAccess.mService.searchArtists(id[0]);
 
-                //Append the request string with up to 50 album ids.
-                do{
-                    if(albumRequests == null){
-                        albumRequests = albumsList.get(0);
-                        albumsList.remove(0);
-                        counter++;
-                    }
-                    else {
-                        albumRequests += "," + albumsList.get(0);
-                        albumsList.remove(0);
-                        counter++;
-                    }
-                }while (counter < 50 && !albumsList.isEmpty());
+            //Go through each result from the artist search.
+            for(int i = 0; i < mArtists.artists.items.size(); i++){
+                //Get the albums an artist have made, as this is the only way to find which tracks an artist have made.
+                //Call to the Spotify API getArtistAlbums function, returns a Pager object.
+                mArtistAlbums = MainActivity.mSpotifyAccess.mService.getArtistAlbums(mArtists.artists.items.get(i).id);
 
-                //Call to Spotify API getAlbums function with the request string, returns the albums.
-                Albums mAlbums = MainActivity.mSpotifyAccess.mService.getAlbums(albumRequests);
-                List<Album> mAlbumsHelper = mAlbums.albums;
+                //Helper to make cleaner code, the call is safe despite the warning.
+                List<Album> mArtistAlbumsHelper = mArtistAlbums.items;
 
-                //Go through all the albums, extract the tracks, and add them to the return list.
-                for(int j = 0; j < mAlbumsHelper.size(); j++){
-                    for(int l = 0; l < mAlbumsHelper.get(j).tracks.items.size(); l++){
-                        myTrack temp = new myTrack();
-                        temp.setMyTrack(mAlbumsHelper.get(j).tracks.items.get(l));
-                        mSearchTracks.add(temp);
-                    }
+                //Populate the list of albums ids
+                for(int j=0; j < mArtistAlbumsHelper.size(); j++){
+                    albumsList.add(mArtistAlbumsHelper.get(j).id);
                 }
-            }while (!albumsList.isEmpty());
-        }
 
-        //Sort on id
-        Collections.sort(mSearchTracks, new Comparator<myTrack>() {
-            @Override
-            public int compare(myTrack lhs, myTrack rhs) {
-                return lhs.id.compareTo(rhs.id);
-            }
-        });
+                //To reduce the number of requests to Spotify we get multiple albums in one request, limit of 50 albums, so we loop it.
+                do{
+                    String albumRequests = null;
+                    int counter = 0;
 
-        //Remove duplicates
-        for(int i = 0; i < mSearchTracks.size()-1; i++){
-            if(mSearchTracks.get(i).id.equals(mSearchTracks.get(i+1).id)){
-                mSearchTracks.remove(i+1);
+                    //Append the request string with up to 50 album ids.
+                    do{
+                        if(albumRequests == null){
+                            albumRequests = albumsList.get(0);
+                            albumsList.remove(0);
+                            counter++;
+                        }
+                        else {
+                            albumRequests += "," + albumsList.get(0);
+                            albumsList.remove(0);
+                            counter++;
+                        }
+                    }while (counter < 50 && !albumsList.isEmpty());
+
+                    //Call to Spotify API getAlbums function with the request string, returns the albums.
+                    Albums mAlbums = MainActivity.mSpotifyAccess.mService.getAlbums(albumRequests);
+                    List<Album> mAlbumsHelper = mAlbums.albums;
+
+                    //Go through all the albums, extract the tracks, and add them to the return list.
+                    for(int j = 0; j < mAlbumsHelper.size(); j++){
+                        for(int l = 0; l < mAlbumsHelper.get(j).tracks.items.size(); l++){
+                            myTrack temp = new myTrack();
+                            temp.setMyTrack(mAlbumsHelper.get(j).tracks.items.get(l));
+                            mSearchTracks.add(temp);
+                        }
+                    }
+                }while (!albumsList.isEmpty());
             }
+
+            //Sort on id
+            Collections.sort(mSearchTracks, new Comparator<myTrack>() {
+                @Override
+                public int compare(myTrack lhs, myTrack rhs) {
+                    return lhs.id.compareTo(rhs.id);
+                }
+            });
+
+            //Remove duplicates
+            for(int i = 0; i < mSearchTracks.size()-1; i++){
+                if(mSearchTracks.get(i).id.equals(mSearchTracks.get(i+1).id)){
+                    mSearchTracks.remove(i+1);
+                }
+            }
+            return mSearchTracks;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return mSearchTracks;
     }
 
     @Override
