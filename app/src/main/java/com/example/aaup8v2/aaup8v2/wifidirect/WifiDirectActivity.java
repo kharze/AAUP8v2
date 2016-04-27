@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -23,11 +24,17 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
+import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncDataTransfer;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncHostTransfer;
+import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +54,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     private final IntentFilter intentFilter = new IntentFilter();
     private Channel channel;
     private BroadcastReceiver receiver = null;
-    private WifiP2pInfo info;
+    public WifiP2pInfo info;
     ProgressDialog progressDialog = null;
     private List<WifiP2pDevice> peersCollection = new ArrayList();
     //Collection<WifiP2pDevice> peersCollection;
@@ -65,6 +72,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifidirect);
+        MainActivity.mWifiDirectActivity = this;
         // add necessary intent values to be matched.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -219,6 +227,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             public void processFinish(List<String> output) {
                 String type = output.get(0);
                 String data = output.get(1);
+                Gson gson = new Gson();
 
                 switch (type) {
                     case "ip_sent":
@@ -231,6 +240,28 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                     case "down_vote":
                         break;
                     case "track_added":
+                        Type mClass = new TypeToken<myTrack>(){}.getType();
+                        myTrack track = gson.fromJson(data, mClass);
+                        MainActivity.mQueueFragment.addTrack(track);
+
+                        String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+
+                        for(int j = 0; j < ipsOnNetwork.size(); j++){
+                            Intent dataIntent = new Intent(MainActivity.mWifiDirectActivity, DataTransferService.class);
+                            dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+                            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
+                            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
+                            dataIntent.putExtra(DataTransferService.EXTRAS_DATA, queueList);
+                            dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, "track_added");
+                            startService(dataIntent);
+                        }
+
+                        Context context = getApplicationContext();
+                        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
+                        SharedPreferences.Editor ed = mPrefs.edit();
+                        String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+                        ed.putString("mQueueElementList", listJSon2);
+                        ed.commit();
                         break;
                     default:
                         break;
@@ -248,12 +279,23 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 String type = output.get(0);
                 String data = output.get(1);
 
+                Gson gson = new Gson();
+
                 switch (type){
                     case "up_vote":
                         break;
                     case "down_vote":
                         break;
                     case "track_added":
+                        Type mClass = new TypeToken<List<QueueElement>>(){}.getType();
+                        MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+
+                        Context context = getApplicationContext();
+                        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
+                        SharedPreferences.Editor ed = mPrefs.edit();
+                        String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+                        ed.putString("mQueueElementList", listJSon2);
+                        ed.commit();
                         break;
                     default:
                         break;
