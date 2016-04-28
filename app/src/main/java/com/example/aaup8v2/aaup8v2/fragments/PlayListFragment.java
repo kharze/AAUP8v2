@@ -1,5 +1,6 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,35 +8,37 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ExpandableListView.OnGroupCollapseListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
-import com.example.aaup8v2.aaup8v2.SpotifyAccess;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
+import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylists;
+import com.example.aaup8v2.aaup8v2.fragments.models.ExpandableListAdapters;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Pager;
-import kaaes.spotify.webapi.android.models.Playlist;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
-public class PlayListFragment extends Fragment {
-    List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
-    ListView list;
-
-    String[] mNames = { "Paradise city", "Sweet Child o' Mine", "Nothing else Matters", "Levels", "Sweet Lovin'",
-            "Der er noget galt i Danmark", "Lazaro", "Spændt op til lir", "Last Christmas", "Go West", "Work",
-            "Yesterday", "Gi' mig et smil" };
-
-    String[] mArtist = { "Guns'n Roses", "Guns'n Roses", "Metallica", "Avicii", "Sigala",
-            "John Mogensen", "Pavarotti", "Jokeren", "Wham", "Pet shop boys", "Rihanna",
-            "Beatles", "Wafande" };
+public class PlayListFragment extends Fragment{
+    ExpandableListAdapters listAdapter;
+    public ExpandableListView expListView;
+    //List<List<HashMap<String, String>>> tracksLists = new ArrayList<>();
+    List<List<String>> tracksLists = new ArrayList<>();
+    public List<String> playlistName = new ArrayList<>();
+    //HashMap<String, List<HashMap<String, String>>> listDataChild;
+    public HashMap<String, List<String>> listDataChild;
+    List<String> playlistIds = new ArrayList<>();
+    private Context context;
 
     int[] flags = new int[]{
             R.drawable.ic_home,
@@ -52,8 +55,6 @@ public class PlayListFragment extends Fragment {
             R.drawable.ic_home,
             R.drawable.ic_home
     };
-
-    private OnFragmentInteractionListener mListener;
 
     public PlayListFragment() {
         // Required empty public constructor
@@ -72,66 +73,127 @@ public class PlayListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
+        getPlaylists();
+
+        final View v = inflater.inflate(R.layout.fragment_play_list, container,false);
+
+        expListView = (ExpandableListView) v.findViewById(R.id.expand_list);
+
+        prepareListData();
+
+        listAdapter = new ExpandableListAdapters(this.getContext(), playlistName, listDataChild);
+
+        expListView.setAdapter(listAdapter);
+
+       expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
             @Override
-            public void processFinish(Pager output){
-
-                for(int i=0;i < output.items.size();i++){
-                    HashMap<String, String> hm = new HashMap<String,String>();
-
-                    PlaylistTrack p = (PlaylistTrack) output.items.get(i);
-                    String s = p.track.name;
-                    hm.put("txt", s);
-                    hm.put("cur", "Artist : " + p.track.artists.get(0).name);
-                    hm.put("flag", Integer.toString(flags[5]));
-                    aList.add(hm);
-                }
-
-                String[] from = { "flag","txt","cur" };
-
-                int[] to = { R.id.flag,R.id.txt,R.id.cur,R.id.textView};
-                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_layout,from,to );
-
-
-                // Assign adapter to ListView
-                list.setAdapter(adapter);
+            public boolean onGroupClick(ExpandableListView parent, View v,
+                                        int groupPosition, long id) {
+                // Toast.makeText(getApplicationContext(),
+                // "Group Clicked " + listDataHeader.get(groupPosition),
+                // Toast.LENGTH_SHORT).show();
+                return false;
             }
-        }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
+        });
 
-        View v = inflater.inflate(R.layout.fragment_play_list, container,false);
-        list = (ListView)v.findViewById(R.id.list);
+        // Listview Group expanded listener
+       expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                Toast.makeText(context.getApplicationContext(),
+                       playlistName.get(groupPosition) + " Expanded",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Listview Group collasped listener
+       expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                Toast.makeText(context.getApplicationContext(),
+                       playlistName.get(groupPosition) + " Collapsed",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        // Listview on child click listener
+       expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                // TODO Auto-generated method stub
+                Toast.makeText(
+                        context.getApplicationContext(),
+                       playlistName.get(groupPosition)
+                                + " : "
+                                +listDataChild.get(
+                               playlistName.get(groupPosition)).get(
+                                childPosition), Toast.LENGTH_SHORT)
+                        .show();
+                return false;
+            }
+        });
 
         // Inflate the layout for this fragment
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    public void prepareListData(){
+        listDataChild = new HashMap<>();
+
+        for(int i = 0; i < playlistName.size(); i++){
+            listDataChild.put(playlistName.get(i), tracksLists.get(i));
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public void getPlaylists(){
+        try {
+            new asyncGetPlaylists(new asyncGetPlaylists.AsyncResponse() {
+                @Override
+                public void processFinish(Pager<PlaylistSimple> output) {
+                    for (int i = 0; i < output.items.size(); i++){
+                        playlistIds.add(output.items.get(i).id);
+                        playlistName.add(output.items.get(i).name);
+                        getPlaylistTracks(output.items.get(i).id);
+                    }
+                    //listAdapter.notifyDataSetChanged();
+                }
+            }).execute("aaup8");
+        } catch (Exception e) {
+            e.getMessage();
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void getPlaylistTracks(String playlistId){
+        final List<String> aList = new ArrayList<>();
+        new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
+
+            @Override
+            public void processFinish(Pager output){
+
+                for(int i=0;i < output.items.size(); i++) {
+                    //HashMap<String, String> hm = new HashMap<String,String>();
+                    List<String> hm = new ArrayList<>();
+
+                    PlaylistTrack p = (PlaylistTrack) output.items.get(i);
+                    String s = p.track.name;
+                    hm.add(s);
+                    //hm.put("txt", s);
+                    //hm.put("cur", "Artist : " + p.track.artists.get(0).name);
+                    //hm.put("flag", Integer.toString(flags[5]));
+                    aList.add(s);
+                }
+                tracksLists.add(aList);
+                listAdapter.notifyDataSetChanged();
+            }
+        }).execute("aaup8", playlistId);
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }
