@@ -384,6 +384,10 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public void initializePeer(){
+        findViewById(R.id.playButtonImage).setVisibility(View.INVISIBLE);
+    }
+
 
     //Sends the button click to the search fragment
     public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
