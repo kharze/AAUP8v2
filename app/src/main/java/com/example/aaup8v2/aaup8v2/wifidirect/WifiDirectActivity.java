@@ -17,6 +17,7 @@ import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +39,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import retrofit.android.MainThreadExecutor;
 
 /**
  * An activity that uses WiFi Direct APIs to discover and connect with available
@@ -215,6 +218,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                     info.groupOwnerAddress.getHostAddress());
             serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
             startService(serviceIntent);
+
+            //Remove play/pause button for peers
+            findViewById(R.id.playButtonImage).setVisibility(View.INVISIBLE);
 
             receiveDataSpawn();
         }
