@@ -296,7 +296,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 default:
                                     break;
                             }
-                            // Update view and remove loading spinner etc...
                         }
                     });
                 }
