@@ -622,28 +622,38 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             if (index == bIndex)
             {
                 if (!info.isGroupOwner) {
-                    Intent serviceIntent = new Intent(this, HostTransferService.class);
-                    serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
-                    serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
-                            info.groupOwnerAddress.getHostAddress());
-                    serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
-                    serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, "I sent something");
-                    serviceIntent.putExtra(HostTransferService.EXTRAS_TYPE, "");
-                    startService(serviceIntent);
+                    sendDataToHost("", "I sent something");
                 } else {
-                    for(int j = 0; j < ipsOnNetwork.size(); j++){
-                        Intent dataIntent = new Intent(this, DataTransferService.class);
-                        dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
-                        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
-                        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
-                        dataIntent.putExtra(DataTransferService.EXTRAS_DATA, "I'm number" + i);
-                        dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, "");
-                        startService(dataIntent);
-                    }
+                    sendDataToPeers("", "I'm number" + i);
                 }
 
             }
             index++;
         }
     }
+
+    public void sendDataToHost(String type, String data){
+        Intent serviceIntent = new Intent(this, HostTransferService.class);
+        serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                info.groupOwnerAddress.getHostAddress());
+        serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, data);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_TYPE, type);
+        startService(serviceIntent);
+    }
+
+    public void sendDataToPeers(String type, String data){
+        for(int j = 0; j < ipsOnNetwork.size(); j++){
+            Intent dataIntent = new Intent(this, DataTransferService.class);
+            dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
+            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
+            dataIntent.putExtra(DataTransferService.EXTRAS_DATA, data);
+            dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, type);
+            startService(dataIntent);
+        }
+    }
 }
+
+
