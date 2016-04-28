@@ -44,7 +44,7 @@ dependencies {
     compile 'com.spotify.sdk:spotify-player:1.0.0-beta12@aar'
 
     //This is the spotify web API
-    compile 'com.github.kaaes:spotify-web-api-android:0.2.0'
+    compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
 
     // Test dependencies
     testCompile "org.mockito:mockito-core:1.9.5"

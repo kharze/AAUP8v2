@@ -1,6 +1,7 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
 import com.example.aaup8v2.aaup8v2.myTrack;
+import com.example.aaup8v2.aaup8v2.wifidirect.DataTransferService;
+import com.example.aaup8v2.aaup8v2.wifidirect.HostTransferService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -183,7 +186,36 @@ public class SearchFragment extends Fragment{
 
         QueueElement queueEmelemt = new QueueElement();
         queueEmelemt.track = mTracklist.get(trackChosenOnList);
-        MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
+        if(MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
+            MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
+
+            String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+
+            for(int j = 0; j < MainActivity.mWifiDirectActivity.ipsOnNetwork.size(); j++){
+                Intent dataIntent = new Intent(MainActivity.mWifiDirectActivity, DataTransferService.class);
+                dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+                dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, MainActivity.mWifiDirectActivity.ipsOnNetwork.get(j));
+                dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
+                dataIntent.putExtra(DataTransferService.EXTRAS_DATA, queueList);
+                dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, "track_added");
+                getActivity().startService(dataIntent);
+            }
+        }
+        else if (MainActivity.mWifiDirectActivity.info != null){
+            String track = gson.toJson(mTracklist.get(trackChosenOnList));
+
+            Intent serviceIntent = new Intent(MainActivity.mWifiDirectActivity, HostTransferService.class);
+            serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
+            serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                    MainActivity.mWifiDirectActivity.info.groupOwnerAddress.getHostAddress());
+            serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
+            serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, track);
+            serviceIntent.putExtra(HostTransferService.EXTRAS_TYPE, "track_added");
+            getActivity().startService(serviceIntent);
+        }
+        else{ //in case we aren't connected to a network, we just add it as a jukebox.
+            MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
+        }
 
         SharedPreferences.Editor ed = mPrefs.edit();
         String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
