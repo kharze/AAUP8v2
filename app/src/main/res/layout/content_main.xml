@@ -35,19 +35,23 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:onClick="playPause"
-                android:layout_alignParentLeft="true"/>
+                android:layout_alignParentRight="true"/>
             <ImageButton
                 android:id="@+id/testButtonImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="pToP"
                 android:src="@drawable/ic_home"
-                android:layout_alignParentRight="true"/>
+                android:layout_toLeftOf="@id/playButtonImage"/>
             <TextView
                 android:id="@+id/track_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/playButtonImage"
+                android:layout_toStartOf="@id/playButtonImage"
+                android:layout_toLeftOf="@id/playButtonImage"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="5dp"
                 android:textSize="18sp"
                 android:textColor="@color/textColor"
                 android:text="No song playing"
@@ -57,7 +61,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/track_name"
-                android:layout_toRightOf="@id/playButtonImage"
+                android:layout_toStartOf="@id/playButtonImage"
+                android:layout_toLeftOf="@id/playButtonImage"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="5dp"
                 android:textSize="14sp"
                 android:textColor="@color/textColor"
                 android:lines="1"/>

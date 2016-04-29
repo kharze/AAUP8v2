@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -227,6 +226,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
         return true;
     }
 
@@ -354,37 +354,6 @@ public class MainActivity extends AppCompatActivity
         mPlayer.resume();
     }
 **/
-
-    EditText mText;
-
-    int i = 0;
-
-    public void searchMusic(View view){
-        String searchString;
-        mText = (EditText) findViewById(R.id.Search_Text);
-        searchString = mText.getText().toString();
-
-        //ensure searchString has at least 3 characters
-        if(searchString.length() >= 3)
-            mSearchFragment.SearchForMusic(searchString);
-        else
-            i++;
-
-        /*String searchString = "";
-        mText = (EditText) findViewById(R.id.Search_Text);
-        searchString = mText.getText().toString();
-
-        new asyncSearchMusic(new asyncSearchMusic.AsyncResponse(){
-            @Override
-            public void processFinish(List output){
-
-                //mListView;
-
-                i++;
-            }
-        }).execute(searchString);*/
-
-    }
 
     //Don't use, doesn't work
     public void pToP(View view){

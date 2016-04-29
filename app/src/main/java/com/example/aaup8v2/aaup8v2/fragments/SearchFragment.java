@@ -8,9 +8,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
@@ -53,8 +55,8 @@ public class SearchFragment extends Fragment{
 
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView Search_Results;
-
-    EditText mText;
+    private Button searchButton;
+    private EditText mText;
 
     private OnFragmentInteractionListener mListener;
 
@@ -93,6 +95,23 @@ public class SearchFragment extends Fragment{
 
         View v = inflater.inflate(R.layout.fragment_search, container,false);
         Search_Results = (ListView)v.findViewById(R.id.Search_Results);
+        searchButton = (Button)v.findViewById(R.id.searchMusicButton);
+        mText = (EditText) v.findViewById(R.id.Search_Text);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String searchString;
+                searchString = mText.getText().toString();
+
+                //ensure searchString has at least 3 characters
+                if(searchString.length() >= 3) {
+                    Toast.makeText(getContext(), "Search started", Toast.LENGTH_SHORT).show();
+                    MainActivity.mSearchFragment.SearchForMusic(searchString);
+                } else
+                    Toast.makeText(getContext(),"Search input too short", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         String[] from = {"trackName", "artist", "add"};
 

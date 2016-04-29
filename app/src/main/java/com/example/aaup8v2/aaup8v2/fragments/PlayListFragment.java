@@ -1,21 +1,14 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
-import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.ExpandableListView.OnGroupCollapseListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.Toast;
 
-import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylists;
@@ -63,9 +56,6 @@ public class PlayListFragment extends Fragment{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-
-
         super.onCreate(savedInstanceState);
     }
 
