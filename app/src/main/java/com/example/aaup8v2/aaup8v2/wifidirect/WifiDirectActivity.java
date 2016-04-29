@@ -147,50 +147,51 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 Toast.makeText(WifiDirectActivity.this, "Discovery Initiated",
                         Toast.LENGTH_SHORT).show();
 
-                    // request available peers from the wifi p2p manager. This is an
-                    // asynchronous call and the calling activity is notified with a
-                    // callback on PeerListListener.onPeersAvailable()
-                    if (manager != null) {
-                        manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
+                // request available peers from the wifi p2p manager. This is an
+                // asynchronous call and the calling activity is notified with a
+                // callback on PeerListListener.onPeersAvailable()
+                if (manager != null) {
+                    manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
 
-                            public void onPeersAvailable(WifiP2pDeviceList peers) {
-                                Log.d(TAG, String.format("PeerListListener: %d peers available, updating device list", peers.getDeviceList().size()));
-                                fragment.onPeersAvailable(peers);
+                        public void onPeersAvailable(WifiP2pDeviceList peers) {
+                            Log.d(TAG, String.format("PeerListListener: %d peers available, updating device list", peers.getDeviceList().size()));
+                            fragment.onPeersAvailable(peers);
 
-                                // DO WHATEVER YOU WANT HERE
-                                // YOU CAN GET ACCESS TO ALL THE DEVICES YOU FOUND FROM peers OBJECT
-                                aList.clear();
+                            // DO WHATEVER YOU WANT HERE
+                            // YOU CAN GET ACCESS TO ALL THE DEVICES YOU FOUND FROM peers OBJECT
+                            aList.clear();
 
-                                while(!peersCollection.isEmpty()){
-                                    peersCollection.remove(0);
-                                }
-
-                                peersCollection.addAll(peers.getDeviceList());
-
-                                for(int i = 0; i < peersCollection.size(); i++){
-                                    HashMap<String, String> hm = new HashMap<String,String>();
-
-                                    String s = peersCollection.get(i).deviceName;
-                                    hm.put("txt", s);
-                                    aList.add(hm);
-                                }
-
-
-                                String[] from = { "flag","txt","cur" };
-
-                                int[] to = { R.id.flag,R.id.txt,R.id.cur,R.id.textView};
-                                SimpleAdapter a = new SimpleAdapter(view.getContext(),aList,R.layout.listview_layout_p2p,from,to);
-
-                                // Assign adapter to ListView
-                                list = (ListView) findViewById(R.id.listviewPeers);
-                                list.setAdapter(a);
-
+                            while (!peersCollection.isEmpty()) {
+                                peersCollection.remove(0);
                             }
-                        });
 
-                    }
+                            peersCollection.addAll(peers.getDeviceList());
+
+                            for (int i = 0; i < peersCollection.size(); i++) {
+                                HashMap<String, String> hm = new HashMap<String, String>();
+
+                                String s = peersCollection.get(i).deviceName;
+                                hm.put("txt", s);
+                                aList.add(hm);
+                            }
+
+
+                            String[] from = {"flag", "txt", "cur"};
+
+                            int[] to = {R.id.flag, R.id.txt, R.id.cur, R.id.textView};
+                            SimpleAdapter a = new SimpleAdapter(view.getContext(), aList, R.layout.listview_layout_p2p, from, to);
+
+                            // Assign adapter to ListView
+                            list = (ListView) findViewById(R.id.listviewPeers);
+                            list.setAdapter(a);
+
+                        }
+                    });
+
+                }
 
             }
+
             @Override
             public void onFailure(int reasonCode) {
                 Toast.makeText(WifiDirectActivity.this, "Discovery Failed : " + reasonCode,
@@ -418,20 +419,19 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
     @Override
     public void disconnect() {
-        final DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager()
-                .findFragmentById(R.id.frag_detail);
-        fragment.resetViews();
-        manager.removeGroup(channel, new ActionListener() {
-            @Override
-            public void onFailure(int reasonCode) {
-                Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
-            }
+        if(manager != null) {
+            manager.removeGroup(channel, new ActionListener() {
+                @Override
+                public void onFailure(int reasonCode) {
+                    Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
+                }
 
-            @Override
-            public void onSuccess() {
-                fragment.getView().setVisibility(View.GONE);
-            }
-        });
+                @Override
+                public void onSuccess() {
+
+                }
+            });
+        }
     }
     @Override
     protected void onDestroy()
