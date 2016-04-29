@@ -2,7 +2,6 @@ package com.example.aaup8v2.aaup8v2.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,9 +20,7 @@ import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.DataTransferService;
 import com.example.aaup8v2.aaup8v2.wifidirect.HostTransferService;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -180,8 +177,6 @@ public class SearchFragment extends Fragment{
         int bIndex = listVoteInView.indexOfChild((View)view.getParent().getParent());
         int trackChosenOnList = listVoteInView.getFirstVisiblePosition() + bIndex;
 
-        Context context = getContext();
-        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
         Gson gson = new Gson();
 
         QueueElement queueEmelemt = new QueueElement();
@@ -216,11 +211,6 @@ public class SearchFragment extends Fragment{
         else{ //in case we aren't connected to a network, we just add it as a jukebox.
             MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
         }
-
-        SharedPreferences.Editor ed = mPrefs.edit();
-        String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-        ed.putString("mQueueElementList", listJSon2);
-        ed.commit();
     }
 
 }

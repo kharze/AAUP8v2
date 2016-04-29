@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
@@ -58,11 +59,13 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
     public PearsonRecommend mRecommend = new PearsonRecommend();
-    public MusicPlayer musicPlayer = new MusicPlayer();
+    public MusicPlayer musicPlayer;
 
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;
+    public static TextView playedName;
+    public static TextView playedArtist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,11 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
+        // Instanciate the textviews for tracks.
+        playedName = (TextView)findViewById(R.id.track_name);
+        playedArtist = (TextView)findViewById(R.id.artist_name);
         /**FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +115,7 @@ public class MainActivity extends AppCompatActivity
 
         mSearchFragment = new SearchFragment();
         mQueueFragment = new QueueFragment();
+        musicPlayer = new MusicPlayer();
 
         //Temporary TextView used to show playlist and Track.
         //mTextView = (TextView)findViewById(R.id.Name_for_song);
@@ -173,6 +182,8 @@ public class MainActivity extends AppCompatActivity
                 mSearchFragment = (SearchFragment) fragment;
             }
             else if(fragmentClass == QueueFragment.class){
+
+                ((QueueFragment)fragment).mQueueElementList = mQueueFragment.mQueueElementList;
                 mQueueFragment = (QueueFragment) fragment;
             }
         } catch (Exception e) {
@@ -393,6 +404,6 @@ public class MainActivity extends AppCompatActivity
     public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
 
     // Upvote and downvote on click action for the Queue fragment
-    public void click_down_vote(View view){ mQueueFragment.click_down_vote(view); }
-    public void click_up_vote(View view){ mQueueFragment.click_up_vote(view); }
+    //public void click_down_vote(View view){ mQueueFragment.click_down_vote(view); }
+    //public void click_up_vote(View view){ mQueueFragment.click_up_vote(view); }
 }

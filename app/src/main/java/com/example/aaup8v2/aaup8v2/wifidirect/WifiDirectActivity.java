@@ -17,7 +17,6 @@ import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -28,8 +27,6 @@ import android.widget.Toast;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncDataTransfer;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncHostTransfer;
 import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
 import com.google.gson.Gson;
@@ -43,8 +40,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import retrofit.android.MainThreadExecutor;
 
 /**
  * An activity that uses WiFi Direct APIs to discover and connect with available
@@ -539,7 +534,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     protected void onDestroy()
     {
         super.onDestroy();
-        worker.interrupt();
+        if(worker != null)
+            worker.interrupt();
     }
     @Override
     public void onChannelDisconnected() {

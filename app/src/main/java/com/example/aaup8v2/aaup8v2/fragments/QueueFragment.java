@@ -1,23 +1,21 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.myTrack;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,8 +43,6 @@ public class QueueFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener; //Is is needed to be here, get an error if removed.
 
-    private Gson gson;
-    private SharedPreferences mPrefs;
 
     public QueueFragment() {
         // Required empty public constructor
@@ -55,10 +51,6 @@ public class QueueFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        gson = new Gson();
-        Context context = getContext();
-
-        mPrefs = context.getSharedPreferences("Queue", 1);
     }
 
     @Override
@@ -73,7 +65,38 @@ public class QueueFragment extends Fragment {
         //Specifies the ListView
         View v = inflater.inflate(R.layout.fragment_queue, container, false);
         mlistView = (ListView)v.findViewById(R.id.queue_list);
+        mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+            }
+        });
+
+        queueAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if(!view.hasOnClickListeners()) {
+                    if (view.getId() == R.id.upVote) {
+                        view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                click_up_vote(v);
+                            }
+                        });
+                    }
+                    if (view.getId() == R.id.downVote) {
+                        view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                click_down_vote(v);
+                            }
+                        });
+
+                    }
+                }
+                return false;
+            }
+        });
         mlistView.setAdapter(queueAdapter);
 
         // Inflate the layout for this fragment
@@ -83,10 +106,6 @@ public class QueueFragment extends Fragment {
     public void onResume(){
         super.onResume();
 
-        String listJSon = mPrefs.getString("mQueueElementList", "");
-        Type mClass = new TypeToken<List<QueueElement>>(){}.getType();
-        mQueueElementList = gson.fromJson(listJSon, mClass);
-
         //Resets the playqueue after resuming
         if(mQueueElementList != null){
             for(int i=0;i < mQueueElementList.size();i++) {
@@ -95,16 +114,13 @@ public class QueueFragment extends Fragment {
                 addToAdapter(element);
             }
             sortQueue();
+        }else{
+            mQueueElementList = new ArrayList<>();
         }
     }
 
     public void onPause() {
         super.onPause();
-
-        SharedPreferences.Editor ed = mPrefs.edit();
-        String listJSon = gson.toJson(mQueueElementList);
-        ed.putString("mQueueElementList", listJSon);
-        ed.apply();
     }
 
     @Override
@@ -137,7 +153,6 @@ public class QueueFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-        void click_up_vote(View view);
     }
 
     public void addTrack(myTrack track){
@@ -210,6 +225,8 @@ public class QueueFragment extends Fragment {
 
     public String nextSong(){
         String trackId = mQueueElementList.get(0).track.id;
+        MainActivity.playedArtist.setText("Artist: " + mQueueElementList.get(0).track.artist);
+        MainActivity.playedName.setText(mQueueElementList.get(0).track.name);
         deleteTrack(0);
         return trackId;
     }
