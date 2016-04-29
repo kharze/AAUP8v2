@@ -14,6 +14,7 @@ import android.widget.SimpleAdapter;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
+import com.example.aaup8v2.aaup8v2.FindIP;
 import com.example.aaup8v2.aaup8v2.myTrack;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class QueueFragment extends Fragment {
     private int likeActive = R.drawable.ic_action_like_active;
     private int dontlikeActive = R.drawable.ic_action_dontlike_active;
     private int flag = R.drawable.ic_home; //Should be changed at some point
+    String myIP = FindIP.getIPAddress(true);
 
     private SimpleAdapter queueAdapter; //Adapter for the list view
 
@@ -207,18 +209,18 @@ public class QueueFragment extends Fragment {
             elementList.get(i).put("txt", mQueueElementList.get(i).track.name);
             elementList.get(i).put("cur", "Artist : " + mQueueElementList.get(i).track.artist);
             elementList.get(i).put("flag", Integer.toString(flag));
-            if(mQueueElementList.get(i).upvoteFlag){
+            if(mQueueElementList.get(i).upvoteList.contains(myIP)){
                 elementList.get(i).put("upVote", Integer.toString(likeActive));
             }else{
                 elementList.get(i).put("upVote", Integer.toString(like));
             }
-            if(mQueueElementList.get(i).downvoteFlag){
+            if(mQueueElementList.get(i).downvoteList.contains(myIP)){
                 elementList.get(i).put("downVote", Integer.toString(dontlikeActive));
             }else{
                 elementList.get(i).put("downVote", Integer.toString(dontlike));
             }
-            elementList.get(i).put("downCount", Integer.toString(mQueueElementList.get(i).downVotes));
-            elementList.get(i).put("upCount", Integer.toString(mQueueElementList.get(i).upVotes));
+            elementList.get(i).put("downCount", Integer.toString(mQueueElementList.get(i).downvoteList.size()));
+            elementList.get(i).put("upCount", Integer.toString(mQueueElementList.get(i).upvoteList.size()));
         }
         queueAdapter.notifyDataSetChanged();
     }
@@ -243,18 +245,18 @@ public class QueueFragment extends Fragment {
         hMap.put("txt", element.track.name);
         hMap.put("cur", "Artist : " + element.track.artist);
         hMap.put("flag", Integer.toString(flag));
-        if(element.upvoteFlag) {
+        if(element.upvoteList.contains(myIP)) {
             hMap.put("upVote", Integer.toString(likeActive));
         }else{
             hMap.put("upVote", Integer.toString(like));
         }
-        if(element.downvoteFlag){
+        if(element.downvoteList.contains(myIP)){
             hMap.put("downVote", Integer.toString(dontlikeActive));
         }else{
             hMap.put("downVote", Integer.toString(dontlike));
         }
-        hMap.put("downCount", Integer.toString(element.downVotes));
-        hMap.put("upCount", Integer.toString(element.upVotes));
+        hMap.put("downCount", Integer.toString(element.downvoteList.size()));
+        hMap.put("upCount", Integer.toString(element.upvoteList.size()));
 
         elementList.add(hMap);
     }
@@ -267,31 +269,29 @@ public class QueueFragment extends Fragment {
 
         //Change the value of the up/down votes depending if the button has already been pressed.
         //Change the icon for the button.
-        if(!mQueueElementList.get(trackChosenOnList).downvoteFlag)
+        if(!mQueueElementList.get(trackChosenOnList).downvoteList.contains(myIP))
         {
             elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlikeActive));
-            mQueueElementList.get(trackChosenOnList).downvoteFlag = true;
-            mQueueElementList.get(trackChosenOnList).downVotes += 1;
             mQueueElementList.get(trackChosenOnList).weight -= 1;
-            if ( mQueueElementList.get(trackChosenOnList).upvoteFlag)
+            mQueueElementList.get(trackChosenOnList).downvoteList.add(myIP);
+
+            if (mQueueElementList.get(trackChosenOnList).upvoteList.contains(myIP))
             {
                 elementList.get(trackChosenOnList).put("upVote", Integer.toString(like));
-                mQueueElementList.get(trackChosenOnList).upvoteFlag = false;
-                mQueueElementList.get(trackChosenOnList).upVotes -= 1;
                 mQueueElementList.get(trackChosenOnList).weight -= 1;
+                mQueueElementList.get(trackChosenOnList).upvoteList.remove(myIP);
             }
         }
         else
         {
             elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlike));
-            mQueueElementList.get(trackChosenOnList).downvoteFlag = false;
-            mQueueElementList.get(trackChosenOnList).downVotes -= 1;
             mQueueElementList.get(trackChosenOnList).weight += 1;
+            mQueueElementList.get(trackChosenOnList).downvoteList.remove(myIP);
         }
 
         //Updates the upvote/downvote value in the view.
-        elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
-        elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downVotes));
+        elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upvoteList.size()));
+        elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downvoteList.size()));
         queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
         voteThreshold(trackChosenOnList);
         sortQueue();
@@ -305,32 +305,29 @@ public class QueueFragment extends Fragment {
 
         //Change the value of the up/down votes depending if the button has already been pressed.
         //Change the icon for the button.
-        if(!mQueueElementList.get(trackChosenOnList).upvoteFlag)
+        if(!mQueueElementList.get(trackChosenOnList).upvoteList.contains(myIP))
         {
             elementList.get(trackChosenOnList).put("upVote", Integer.toString(likeActive));
-            mQueueElementList.get(trackChosenOnList).upvoteFlag = true;
-            mQueueElementList.get(trackChosenOnList).upVotes += 1;
             mQueueElementList.get(trackChosenOnList).weight += 1;
-            if ( mQueueElementList.get(trackChosenOnList).downvoteFlag)
+            mQueueElementList.get(trackChosenOnList).upvoteList.add(myIP);
+
+            if (mQueueElementList.get(trackChosenOnList).downvoteList.contains(myIP))
             {
                 elementList.get(trackChosenOnList).put("downVote", Integer.toString(dontlike));
-                mQueueElementList.get(trackChosenOnList).downvoteFlag = false;
-                mQueueElementList.get(trackChosenOnList).downVotes -= 1;
                 mQueueElementList.get(trackChosenOnList).weight += 1;
+                mQueueElementList.get(trackChosenOnList).downvoteList.remove(myIP);
             }
         }
         else
         {
-            mQueueElementList.get(trackChosenOnList).upvoteFlag = false;
-            mQueueElementList.get(trackChosenOnList).upVotes -= 1;
             elementList.get(trackChosenOnList).put("upVote", Integer.toString(like));
             mQueueElementList.get(trackChosenOnList).weight -= 1;
-
+            mQueueElementList.get(trackChosenOnList).upvoteList.remove(myIP);
         }
 
         //Updates the upvote/downvote value in the view.
-        elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upVotes));
-        elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downVotes));
+        elementList.get(trackChosenOnList).put("upCount", Integer.toString(mQueueElementList.get(trackChosenOnList).upvoteList.size()));
+        elementList.get(trackChosenOnList).put("downCount", Integer.toString(mQueueElementList.get(trackChosenOnList).downvoteList.size()));
         queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
         sortQueue();
     }
@@ -346,7 +343,7 @@ public class QueueFragment extends Fragment {
 
     public void voteThreshold(int downVotedTrack) {
         //If track weight gets below the set threshold it will be removed from the list
-        if((threshold + mQueueElementList.get(downVotedTrack).upVotes - mQueueElementList.get(downVotedTrack).downVotes) <= 0)
+        if((threshold + mQueueElementList.get(downVotedTrack).upvoteList.size() - mQueueElementList.get(downVotedTrack).downvoteList.size()) <= 0)
         {
             deleteTrack(downVotedTrack);
         }
