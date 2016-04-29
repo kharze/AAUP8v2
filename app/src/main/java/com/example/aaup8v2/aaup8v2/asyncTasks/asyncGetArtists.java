@@ -19,6 +19,12 @@ public class asyncGetArtists extends AsyncTask<String, Void, Artists> {
     }
 
     @Override
+    protected void onPreExecute(){
+        if(MainActivity.mWifiDirectActivity.worker != null)
+            MainActivity.mWifiDirectActivity.worker.interrupt();
+    }
+
+    @Override
     protected void onProgressUpdate(Void... values) {
     }
 
@@ -38,6 +44,10 @@ public class asyncGetArtists extends AsyncTask<String, Void, Artists> {
     protected void onPostExecute(Artists p){
         try {
             delegate.processFinish(p);
+            if(MainActivity.mWifiDirectActivity.info.isGroupOwner)
+                MainActivity.mWifiDirectActivity.receiveHostSpawn();
+            else
+                MainActivity.mWifiDirectActivity.receiveDataSpawn();
         }
         catch (Exception e)
         {

@@ -63,8 +63,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView list;
     public List<String> ipsOnNetwork = new ArrayList<>();
-    private Thread worker;
-    private boolean isHostAsyncNotRunning = true;
+    public Thread worker;
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
      */
@@ -241,9 +240,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                 private void updateUI(final List<String> output)
                 {
-                    if(worker.isInterrupted()){
-                        return;
-                    }
                     runOnUiThread(new Runnable(){
 
                         @Override
@@ -271,22 +267,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
 
-                                    for (int j = 0; j < ipsOnNetwork.size(); j++) {
-                                        Intent dataIntent = new Intent(MainActivity.mWifiDirectActivity, DataTransferService.class);
-                                        dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
-                                        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
-                                        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
-                                        dataIntent.putExtra(DataTransferService.EXTRAS_DATA, queueList);
-                                        dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, "track_added");
-                                        startService(dataIntent);
-                                    }
+                                    sendDataToPeers("track_added", queueList);
 
-                                    Context context = getApplicationContext();
-                                    SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
-                                    SharedPreferences.Editor ed = mPrefs.edit();
-                                    String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-                                    ed.putString("mQueueElementList", listJSon2);
-                                    ed.commit();
                                     break;
                                 default:
                                     break;
@@ -314,11 +296,19 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             data.add((String) type);
                             data.add((String) object);
                             updateUI(data);
-
                             serverSocket.close();
-                            //return data;
+
+                            if(false)
+                                throw new InterruptedException();
+
+                        } catch (InterruptedException e){
+                            e.printStackTrace();
+                            break;
+                        }catch (IOException e) {
+                            e.printStackTrace();
                         } catch (Exception e) {
-                            //return null;
+                            e.printStackTrace();
+                            break;
                         }
                     }
                 }
@@ -327,54 +317,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             worker.start();
         }
 
-        /*new asyncHostTransfer(new asyncHostTransfer.AsyncResponse() {
-            @Override
-            public void processFinish(List<String> output) {
-                String type = output.get(0);
-                String data = output.get(1);
-                Gson gson = new Gson();
-
-                switch (type) {
-                    case "ip_sent":
-                        if (!ipsOnNetwork.contains(data)) {
-                            ipsOnNetwork.add(data);
-                        }
-                        break;
-                    case "up_vote":
-                        break;
-                    case "down_vote":
-                        break;
-                    case "track_added":
-                        Type mClass = new TypeToken<myTrack>(){}.getType();
-                        myTrack track = gson.fromJson(data, mClass);
-                        MainActivity.mQueueFragment.addTrack(track);
-
-                        String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-
-                        for(int j = 0; j < ipsOnNetwork.size(); j++){
-                            Intent dataIntent = new Intent(MainActivity.mWifiDirectActivity, DataTransferService.class);
-                            dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
-                            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
-                            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
-                            dataIntent.putExtra(DataTransferService.EXTRAS_DATA, queueList);
-                            dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, "track_added");
-                            startService(dataIntent);
-                        }
-
-                        Context context = getApplicationContext();
-                        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
-                        SharedPreferences.Editor ed = mPrefs.edit();
-                        String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-                        ed.putString("mQueueElementList", listJSon2);
-                        ed.commit();
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-        }).execute();*/
-
     }
 
     public void receiveDataSpawn(){
@@ -382,9 +324,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             worker = new Thread(new Runnable() {
 
                 private void updateUI(final List<String> output) {
-                    if (worker.isInterrupted()) {
-                        return;
-                    }
                     runOnUiThread(new Runnable() {
 
                         @Override
@@ -403,18 +342,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     Type mClass = new TypeToken<List<QueueElement>>() {
                                     }.getType();
                                     MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
-
-                                    Context context = getApplicationContext();
-                                    SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
-                                    SharedPreferences.Editor ed = mPrefs.edit();
-                                    String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-                                    ed.putString("mQueueElementList", listJSon2);
-                                    ed.commit();
                                     break;
                                 default:
                                     break;
                             }
-                            // Update view and remove loading spinner etc...
                         }
                     });
                 }
@@ -443,8 +374,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             objectInputStream.close();
                             serverSocket.close();
+                            if(false)
+                                throw new InterruptedException();
                             //return data;
-                        } catch (IOException e) {
+                        } catch (InterruptedException e){
+                            e.printStackTrace();
+                            break;
+                        }catch (IOException e) {
                             Log.e(WifiDirectActivity.TAG, e.getMessage());
                             //return null;
                         } catch (ClassNotFoundException e) {
@@ -457,39 +393,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             });
             worker.start();
         }
-
-        /*new asyncDataTransfer(new asyncDataTransfer.AsyncResponse() {
-            @Override
-            public void processFinish(List<String> output){
-                String type = output.get(0);
-                String data = output.get(1);
-
-                Gson gson = new Gson();
-
-                switch (type){
-                    case "up_vote":
-                        break;
-                    case "down_vote":
-                        break;
-                    case "track_added":
-                        Type mClass = new TypeToken<List<QueueElement>>(){}.getType();
-                        MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
-
-                        Context context = getApplicationContext();
-                        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
-                        SharedPreferences.Editor ed = mPrefs.edit();
-                        String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-                        ed.putString("mQueueElementList", listJSon2);
-                        ed.commit();
-                        break;
-                    default:
-                        break;
-                }
-                //do something with the new data here.
-                //first element of list is an indicator of which type of data was sent.
-                //second element is the string of data
-            }
-        }).execute();*/
     }
 
     @Override

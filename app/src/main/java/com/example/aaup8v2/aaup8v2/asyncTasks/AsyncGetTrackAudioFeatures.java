@@ -22,6 +22,12 @@ public class AsyncGetTrackAudioFeatures extends AsyncTask<String, Void, AudioFea
     }
 
     @Override
+    protected void onPreExecute(){
+        if(MainActivity.mWifiDirectActivity.worker != null)
+            MainActivity.mWifiDirectActivity.worker.interrupt();
+    }
+
+    @Override
     protected void onProgressUpdate(Void... values){
     }
 
@@ -39,6 +45,10 @@ public class AsyncGetTrackAudioFeatures extends AsyncTask<String, Void, AudioFea
     protected void onPostExecute(AudioFeaturesTrack af){
         try {
             delegate.processFinish(af);
+            if(MainActivity.mWifiDirectActivity.info.isGroupOwner)
+                MainActivity.mWifiDirectActivity.receiveHostSpawn();
+            else
+                MainActivity.mWifiDirectActivity.receiveDataSpawn();
         }
         catch(Exception e){
             e.getCause();

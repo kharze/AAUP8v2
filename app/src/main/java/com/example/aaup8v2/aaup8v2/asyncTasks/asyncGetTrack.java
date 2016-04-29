@@ -18,6 +18,11 @@ public class asyncGetTrack extends AsyncTask<String, Void, Track> {
         this.delegate = delegate;
     }
 
+    @Override
+    protected void onPreExecute(){
+        if(MainActivity.mWifiDirectActivity.worker != null)
+            MainActivity.mWifiDirectActivity.worker.interrupt();
+    }
 
     @Override
     protected void onProgressUpdate(Void... values) {
@@ -32,6 +37,10 @@ public class asyncGetTrack extends AsyncTask<String, Void, Track> {
     protected void onPostExecute(Track t){
         try {
             delegate.processFinish(t);
+            if(MainActivity.mWifiDirectActivity.info.isGroupOwner)
+                MainActivity.mWifiDirectActivity.receiveHostSpawn();
+            else
+                MainActivity.mWifiDirectActivity.receiveDataSpawn();
         }
         catch (Exception e)
         {
