@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;
+    public static ImageView playButton;
     public static TextView playedName;
     public static TextView playedArtist;
 
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity
         // Instanciate the textviews for tracks.
         playedName = (TextView)findViewById(R.id.track_name);
         playedArtist = (TextView)findViewById(R.id.artist_name);
+        playButton = (ImageView)findViewById(R.id.playButtonImage);
         /**FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,8 +366,8 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    public void initializePeer(){
-        findViewById(R.id.playButtonImage).setVisibility(View.INVISIBLE);
+    public static void initializePeer(){
+        playButton.setVisibility(ImageView.GONE);
     }
 
 
