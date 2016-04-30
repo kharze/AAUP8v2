@@ -301,6 +301,8 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
         Spotify.destroyPlayer(this);
+        //Disconnect from the network, when the app is closed
+        mWifiDirectActivity.disconnect();
         super.onDestroy();
     }
 
@@ -357,7 +359,6 @@ public class MainActivity extends AppCompatActivity
     }
 **/
 
-    //Don't use, doesn't work
     public void pToP(View view){
         //Start Peer-to-Peer
         //Intent intent = new Intent(this, PeerToPeer.class);
