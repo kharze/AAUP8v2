@@ -35,7 +35,8 @@
                 android:hint="Enter hostname.."
                 android:textSize="14sp"
                 android:textColorHint="@color/textColor"
-                android:textColor="@color/textColor" />
+                android:textColor="@color/textColor"
+                android:inputType="text"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="fill_parent"
@@ -60,7 +61,7 @@
                 android:textColor="@color/textColor"
                 android:textSize="14sp"
                 android:hint="Enter password.."
-                android:password="true" />
+                android:inputType="textWebPassword"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="fill_parent"

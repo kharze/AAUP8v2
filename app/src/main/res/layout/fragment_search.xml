@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,28 +6,22 @@
     android:layout_below="@+id/toolbar"
     android:layout_above="@+id/playbarLayout">
 
-
-
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
         <Button
             android:id="@+id/searchMusicButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Search"
-            android:onClick="searchMusic"
-            android:layout_column="0" />
+            android:text="@string/Search"/>
 
         <EditText
             android:id="@+id/Search_Text"
-            android:hint="Search"
+            android:textColor="@color/textColor"
+            android:textColorHint="@color/textColor"
+            android:hint="@string/search_term"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:width="300dp"
             android:layout_toRightOf="@id/searchMusicButton"
+            android:layout_toEndOf="@id/searchMusicButton"
             android:singleLine="true"/>
 
         <ListView
@@ -36,5 +30,4 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
 
-    </RelativeLayout>
-</FrameLayout>
+</RelativeLayout>
