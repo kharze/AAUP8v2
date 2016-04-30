@@ -44,7 +44,7 @@ public class SearchFragment extends Fragment{
     private int add_track_check = R.drawable.ic_playlist_add_check;
     private SimpleAdapter searchAdapter;
 
-    List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
+    List<HashMap<String,String>> aList = new ArrayList<>();
     ListView Search_Results;
     private EditText mText;
 
