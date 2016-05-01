@@ -1,9 +1,7 @@
 package com.example.aaup8v2.aaup8v2;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -76,10 +74,6 @@ public class MainActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 
-        // Instanciate the textviews for tracks.
-        playedName = (TextView)findViewById(R.id.track_name);
-        playedArtist = (TextView)findViewById(R.id.artist_name);
-        playButton = (ImageView)findViewById(R.id.playButtonImage);
         /**FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,25 +112,22 @@ public class MainActivity extends AppCompatActivity
         mQueueFragment = new QueueFragment();
         musicPlayer = new MusicPlayer();
 
-        //Temporary TextView used to show playlist and Track.
-        //mTextView = (TextView)findViewById(R.id.Name_for_song);
+        // Instanciate the textviews for tracks.
+        playedName = (TextView)findViewById(R.id.track_name);
+        playedArtist = (TextView)findViewById(R.id.artist_name);
+        playButton = (ImageView)findViewById(R.id.playButtonImage);
 
-        //Clears the queue on startup, to prevent stored queue between sessions.
-        Context context = getApplicationContext();
-        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
-        mPrefs.edit().clear().apply();
-
-        final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
-        button.setOnClickListener(new View.OnClickListener() {
+        //Create onClickListener for playButton
+        playButton.setOnClickListener(new View.OnClickListener() {
             int buttonState = 0;
             public void onClick(View v) {
                 if (buttonState == 0 && (!mQueueFragment.mQueueElementList.isEmpty() || musicPlayer.isPlaying)) {
                     musicPlayer.play();
-                    button.setImageResource(R.drawable.ic_action_playback_pause);
+                    playButton.setImageResource(R.drawable.ic_action_playback_pause);
                     buttonState = 1;
                 } else if (buttonState == 1) {
                     musicPlayer.pause();
-                    button.setImageResource(R.drawable.ic_action_playback_play);
+                    playButton.setImageResource(R.drawable.ic_action_playback_play);
                     buttonState = 0;
                 }
             }
