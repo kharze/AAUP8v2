@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
-    public PearsonRecommend mRecommend = new PearsonRecommend();
+    public PearsonRecommend mRecommend;
     public MusicPlayer musicPlayer;
 
     public static SearchFragment mSearchFragment;
@@ -74,23 +74,12 @@ public class MainActivity extends AppCompatActivity
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 
-        /**FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });**/
-
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        //navigationView.setNavigationItemSelectedListener(this);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -101,18 +90,19 @@ public class MainActivity extends AppCompatActivity
 
         });
 
-        //Authenticates Spotify
-        SDKAuthenticate();
-        //Sets the spotify web Api access class
-        mSpotifyAccess = new SpotifyAccess();
+         authenticate(); //Authenticates Spotify
+
+        mSpotifyAccess = new SpotifyAccess(); //Sets the SpotifyAccess class
+        mRecommend = new PearsonRecommend(); //Sets the PearsonRecommend class
 
         mWifiDirectActivity = new WifiDirectActivity();
 
+        //Instantiate the fragments
         mSearchFragment = new SearchFragment();
         mQueueFragment = new QueueFragment();
         musicPlayer = new MusicPlayer();
 
-        // Instanciate the textviews for tracks.
+        // Instantiate the playbar
         playedName = (TextView)findViewById(R.id.track_name);
         playedArtist = (TextView)findViewById(R.id.artist_name);
         playButton = (ImageView)findViewById(R.id.playButtonImage);
@@ -195,7 +185,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void SDKAuthenticate(){
+    public void authenticate(){
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, //authentication
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
@@ -277,7 +267,6 @@ public class MainActivity extends AppCompatActivity
                     public void onInitialized(Player player) {
                         musicPlayer.mPlayer.addConnectionStateCallback(musicPlayer);
                         musicPlayer.mPlayer.addPlayerNotificationCallback(musicPlayer);
-                        //mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N");
                     }
 
                     @Override
@@ -335,22 +324,6 @@ public class MainActivity extends AppCompatActivity
             e.getMessage();
         }
     }
-    /**
-    public void playMusic(View view){ mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N"); }
-    public void pauseMusic(View view){
-        mPlayer.pause();
-    }
-    public void skipMusic(View view){
-        mPlayer.skipToNext();
-    }
-    public void prevMusic(View view){
-        mPlayer.skipToPrevious();
-    }
-
-    public void resumeMusic(View view) {
-        mPlayer.resume();
-    }
-**/
 
     public void pToP(View view){
         //Start Peer-to-Peer
@@ -368,7 +341,4 @@ public class MainActivity extends AppCompatActivity
     //Sends the button click to the search fragment
     //public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
 
-    // Upvote and downvote on click action for the Queue fragment
-    //public void click_down_vote(View view){ mQueueFragment.click_down_vote(view); }
-    //public void click_up_vote(View view){ mQueueFragment.click_up_vote(view); }
 }

@@ -89,7 +89,7 @@
 
         <!-- Large text at the top of the field -->
         <TextView
-            android:id="@+id/txt"
+            android:id="@+id/track_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
@@ -100,12 +100,12 @@
 
         <!-- Small text at the bottom of the field -->
         <TextView
-            android:id="@+id/cur"
+            android:id="@+id/artist_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
             android:textColor="@color/textColor"
-            android:layout_below="@id/txt"
+            android:layout_below="@id/track_name"
             android:lines="1"/>
     </RelativeLayout>
 
