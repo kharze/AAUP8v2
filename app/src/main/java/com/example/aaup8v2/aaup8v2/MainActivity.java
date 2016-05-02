@@ -41,6 +41,7 @@ import com.spotify.sdk.android.player.Spotify;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.UserPrivate;
 
 public class MainActivity extends AppCompatActivity
         implements /*NavigationView.OnNavigationItemSelectedListener,*/AdminFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, PlayListFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener,
@@ -122,6 +123,23 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    public void isPremium(){
+        Thread worker = new Thread(new Runnable() {
+            private void changePlaybutton(final UserPrivate up) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(up.product.equals("premium")){ initializePeer(true); }
+                        else { initializePeer(false); }
+                    }
+                });
+            }
+            @Override
+            public void run() { changePlaybutton(mSpotifyAccess.mService.getMe()); }
+        });
+        worker.start();
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
@@ -259,7 +277,8 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-               mSpotifyAccess.setAccessToken(response.getAccessToken());
+                mSpotifyAccess.setAccessToken(response.getAccessToken());
+                isPremium();
 
                 Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
                 musicPlayer.mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
@@ -333,8 +352,11 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    public static void initializePeer(){
-        playButton.setVisibility(ImageView.GONE);
+    public static void initializePeer(boolean show){
+        if(show)
+            playButton.setVisibility(ImageView.VISIBLE);
+        else
+            playButton.setVisibility(ImageView.GONE);
     }
 
 
