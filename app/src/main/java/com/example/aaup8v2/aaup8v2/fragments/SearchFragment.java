@@ -12,20 +12,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
-import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
+import com.example.aaup8v2.aaup8v2.fragments.models.SearchListAdapter;
 import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.DataTransferService;
 import com.example.aaup8v2.aaup8v2.wifidirect.HostTransferService;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -39,12 +37,9 @@ import java.util.List;
  */
 public class SearchFragment extends Fragment{
 
-    private List<myTrack> mTracklist;
-    private int add_track = R.drawable.ic_playlist_add;
-    private int add_track_check = R.drawable.ic_playlist_add_check;
-    private SimpleAdapter searchAdapter;
+    private List<myTrack> mTracklist = new ArrayList<>();
+    private SearchListAdapter searchAdapter;
 
-    List<HashMap<String,String>> aList = new ArrayList<>();
     ListView Search_Results;
     private EditText mText;
 
@@ -57,7 +52,6 @@ public class SearchFragment extends Fragment{
 
     public static SearchFragment newInstance() {
         SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
 
         return fragment;
     }
@@ -96,33 +90,10 @@ public class SearchFragment extends Fragment{
             }
         });
 
-        String[] from = {"trackName", "artist", "add"};
+        searchAdapter = new SearchListAdapter(getContext(), R.layout.listview_search_layout, mTracklist);
+        Search_Results.setAdapter(searchAdapter); // Assign adapter to ListView
 
-        int[] to = {R.id.trackName, R.id.artist, R.id.add_track};
-        searchAdapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_search_layout, from, to);
-
-        // Make onClickListener for elements in list
-        searchAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Object data, String textRepresentation) {
-                if(!view.hasOnClickListeners()) {
-                    if (view.getId() == R.id.add_track) {
-                        view.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                click_search_add_track(v);
-                            }
-                        });
-                    }
-                }
-                return false;
-            }
-        });
-
-        // Assign adapter to ListView
-        Search_Results.setAdapter(searchAdapter);
-        // Inflate the layout for this fragment
-        return v;
+        return v; // Inflate the layout for this fragment
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -149,8 +120,6 @@ public class SearchFragment extends Fragment{
         mListener = null;
     }
 
-
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -171,90 +140,53 @@ public class SearchFragment extends Fragment{
             @Override
             public void processFinish(List output) {
 
-                while(!aList.isEmpty()){
-                    aList.remove(0);
+                if(output.getClass() == mTracklist.getClass()) {
+                    mTracklist.clear(); //Clears the whole list
+                    mTracklist.addAll(output);
                 }
 
-                for (int i = 0; i < output.size(); i++) {
-                    HashMap<String, String> hm = new HashMap<>();
+                if(searchAdapter != null)
+                    searchAdapter.notifyDataSetChanged();
 
-                    mTracklist = (List<myTrack>)output;
-                    myTrack track = (myTrack) output.get(i);
-                    String s = track.name;
-                    hm.put("trackName", s);
-                    hm.put("artist", "Artist : " + track.artist);
-
-                    // Checks if the track is already on the Queue
-                    for(int j = 0; MainActivity.mQueueFragment.mQueueElementList.size() > j; j++){
-                        if(MainActivity.mQueueFragment.mQueueElementList.get(j).track.id.equals(((myTrack) output.get(i)).id)){
-                            hm.put("add", Integer.toString(add_track_check));
-                            break;
-                        }
-                    } //Checks is the track was detected
-                    if(!hm.containsValue(Integer.toString(add_track_check)))
-                        hm.put("add", Integer.toString(add_track));
-                    aList.add(hm);
-                }
-
-                searchAdapter.notifyDataSetChanged();
             }
         }).execute(searchString);
     }
 
 
-    public void click_search_add_track(View view){
-        // These two lines are used to find out which line of the list the button is in.
-        ListView listVoteInView = (ListView)view.getParent().getParent().getParent();
-        int bIndex = listVoteInView.indexOfChild((View)view.getParent().getParent());
-        int trackChosenOnList = listVoteInView.getFirstVisiblePosition() + bIndex;
-
-        searchAdapter.notifyDataSetChanged();
-
+    public void click_search_add_track(int position){
         Gson gson = new Gson();
 
-        //Check to see if the track is on the queue
-        if (!aList.get(trackChosenOnList).containsValue(Integer.toString(add_track_check))){
-            //Change the icon for the button (Needs to have a check for the state of the button.)
-            aList.get(trackChosenOnList).put("add", Integer.toString(add_track_check));
+        if(MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
+            MainActivity.mQueueFragment.addTrack(mTracklist.get(position));
 
-            QueueElement queueEmelemt = new QueueElement();
-            queueEmelemt.track = mTracklist.get(trackChosenOnList);
-            if(MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
-                MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
+            String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
 
-                String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-
-                for(int j = 0; j < MainActivity.mWifiDirectActivity.ipsOnNetwork.size(); j++){
-                    Intent dataIntent = new Intent(MainActivity.mWifiDirectActivity, DataTransferService.class);
-                    dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
-                    dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, MainActivity.mWifiDirectActivity.ipsOnNetwork.get(j));
-                    dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
-                    dataIntent.putExtra(DataTransferService.EXTRAS_DATA, queueList);
-                    dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, "track_added");
-                    getActivity().startService(dataIntent);
-                }
+            for(int j = 0; j < MainActivity.mWifiDirectActivity.ipsOnNetwork.size(); j++){
+                Intent dataIntent = new Intent(MainActivity.mWifiDirectActivity, DataTransferService.class);
+                dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+                dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, MainActivity.mWifiDirectActivity.ipsOnNetwork.get(j));
+                dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
+                dataIntent.putExtra(DataTransferService.EXTRAS_DATA, queueList);
+                dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, "track_added");
+                getActivity().startService(dataIntent);
             }
-            else if (MainActivity.mWifiDirectActivity.info != null){
-                String track = gson.toJson(mTracklist.get(trackChosenOnList));
-
-                Intent serviceIntent = new Intent(MainActivity.mWifiDirectActivity, HostTransferService.class);
-                serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
-                serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
-                        MainActivity.mWifiDirectActivity.info.groupOwnerAddress.getHostAddress());
-                serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
-                serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, track);
-                serviceIntent.putExtra(HostTransferService.EXTRAS_TYPE, "track_added");
-                getActivity().startService(serviceIntent);
-            }
-            else{ //in case we aren't connected to a network, we just add it as a jukebox.
-                MainActivity.mQueueFragment.addTrack(mTracklist.get(trackChosenOnList));
-            }
-            // A toast for when the track is added to the queue
-            Toast.makeText(getContext(),"Track added to queue",Toast.LENGTH_SHORT).show();
         }
-        else {
-            Toast.makeText(getContext(), "Track already on the queue", Toast.LENGTH_SHORT).show();
+        else if (MainActivity.mWifiDirectActivity.info != null){
+            String track = gson.toJson(mTracklist.get(position));
+
+            Intent serviceIntent = new Intent(MainActivity.mWifiDirectActivity, HostTransferService.class);
+            serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
+            serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                    MainActivity.mWifiDirectActivity.info.groupOwnerAddress.getHostAddress());
+            serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
+            serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, track);
+            serviceIntent.putExtra(HostTransferService.EXTRAS_TYPE, "track_added");
+            getActivity().startService(serviceIntent);
+            }
+        else{ //in case we aren't connected to a network, we just add it as a jukebox.
+            MainActivity.mQueueFragment.addTrack(mTracklist.get(position));
+            if(searchAdapter != null)
+                searchAdapter.notifyDataSetChanged();
         }
     }
-
 }

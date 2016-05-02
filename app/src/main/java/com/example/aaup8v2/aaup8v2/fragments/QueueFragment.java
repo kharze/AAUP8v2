@@ -56,7 +56,7 @@ public class QueueFragment extends Fragment {
         mlistView = (ListView)v.findViewById(R.id.queue_list);
 
         //Instantiate the adapter
-        queueAdapter = new QueueListAdapter(getContext(),R.layout.queue_listview_element,mQueueElementList);
+        queueAdapter = new QueueListAdapter(getContext(), R.layout.queue_listview_element, mQueueElementList);
 
         //Sets the adapter for the view
         mlistView.setAdapter(queueAdapter);
