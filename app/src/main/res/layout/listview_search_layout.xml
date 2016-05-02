@@ -28,7 +28,6 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:clickable="true"
-            android:onClick="click_search_add_track"
             android:contentDescription="@string/add_track_to_queue" />
 
         <TextView

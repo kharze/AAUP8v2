@@ -101,6 +101,23 @@ public class SearchFragment extends Fragment{
         int[] to = {R.id.trackName, R.id.artist, R.id.add_track};
         searchAdapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_search_layout, from, to);
 
+        // Make onClickListener for elements in list
+        searchAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if(!view.hasOnClickListeners()) {
+                    if (view.getId() == R.id.add_track) {
+                        view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                click_search_add_track(v);
+                            }
+                        });
+                    }
+                }
+                return false;
+            }
+        });
 
         // Assign adapter to ListView
         Search_Results.setAdapter(searchAdapter);
@@ -235,7 +252,7 @@ public class SearchFragment extends Fragment{
             // A toast for when the track is added to the queue
             Toast.makeText(getContext(),"Track added to queue",Toast.LENGTH_SHORT).show();
         }
-        else{
+        else {
             Toast.makeText(getContext(), "Track already on the queue", Toast.LENGTH_SHORT).show();
         }
     }

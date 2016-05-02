@@ -74,6 +74,7 @@ public class QueueFragment extends Fragment {
             }
         });
 
+        //Makes onClickListener for Elements on the list.
         queueAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {

@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         //Authenticates Spotify
-        authenticate();
+        SDKAuthenticate();
         //Sets the spotify web Api access class
         mSpotifyAccess = new SpotifyAccess();
 
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public void authenticate(){
+    public void SDKAuthenticate(){
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, //authentication
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
@@ -260,6 +260,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }*/
 
+    //Might be possible to move some of this to the MusicPlayer class.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -268,7 +269,7 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-               mSpotifyAccess.setAccessToken2(response.getAccessToken());
+               mSpotifyAccess.setAccessToken(response.getAccessToken());
 
                 Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
                 musicPlayer.mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
@@ -290,11 +291,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         // VERY IMPORTANT! This must always be called or else you will leak resources
         Spotify.destroyPlayer(this);
+
         //Disconnect from the network, when the app is closed
         mWifiDirectActivity.disconnect();
-        super.onDestroy();
     }
 
     @Override
@@ -364,7 +366,7 @@ public class MainActivity extends AppCompatActivity
 
 
     //Sends the button click to the search fragment
-    public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
+    //public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
 
     // Upvote and downvote on click action for the Queue fragment
     //public void click_down_vote(View view){ mQueueFragment.click_down_vote(view); }
