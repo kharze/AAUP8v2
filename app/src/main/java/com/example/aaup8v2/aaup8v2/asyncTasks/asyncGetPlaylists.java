@@ -25,6 +25,12 @@ public class asyncGetPlaylists extends AsyncTask<String, Void, Pager<PlaylistSim
     public asyncGetPlaylists(AsyncResponse delegate) { this.delegate = delegate; }
 
     @Override
+    protected void onPreExecute(){
+        if(MainActivity.mWifiDirectActivity.worker != null)
+            MainActivity.mWifiDirectActivity.worker.interrupt();
+    }
+
+    @Override
     protected void onProgressUpdate(Void... values) {}
 
     @Override
@@ -65,6 +71,10 @@ public class asyncGetPlaylists extends AsyncTask<String, Void, Pager<PlaylistSim
     protected void onPostExecute(Pager<PlaylistSimple> p){
         try {
             delegate.processFinish(p);
+            if(MainActivity.mWifiDirectActivity.info.isGroupOwner)
+                MainActivity.mWifiDirectActivity.receiveHostSpawn();
+            else
+                MainActivity.mWifiDirectActivity.receiveDataSpawn();
         }
         catch (Exception e)
         {

@@ -50,14 +50,6 @@ public class DataTransferService extends IntentService {
                 ObjectOutputStream oos = new ObjectOutputStream(stream);
                 oos.writeObject(dataType);
                 oos.writeObject(data);
-                /*ContentResolver cr = context.getContentResolver();
-                InputStream is = null;
-                try {
-                    is = cr.openInputStream(Uri.parse(fileUri));
-                } catch (FileNotFoundException e) {
-                    Log.d(WifiDirectActivity.TAG, e.toString());
-                }
-                DeviceDetailFragment.copyFile(is, stream);*/
                 Log.d(WifiDirectActivity.TAG, "Client: Data written");
             } catch (IOException e) {
                 Log.e(WifiDirectActivity.TAG, e.getMessage());

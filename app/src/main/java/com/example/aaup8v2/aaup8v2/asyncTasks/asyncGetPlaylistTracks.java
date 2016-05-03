@@ -22,6 +22,12 @@ public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
     }
 
     @Override
+    protected void onPreExecute(){
+        if(MainActivity.mWifiDirectActivity.worker != null)
+            MainActivity.mWifiDirectActivity.worker.interrupt();
+    }
+
+    @Override
     protected void onProgressUpdate(Void... values) {
     }
 
@@ -63,6 +69,10 @@ public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
     protected void onPostExecute(Pager p){
         try {
             delegate.processFinish(p);
+            if(MainActivity.mWifiDirectActivity.info.isGroupOwner)
+                MainActivity.mWifiDirectActivity.receiveHostSpawn();
+            else
+                MainActivity.mWifiDirectActivity.receiveDataSpawn();
         }
         catch (Exception e)
         {

@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -17,7 +16,6 @@ import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -28,19 +26,19 @@ import android.widget.Toast;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncDataTransfer;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncHostTransfer;
 import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import retrofit.android.MainThreadExecutor;
 
 /**
  * An activity that uses WiFi Direct APIs to discover and connect with available
@@ -50,6 +48,11 @@ import retrofit.android.MainThreadExecutor;
  * WiFi state related events.
  */
 public class WifiDirectActivity extends Activity implements ChannelListener, DeviceActionListener, WifiP2pManager.ConnectionInfoListener {
+    public static final String IP_SENT = "ip_sent";
+    public static final String TRACK_ADDED = "track_added";
+    public static final String UP_VOTE = "up_vote";
+    public static final String DOWN_VOTE = "down_vote";
+
     public static final String TAG = "wifidirectdemo";
     private WifiP2pManager manager;
     private boolean isWifiP2pEnabled = false;
@@ -64,7 +67,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView list;
     public List<String> ipsOnNetwork = new ArrayList<>();
-    private boolean isHostAsyncNotRunning = true;
+    public Thread worker;
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
      */
@@ -148,50 +151,51 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 Toast.makeText(WifiDirectActivity.this, "Discovery Initiated",
                         Toast.LENGTH_SHORT).show();
 
-                    // request available peers from the wifi p2p manager. This is an
-                    // asynchronous call and the calling activity is notified with a
-                    // callback on PeerListListener.onPeersAvailable()
-                    if (manager != null) {
-                        manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
+                // request available peers from the wifi p2p manager. This is an
+                // asynchronous call and the calling activity is notified with a
+                // callback on PeerListListener.onPeersAvailable()
+                if (manager != null) {
+                    manager.requestPeers(channel, new WifiP2pManager.PeerListListener() {
 
-                            public void onPeersAvailable(WifiP2pDeviceList peers) {
-                                Log.d(TAG, String.format("PeerListListener: %d peers available, updating device list", peers.getDeviceList().size()));
-                                fragment.onPeersAvailable(peers);
+                        public void onPeersAvailable(WifiP2pDeviceList peers) {
+                            Log.d(TAG, String.format("PeerListListener: %d peers available, updating device list", peers.getDeviceList().size()));
+                            fragment.onPeersAvailable(peers);
 
-                                // DO WHATEVER YOU WANT HERE
-                                // YOU CAN GET ACCESS TO ALL THE DEVICES YOU FOUND FROM peers OBJECT
-                                aList.clear();
+                            // DO WHATEVER YOU WANT HERE
+                            // YOU CAN GET ACCESS TO ALL THE DEVICES YOU FOUND FROM peers OBJECT
+                            aList.clear();
 
-                                while(!peersCollection.isEmpty()){
-                                    peersCollection.remove(0);
-                                }
-
-                                peersCollection.addAll(peers.getDeviceList());
-
-                                for(int i = 0; i < peersCollection.size(); i++){
-                                    HashMap<String, String> hm = new HashMap<String,String>();
-
-                                    String s = peersCollection.get(i).deviceName;
-                                    hm.put("txt", s);
-                                    aList.add(hm);
-                                }
-
-
-                                String[] from = { "flag","txt","cur" };
-
-                                int[] to = { R.id.flag,R.id.txt,R.id.cur,R.id.textView};
-                                SimpleAdapter a = new SimpleAdapter(view.getContext(),aList,R.layout.listview_layout_p2p,from,to);
-
-                                // Assign adapter to ListView
-                                list = (ListView) findViewById(R.id.listviewPeers);
-                                list.setAdapter(a);
-
+                            while (!peersCollection.isEmpty()) {
+                                peersCollection.remove(0);
                             }
-                        });
 
-                    }
+                            peersCollection.addAll(peers.getDeviceList());
+
+                            for (int i = 0; i < peersCollection.size(); i++) {
+                                HashMap<String, String> hm = new HashMap<String, String>();
+
+                                String s = peersCollection.get(i).deviceName;
+                                hm.put("txt", s);
+                                aList.add(hm);
+                            }
+
+
+                            String[] from = {"flag", "txt", "cur"};
+
+                            int[] to = {R.id.flag, R.id.txt, R.id.cur, R.id.textView};
+                            SimpleAdapter a = new SimpleAdapter(view.getContext(), aList, R.layout.listview_layout_p2p, from, to);
+
+                            // Assign adapter to ListView
+                            list = (ListView) findViewById(R.id.listviewPeers);
+                            list.setAdapter(a);
+
+                        }
+                    });
+
+                }
 
             }
+
             @Override
             public void onFailure(int reasonCode) {
                 Toast.makeText(WifiDirectActivity.this, "Discovery Failed : " + reasonCode,
@@ -212,15 +216,25 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             receiveHostSpawn();
 
         } else if (info.groupFormed) {
-            Intent serviceIntent = new Intent(this, HostTransferService.class);
+            sendDataToHost("ip_sent", "", MainActivity.mQueueFragment.myIP);
+
+            /*Intent serviceIntent = new Intent(this, HostTransferService.class);
             serviceIntent.setAction(HostTransferService.ACTION_FIRST_TIME);
             serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
                     info.groupOwnerAddress.getHostAddress());
             serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
-            startService(serviceIntent);
+            startService(serviceIntent);*/
 
             //Remove play/pause button for peers
-            findViewById(R.id.playButtonImage).setVisibility(View.INVISIBLE);
+            //MainActivity.initializePeer();
+
+            /*try {
+                setContentView(R.layout.content_main);
+                findViewById(R.id.playButtonImage).setVisibility(View.INVISIBLE);
+                //setContentView(R.layout.activity_wifidirect);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
 
             receiveDataSpawn();
         }
@@ -228,89 +242,187 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void receiveHostSpawn(){
-        new asyncHostTransfer(new asyncHostTransfer.AsyncResponse() {
-            @Override
-            public void processFinish(List<String> output) {
-                String type = output.get(0);
-                String data = output.get(1);
-                Gson gson = new Gson();
+        if (worker == null || !worker.isAlive()) {
+            worker = new Thread(new Runnable(){
 
-                switch (type) {
-                    case "ip_sent":
-                        if (!ipsOnNetwork.contains(data)) {
-                            ipsOnNetwork.add(data);
+                private void updateUI(final List<String> output)
+                {
+                    runOnUiThread(new Runnable(){
+
+                        @Override
+                        public void run()
+                        {
+                            String type = output.get(0);
+                            String data = output.get(1);
+                            String sender = output.get(2);
+                            Gson gson = new Gson();
+
+                            switch (type) {
+                                case IP_SENT:
+                                    if (!ipsOnNetwork.contains(data)) {
+                                        ipsOnNetwork.add(data);
+                                    }
+                                    break;
+                                case UP_VOTE:
+                                    MainActivity.mQueueFragment.mQueueElementList.get(Integer.parseInt(data)).upvoteList.add(sender);
+                                    MainActivity.mQueueFragment.sortQueue();
+                                    String queueListUp = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+                                    sendDataToPeers(queueListUp, WifiDirectActivity.UP_VOTE);
+                                    break;
+                                case DOWN_VOTE:
+                                    MainActivity.mQueueFragment.mQueueElementList.get(Integer.parseInt(data)).downvoteList.add(sender);
+                                    MainActivity.mQueueFragment.voteThreshold(Integer.parseInt(data));
+                                    MainActivity.mQueueFragment.sortQueue();
+                                    String queueListDown = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+                                    sendDataToPeers(queueListDown, WifiDirectActivity.DOWN_VOTE);
+                                    break;
+                                case TRACK_ADDED:
+                                    Type mClass = new TypeToken<myTrack>() {
+                                    }.getType();
+                                    myTrack track = gson.fromJson(data, mClass);
+                                    MainActivity.mQueueFragment.addTrack(track);
+
+                                    String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+
+                                    sendDataToPeers("track_added", queueList);
+
+                                    break;
+                                case "disconnect":
+                                    //Handle disconnect
+
+
+                                    if(ipsOnNetwork.contains(sender))
+                                        ipsOnNetwork.remove(sender);
+
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
-                        break;
-                    case "up_vote":
-                        break;
-                    case "down_vote":
-                        break;
-                    case "track_added":
-                        Type mClass = new TypeToken<myTrack>(){}.getType();
-                        myTrack track = gson.fromJson(data, mClass);
-                        MainActivity.mQueueFragment.addTrack(track);
-
-                        String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-
-                        for(int j = 0; j < ipsOnNetwork.size(); j++){
-                            Intent dataIntent = new Intent(MainActivity.mWifiDirectActivity, DataTransferService.class);
-                            dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
-                            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
-                            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
-                            dataIntent.putExtra(DataTransferService.EXTRAS_DATA, queueList);
-                            dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, "track_added");
-                            startService(dataIntent);
-                        }
-
-                        Context context = getApplicationContext();
-                        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
-                        SharedPreferences.Editor ed = mPrefs.edit();
-                        String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-                        ed.putString("mQueueElementList", listJSon2);
-                        ed.commit();
-                        break;
-                    default:
-                        break;
+                    });
                 }
 
-            }
-        }).execute();
+
+                @Override
+                public void run()
+                {
+                    Log.d(TAG, "Thread run()");
+                    while (true) {
+                        try {
+                            ServerSocket serverSocket = new ServerSocket(8888);
+                            Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
+                            Socket client = serverSocket.accept();
+                            Log.d(WifiDirectActivity.TAG, "Server: connection done");
+                            ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
+                            Object type = objectInputStream.readObject();
+                            Object object = objectInputStream.readObject();
+                            Object sender = objectInputStream.readObject();
+
+                            List<String> data = new ArrayList<>();
+                            data.add((String) type);
+                            data.add((String) object);
+                            data.add((String) sender);
+                            updateUI(data);
+                            serverSocket.close();
+
+                            if(false)
+                                throw new InterruptedException();
+
+                        } catch (InterruptedException e){
+                            e.printStackTrace();
+                            break;
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            break;
+                        }
+                    }
+                }
+
+            });
+            worker.start();
+        }
 
     }
 
     public void receiveDataSpawn(){
-        new asyncDataTransfer(new asyncDataTransfer.AsyncResponse() {
-            @Override
-            public void processFinish(List<String> output){
-                String type = output.get(0);
-                String data = output.get(1);
+        if(worker == null || !worker.isAlive()) {
+            worker = new Thread(new Runnable() {
 
-                Gson gson = new Gson();
+                private void updateUI(final List<String> output) {
+                    runOnUiThread(new Runnable() {
 
-                switch (type){
-                    case "up_vote":
-                        break;
-                    case "down_vote":
-                        break;
-                    case "track_added":
-                        Type mClass = new TypeToken<List<QueueElement>>(){}.getType();
-                        MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                        @Override
+                        public void run() {
+                            String type = output.get(0);
+                            String data = output.get(1);
 
-                        Context context = getApplicationContext();
-                        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
-                        SharedPreferences.Editor ed = mPrefs.edit();
-                        String listJSon2 = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-                        ed.putString("mQueueElementList", listJSon2);
-                        ed.commit();
-                        break;
-                    default:
-                        break;
+                            Gson gson = new Gson();
+                            Type mClass = new TypeToken<List<QueueElement>>() {
+                            }.getType();
+
+                            switch (type) {
+                                case UP_VOTE:
+
+                                    MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                                    break;
+                                case DOWN_VOTE:
+                                    MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                                    break;
+                                case TRACK_ADDED:
+                                    MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    });
                 }
-                //do something with the new data here.
-                //first element of list is an indicator of which type of data was sent.
-                //second element is the string of data
-            }
-        }).execute();
+
+
+                @Override
+                public void run() {
+                    Log.d(TAG, "Thread run()");
+                    while (true) {
+                        try {
+                            ServerSocket serverSocket = new ServerSocket(8988);
+                            Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
+                            Socket client = serverSocket.accept();
+                            Log.d(WifiDirectActivity.TAG, "Server: connection done");
+
+                            ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
+                            Object type = objectInputStream.readObject();
+                            Object object = objectInputStream.readObject();
+                            if (object.getClass().equals(String.class)) {
+                                Log.d(WifiDirectActivity.TAG, "Data received");
+                            }
+                            List<String> data = new ArrayList<>();
+                            data.add((String) type);
+                            data.add((String) object);
+                            updateUI(data);
+
+                            objectInputStream.close();
+                            serverSocket.close();
+                            if(false)
+                                throw new InterruptedException();
+                            //return data;
+                        } catch (InterruptedException e){
+                            e.printStackTrace();
+                            break;
+                        }catch (IOException e) {
+                            Log.e(WifiDirectActivity.TAG, e.getMessage());
+                            //return null;
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                            //return null;
+                        }
+                    }
+                }
+
+            });
+            worker.start();
+        }
     }
 
     @Override
@@ -336,20 +448,34 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
     @Override
     public void disconnect() {
-        final DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager()
-                .findFragmentById(R.id.frag_detail);
-        fragment.resetViews();
-        manager.removeGroup(channel, new ActionListener() {
-            @Override
-            public void onFailure(int reasonCode) {
-                Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
-            }
+        //Add data communication that peer left the network.
 
-            @Override
-            public void onSuccess() {
-                fragment.getView().setVisibility(View.GONE);
-            }
-        });
+        if(manager != null) {
+            manager.removeGroup(channel, new ActionListener() {
+                @Override
+                public void onFailure(int reasonCode) {
+                    Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
+                }
+
+                @Override
+                public void onSuccess() {
+
+                }
+            });
+        }
+    }
+
+    public void disconnectTellHost(){
+        sendDataToHost("disconnect", "", MainActivity.mQueueFragment.myIP);
+        disconnect();
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        if(worker != null)
+            worker.interrupt();
     }
     @Override
     public void onChannelDisconnected() {
@@ -432,26 +558,39 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             if (index == bIndex)
             {
                 if (!info.isGroupOwner) {
-                    Intent serviceIntent = new Intent(this, HostTransferService.class);
-                    serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
-                    serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
-                            info.groupOwnerAddress.getHostAddress());
-                    serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
-                    serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, "I sent something");
-                    startService(serviceIntent);
+                    sendDataToHost("", "I sent something", "");
                 } else {
-                    for(int j = 0; j < ipsOnNetwork.size(); j++){
-                        Intent dataIntent = new Intent(this, DataTransferService.class);
-                        dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
-                        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
-                        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
-                        dataIntent.putExtra(DataTransferService.EXTRAS_DATA, "I'm number" + i);
-                        startService(dataIntent);
-                    }
+                    sendDataToPeers("", "I'm number" + i);
                 }
 
             }
             index++;
         }
     }
+
+    public void sendDataToHost(String type, String data, String ip){
+        Intent serviceIntent = new Intent(this, HostTransferService.class);
+        serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                info.groupOwnerAddress.getHostAddress());
+        serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, data);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_TYPE, type);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_SENDER, ip);
+        startService(serviceIntent);
+    }
+
+    public void sendDataToPeers(String type, String data){
+        for(int j = 0; j < ipsOnNetwork.size(); j++){
+            Intent dataIntent = new Intent(this, DataTransferService.class);
+            dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
+            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
+            dataIntent.putExtra(DataTransferService.EXTRAS_DATA, data);
+            dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, type);
+            startService(dataIntent);
+        }
+    }
 }
+
+

@@ -1,9 +1,7 @@
 package com.example.aaup8v2.aaup8v2;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -18,8 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
@@ -43,6 +41,7 @@ import com.spotify.sdk.android.player.Spotify;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.UserPrivate;
 
 public class MainActivity extends AppCompatActivity
         implements /*NavigationView.OnNavigationItemSelectedListener,*/AdminFragment.OnFragmentInteractionListener, HomeFragment.OnFragmentInteractionListener, PlayListFragment.OnFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener,
@@ -57,13 +56,15 @@ public class MainActivity extends AppCompatActivity
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
-    public PearsonRecommend mRecommend = new PearsonRecommend();
-    public MusicPlayer musicPlayer = new MusicPlayer();
+    public PearsonRecommend mRecommend;
+    public MusicPlayer musicPlayer;
 
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;
-    public static Context context;
+    public static ImageView playButton;
+    public static TextView playedName;
+    public static TextView playedArtist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +73,6 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        /**FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });**/
 
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -88,7 +81,6 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        //navigationView.setNavigationItemSelectedListener(this);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -99,39 +91,55 @@ public class MainActivity extends AppCompatActivity
 
         });
 
-        //Authenticates Spotify
-        authenticate();
-        //Sets the spotify web Api access class
-        mSpotifyAccess = new SpotifyAccess();
+         authenticate(); //Authenticates Spotify
+
+        mSpotifyAccess = new SpotifyAccess(); //Sets the SpotifyAccess class
+        mRecommend = new PearsonRecommend(); //Sets the PearsonRecommend class
 
         mWifiDirectActivity = new WifiDirectActivity();
 
+        //Instantiate the fragments
         mSearchFragment = new SearchFragment();
         mQueueFragment = new QueueFragment();
+        musicPlayer = new MusicPlayer();
 
-        //Temporary TextView used to show playlist and Track.
-        //mTextView = (TextView)findViewById(R.id.Name_for_song);
+        // Instantiate the playbar
+        playedName = (TextView)findViewById(R.id.track_name);
+        playedArtist = (TextView)findViewById(R.id.artist_name);
+        playButton = (ImageView)findViewById(R.id.playButtonImage);
 
-        //Clears the queue on startup, to prevent stored queue between sessions.
-        Context context = getApplicationContext();
-        SharedPreferences mPrefs = context.getSharedPreferences("Queue", 1);
-        mPrefs.edit().clear().apply();
-
-        final ImageView button = (ImageView) findViewById(R.id.playButtonImage);
-        button.setOnClickListener(new View.OnClickListener() {
+        //Create onClickListener for playButton
+        playButton.setOnClickListener(new View.OnClickListener() {
             int buttonState = 0;
             public void onClick(View v) {
                 if (buttonState == 0 && (!mQueueFragment.mQueueElementList.isEmpty() || musicPlayer.isPlaying)) {
                     musicPlayer.play();
-                    button.setImageResource(R.drawable.ic_action_playback_pause);
+                    playButton.setImageResource(R.drawable.ic_action_playback_pause);
                     buttonState = 1;
                 } else if (buttonState == 1) {
                     musicPlayer.pause();
-                    button.setImageResource(R.drawable.ic_action_playback_play);
+                    playButton.setImageResource(R.drawable.ic_action_playback_play);
                     buttonState = 0;
                 }
             }
         });
+    }
+
+    public void isPremium(){
+        Thread worker = new Thread(new Runnable() {
+            private void changePlaybutton(final UserPrivate up) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(up.product.equals("premium")){ initializePeer(true); }
+                        else { initializePeer(false); }
+                    }
+                });
+            }
+            @Override
+            public void run() { changePlaybutton(mSpotifyAccess.mService.getMe()); }
+        });
+        worker.start();
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
@@ -174,6 +182,8 @@ public class MainActivity extends AppCompatActivity
                 mSearchFragment = (SearchFragment) fragment;
             }
             else if(fragmentClass == QueueFragment.class){
+
+                ((QueueFragment)fragment).mQueueElementList = mQueueFragment.mQueueElementList;
                 mQueueFragment = (QueueFragment) fragment;
             }
         } catch (Exception e) {
@@ -217,6 +227,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
         return true;
     }
 
@@ -257,6 +268,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }*/
 
+    //Might be possible to move some of this to the MusicPlayer class.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -265,7 +277,8 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-               mSpotifyAccess.setAccessToken2(response.getAccessToken());
+                mSpotifyAccess.setAccessToken(response.getAccessToken());
+                isPremium();
 
                 Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
                 musicPlayer.mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
@@ -273,7 +286,6 @@ public class MainActivity extends AppCompatActivity
                     public void onInitialized(Player player) {
                         musicPlayer.mPlayer.addConnectionStateCallback(musicPlayer);
                         musicPlayer.mPlayer.addPlayerNotificationCallback(musicPlayer);
-                        //mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N");
                     }
 
                     @Override
@@ -287,9 +299,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         // VERY IMPORTANT! This must always be called or else you will leak resources
         Spotify.destroyPlayer(this);
-        super.onDestroy();
+
+        //Disconnect from the network, when the app is closed
+        mWifiDirectActivity.disconnect();
     }
 
     @Override
@@ -328,55 +343,7 @@ public class MainActivity extends AppCompatActivity
             e.getMessage();
         }
     }
-    /**
-    public void playMusic(View view){ mPlayer.play("spotify:track:2SUpC3UgKwLVOS2FtZif9N"); }
-    public void pauseMusic(View view){
-        mPlayer.pause();
-    }
-    public void skipMusic(View view){
-        mPlayer.skipToNext();
-    }
-    public void prevMusic(View view){
-        mPlayer.skipToPrevious();
-    }
 
-    public void resumeMusic(View view) {
-        mPlayer.resume();
-    }
-**/
-
-    EditText mText;
-
-    int i = 0;
-
-    public void searchMusic(View view){
-        String searchString;
-        mText = (EditText) findViewById(R.id.Search_Text);
-        searchString = mText.getText().toString();
-
-        //ensure searchString has at least 3 characters
-        if(searchString.length() >= 3)
-            mSearchFragment.SearchForMusic(searchString);
-        else
-            i++;
-
-        /*String searchString = "";
-        mText = (EditText) findViewById(R.id.Search_Text);
-        searchString = mText.getText().toString();
-
-        new asyncSearchMusic(new asyncSearchMusic.AsyncResponse(){
-            @Override
-            public void processFinish(List output){
-
-                //mListView;
-
-                i++;
-            }
-        }).execute(searchString);*/
-
-    }
-
-    //Don't use, doesn't work
     public void pToP(View view){
         //Start Peer-to-Peer
         //Intent intent = new Intent(this, PeerToPeer.class);
@@ -385,11 +352,15 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public static void initializePeer(boolean show){
+        if(show)
+            playButton.setVisibility(ImageView.VISIBLE);
+        else
+            playButton.setVisibility(ImageView.GONE);
+    }
+
 
     //Sends the button click to the search fragment
-    public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
+    //public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
 
-    // Upvote and downvote on click action for the Queue fragment
-    public void click_down_vote(View view){ mQueueFragment.click_down_vote(view); }
-    public void click_up_vote(View view){ mQueueFragment.click_up_vote(view); }
 }

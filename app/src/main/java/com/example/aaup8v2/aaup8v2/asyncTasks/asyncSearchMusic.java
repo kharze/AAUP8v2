@@ -22,7 +22,7 @@ import kaaes.spotify.webapi.android.models.TracksPager;
  *
  * Async task to handle the music searching
  */
-public class asyncSearchMusic extends AsyncTask<String, Void, List> {
+public class asyncSearchMusic extends AsyncTask<String, Void, List<myTrack>> {
     public interface AsyncResponse {
         void processFinish(List output);
     }
@@ -33,11 +33,17 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
     }
 
     @Override
+    protected void onPreExecute(){
+        if(MainActivity.mWifiDirectActivity.worker != null)
+            MainActivity.mWifiDirectActivity.worker.interrupt();
+    }
+
+    @Override
     protected void onProgressUpdate(Void... values) {
     }
 
     @Override
-    protected List doInBackground(String... id) {
+    protected List<myTrack> doInBackground(String... id) {
         List<myTrack> mSearchTracks = new ArrayList<>();
         Pager mArtistAlbums;
         List<String> albumsList = new ArrayList<>();
@@ -129,9 +135,13 @@ public class asyncSearchMusic extends AsyncTask<String, Void, List> {
     }
 
     @Override
-    protected void onPostExecute(List t){
+    protected void onPostExecute(List<myTrack> t){
         try {
             delegate.processFinish(t);
+            if(MainActivity.mWifiDirectActivity.info.isGroupOwner)
+                MainActivity.mWifiDirectActivity.receiveHostSpawn();
+            else
+                MainActivity.mWifiDirectActivity.receiveDataSpawn();
         }
         catch (Exception e)
         {

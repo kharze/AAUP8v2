@@ -7,7 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
 
 
@@ -65,8 +67,18 @@ public class DisconnectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_disconnect, container,false);
+        Button disconnectNetworkButton = (Button)v.findViewById(R.id.btn_disconnect_from_network);
+
+        disconnectNetworkButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                MainActivity.mWifiDirectActivity.disconnectTellHost();
+            }
+        });
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_disconnect, container, false);
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

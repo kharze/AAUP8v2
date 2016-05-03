@@ -23,6 +23,7 @@ public class HostTransferService extends IntentService {
     public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
     public static final String EXTRAS_DATA = "data_to_send";
     public static final String EXTRAS_TYPE = "type_to_send";
+    public static final String EXTRAS_SENDER = "ip_of_sender";
     public HostTransferService(String name) {
         super(name);
     }
@@ -36,7 +37,7 @@ public class HostTransferService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         //Context context = getApplicationContext();
-        if (intent.getAction().equals(ACTION_FIRST_TIME)){
+        /*if (intent.getAction().equals(ACTION_FIRST_TIME)){
             String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
             Socket socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
@@ -51,6 +52,7 @@ public class HostTransferService extends IntentService {
                 oos.writeObject("ip_sent");
                 localIp = socket.getLocalAddress().getHostAddress();
                 oos.writeObject(localIp);
+                oos.writeObject("");
                 oos.close();
                 socket.close();
 
@@ -69,7 +71,7 @@ public class HostTransferService extends IntentService {
                     }
                 }
             }
-        }
+        }*/
 
         if (intent.getAction().equals(ACTION_SEND_DATA)) {
             String host = intent.getExtras().getString(EXTRAS_GROUP_OWNER_ADDRESS);
@@ -77,6 +79,7 @@ public class HostTransferService extends IntentService {
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
             String type = intent.getExtras().getString(EXTRAS_TYPE);
             String data = intent.getExtras().getString(EXTRAS_DATA);
+            String sender = intent.getExtras().getString(EXTRAS_SENDER);
             try {
                 Log.d(WifiDirectActivity.TAG, "Opening client socket - ");
                 socket.bind(null);
@@ -87,6 +90,7 @@ public class HostTransferService extends IntentService {
                 ObjectOutputStream oos = new ObjectOutputStream(stream);
                 oos.writeObject(type);
                 oos.writeObject(data);
+                oos.writeObject(sender);
                 oos.close();
                 socket.close();
 

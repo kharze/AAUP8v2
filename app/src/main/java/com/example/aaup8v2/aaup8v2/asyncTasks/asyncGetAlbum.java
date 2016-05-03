@@ -17,6 +17,12 @@ public class asyncGetAlbum extends AsyncTask<String, Void, Album> {
     public asyncGetAlbum(AsyncResponse delegate){ this.delegate = delegate; }
 
     @Override
+    protected void onPreExecute(){
+        if(MainActivity.mWifiDirectActivity.worker != null)
+            MainActivity.mWifiDirectActivity.worker.interrupt();
+    }
+
+    @Override
     protected void onProgressUpdate(Void... values) {
     }
 
@@ -36,6 +42,10 @@ public class asyncGetAlbum extends AsyncTask<String, Void, Album> {
     protected void onPostExecute(Album p){
         try {
             delegate.processFinish(p);
+            if(MainActivity.mWifiDirectActivity.info.isGroupOwner)
+                MainActivity.mWifiDirectActivity.receiveHostSpawn();
+            else
+                MainActivity.mWifiDirectActivity.receiveDataSpawn();
         }
         catch (Exception e)
         {

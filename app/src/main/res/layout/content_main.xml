@@ -1,45 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/flContent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentBottom="true"
     android:paddingTop="5dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.aaup8v2.aaup8v2.MainActivity"
     tools:showIn="@layout/app_bar_main"
-    android:background="#282828">
-
-    <RelativeLayout
-        android:id="@+id/flContent"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true">
+    android:background="@color/colorPrimaryDark">
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_gravity="center|bottom"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:id="@+id/playbarLayout">
+            android:id="@+id/playbarLayout"
+            android:background="@color/colorPrimary">
             <ImageButton
                 android:id="@+id/playButtonImage"
                 android:src="@drawable/ic_action_playback_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="playPause"
-                android:layout_alignParentLeft="true"/>
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@string/play_button"/>
             <ImageButton
                 android:id="@+id/testButtonImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="pToP"
                 android:src="@drawable/ic_home"
-                android:layout_toRightOf="@id/playButtonImage"/>
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/playButtonImage"
+                android:layout_toStartOf="@id/playButtonImage"
+                android:contentDescription="@string/play_button" />
+            <TextView
+                android:id="@+id/track_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/playButtonImage"
+                android:layout_toEndOf="@id/playButtonImage"
+                android:layout_toStartOf="@id/playButtonImage"
+                android:layout_toLeftOf="@id/playButtonImage"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:textSize="18sp"
+                android:textColor="@color/textColor"
+                android:text="@string/no_song_playing_text"
+                android:lines="1"/>
+            <TextView
+                android:id="@+id/artist_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/track_name"
+                android:layout_toStartOf="@id/playButtonImage"
+                android:layout_toLeftOf="@id/playButtonImage"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:textSize="14sp"
+                android:textColor="@color/textColor"
+                android:lines="1"/>
         </RelativeLayout>
-    </RelativeLayout>
 </RelativeLayout>
