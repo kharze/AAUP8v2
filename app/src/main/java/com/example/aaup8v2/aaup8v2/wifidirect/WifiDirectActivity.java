@@ -267,14 +267,14 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     MainActivity.mQueueFragment.mQueueElementList.get(Integer.parseInt(data)).upvoteList.add(sender);
                                     MainActivity.mQueueFragment.sortQueue();
                                     String queueListUp = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-                                    sendDataToPeers(queueListUp, WifiDirectActivity.UP_VOTE);
+                                    sendDataToPeers(WifiDirectActivity.UP_VOTE, queueListUp);
                                     break;
                                 case DOWN_VOTE:
                                     MainActivity.mQueueFragment.mQueueElementList.get(Integer.parseInt(data)).downvoteList.add(sender);
                                     MainActivity.mQueueFragment.voteThreshold(Integer.parseInt(data));
                                     MainActivity.mQueueFragment.sortQueue();
                                     String queueListDown = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-                                    sendDataToPeers(queueListDown, WifiDirectActivity.DOWN_VOTE);
+                                    sendDataToPeers(WifiDirectActivity.DOWN_VOTE, queueListDown);
                                     break;
                                 case TRACK_ADDED:
                                     Type mClass = new TypeToken<myTrack>() {
@@ -284,7 +284,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
 
-                                    sendDataToPeers("track_added", queueList);
+                                    sendDataToPeers(TRACK_ADDED, queueList);
 
                                     break;
                                 case "disconnect":
@@ -366,12 +366,18 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 case UP_VOTE:
 
                                     MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                                    if(MainActivity.mQueueFragment.queueAdapter != null)
+                                        MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case DOWN_VOTE:
                                     MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                                    if(MainActivity.mQueueFragment.queueAdapter != null)
+                                        MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case TRACK_ADDED:
                                     MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                                    if(MainActivity.mQueueFragment.queueAdapter != null)
+                                        MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 default:
                                     break;
@@ -560,7 +566,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 if (!info.isGroupOwner) {
                     sendDataToHost("", "I sent something", "");
                 } else {
-                    sendDataToPeers("", "I'm number" + i);
+                    sendDataToPeers("", "I'm number " + i);
                 }
 
             }

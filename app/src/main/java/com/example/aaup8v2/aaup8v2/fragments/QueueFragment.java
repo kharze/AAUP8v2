@@ -35,7 +35,7 @@ public class QueueFragment extends Fragment {
 
     public String myIP = FindIP.getIPAddress(true); //The ip of the device
 
-    private QueueListAdapter queueAdapter; // Out custom adapter for the queue
+    public QueueListAdapter queueAdapter; // Out custom adapter for the queue
 
     private OnFragmentInteractionListener mListener; //Is is needed to be here, get an error if removed.
 
@@ -202,7 +202,7 @@ public class QueueFragment extends Fragment {
             sortQueue();
 
             String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-            MainActivity.mWifiDirectActivity.sendDataToPeers(queueList, WifiDirectActivity.DOWN_VOTE);
+            MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.DOWN_VOTE, queueList);
         }
         else{
             MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.DOWN_VOTE,Integer.toString(position),myIP);
@@ -240,7 +240,7 @@ public class QueueFragment extends Fragment {
             sortQueue();
 
             String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-            MainActivity.mWifiDirectActivity.sendDataToPeers(queueList, WifiDirectActivity.UP_VOTE);
+            MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.UP_VOTE, queueList);
         }
         else{
             MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.UP_VOTE,Integer.toString(position),myIP);
