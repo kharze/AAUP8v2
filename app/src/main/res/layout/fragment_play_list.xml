@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     tools:context=".fragments.PlayListFragment"
     android:layout_below="@+id/toolbar"
-    android:layout_above="@+id/playbarLayout">
+    android:layout_above="@+id/playbarLayout"
+    android:orientation="vertical">
 
     <ExpandableListView
         android:layout_width="wrap_content"

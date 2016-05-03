@@ -11,6 +11,7 @@
         android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
         android:paddingRight="0dp"
         android:paddingEnd="0dp"
-        android:textSize="17sp"/>
+        android:textSize="17sp"
+        android:textColor="@color/textColor"/>
 
 </LinearLayout>
