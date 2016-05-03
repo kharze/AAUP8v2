@@ -264,8 +264,17 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     }
                                     break;
                                 case UP_VOTE:
+                                    MainActivity.mQueueFragment.mQueueElementList.get(Integer.parseInt(data)).upvoteList.add(sender);
+                                    MainActivity.mQueueFragment.sortQueue();
+                                    String queueListUp = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+                                    sendDataToPeers(queueListUp, WifiDirectActivity.UP_VOTE);
                                     break;
                                 case DOWN_VOTE:
+                                    MainActivity.mQueueFragment.mQueueElementList.get(Integer.parseInt(data)).downvoteList.add(sender);
+                                    MainActivity.mQueueFragment.voteThreshold(Integer.parseInt(data));
+                                    MainActivity.mQueueFragment.sortQueue();
+                                    String queueListDown = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+                                    sendDataToPeers(queueListDown, WifiDirectActivity.DOWN_VOTE);
                                     break;
                                 case TRACK_ADDED:
                                     Type mClass = new TypeToken<myTrack>() {
@@ -350,15 +359,18 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             String data = output.get(1);
 
                             Gson gson = new Gson();
+                            Type mClass = new TypeToken<List<QueueElement>>() {
+                            }.getType();
 
                             switch (type) {
                                 case UP_VOTE:
+
+                                    MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
                                     break;
                                 case DOWN_VOTE:
+                                    MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
                                     break;
                                 case TRACK_ADDED:
-                                    Type mClass = new TypeToken<List<QueueElement>>() {
-                                    }.getType();
                                     MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
                                     break;
                                 default:

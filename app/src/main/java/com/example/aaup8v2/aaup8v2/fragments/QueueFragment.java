@@ -15,6 +15,8 @@ import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.fragments.models.QueueListAdapter;
 import com.example.aaup8v2.aaup8v2.myTrack;
+import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -193,8 +195,20 @@ public class QueueFragment extends Fragment {
             mQueueElementList.get(position).downvoteList.remove(myIP);
         }
 
-        voteThreshold(position);
-        sortQueue();
+        Gson gson = new Gson();
+
+        if (MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
+            voteThreshold(position);
+            sortQueue();
+
+            String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+            MainActivity.mWifiDirectActivity.sendDataToPeers(queueList, WifiDirectActivity.DOWN_VOTE);
+        }
+        else{
+            MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.DOWN_VOTE,Integer.toString(position),myIP);
+        }
+
+
         if(queueAdapter != null)
             queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
     }
@@ -220,7 +234,17 @@ public class QueueFragment extends Fragment {
             mQueueElementList.get(position).upvoteList.remove(myIP);
         }
 
-        sortQueue();
+        Gson gson = new Gson();
+
+        if (MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
+            sortQueue();
+
+            String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+            MainActivity.mWifiDirectActivity.sendDataToPeers(queueList, WifiDirectActivity.UP_VOTE);
+        }
+        else{
+            MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.UP_VOTE,Integer.toString(position),myIP);
+        }
         if(queueAdapter != null)
             queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
     }

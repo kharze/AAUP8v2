@@ -10,7 +10,6 @@ import java.util.List;
 // class for storing the elements of the play queue, and their ranking/votes;
 public class QueueElement {
     public myTrack track;
-    public boolean tooManyDownvotes;
     public double weight;
     public List<String> upvoteList = new ArrayList<>();
     public List<String> downvoteList = new ArrayList<>();
@@ -18,7 +17,6 @@ public class QueueElement {
     // makes sure the values are always 0 at creation;
     public void onCreate(){
         this.track = null;
-        this.tooManyDownvotes = false;
         this.weight = 0;
         this.upvoteList = new ArrayList<>();
         this.downvoteList = new ArrayList<>();
