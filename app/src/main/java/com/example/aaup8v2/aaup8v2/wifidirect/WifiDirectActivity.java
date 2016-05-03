@@ -78,6 +78,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifidirect);
+        this.worker = MainActivity.mWifiDirectActivity.worker;
         MainActivity.mWifiDirectActivity = this;
         // add necessary intent values to be matched.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -280,12 +281,20 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     Type mClass = new TypeToken<myTrack>() {
                                     }.getType();
                                     myTrack track = gson.fromJson(data, mClass);
-                                    MainActivity.mQueueFragment.addTrack(track);
+                                    Boolean inList = false;
+                                    for(int i = 0; MainActivity.mQueueFragment.mQueueElementList.size() > i; i++){
+                                        if(MainActivity.mQueueFragment.mQueueElementList.get(i).track.id.equals(track.id)){
+                                            inList = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!inList){
+                                        MainActivity.mQueueFragment.addTrack(track);
 
-                                    String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+                                        String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
 
-                                    sendDataToPeers(TRACK_ADDED, queueList);
-
+                                        sendDataToPeers(TRACK_ADDED, queueList);
+                                    }
                                     break;
                                 case "disconnect":
                                     //Handle disconnect
@@ -364,7 +373,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             switch (type) {
                                 case UP_VOTE:
-
                                     MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();

@@ -158,6 +158,8 @@ public class SearchFragment extends Fragment{
             MainActivity.mQueueFragment.addTrack(mTracklist.get(position));
             String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
             MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.TRACK_ADDED, queueList);
+            if(searchAdapter != null)
+                searchAdapter.notifyDataSetChanged();
         }
         else if (MainActivity.mWifiDirectActivity.info != null){
             String track = gson.toJson(mTracklist.get(position));
