@@ -1,6 +1,5 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -31,7 +30,7 @@ public class PlayListFragment extends Fragment{
     //HashMap<String, List<HashMap<String, String>>> listDataChild;
     public HashMap<String, List<String>> listDataChild;
     List<String> playlistIds = new ArrayList<>();
-    ExpandableListAdapters listAdapter = new ExpandableListAdapters(this.getContext(), playlistName, listDataChild);
+    ExpandableListAdapters listAdapter;
 
     int[] flags = new int[]{
             R.drawable.ic_home,
@@ -66,10 +65,12 @@ public class PlayListFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if(listDataChild == null)
+            listDataChild = new HashMap<>();
 
         final View v = inflater.inflate(R.layout.fragment_play_list, container,false);
 
-        //listAdapter = new ExpandableListAdapters(this.getContext(), playlistName, listDataChild);
+        listAdapter = new ExpandableListAdapters(getContext(), playlistName, listDataChild);
 
         expListView = (ExpandableListView) v.findViewById(R.id.expand_list);
 
@@ -136,7 +137,7 @@ public class PlayListFragment extends Fragment{
     }
 
     public void prepareListData(){
-        listDataChild = new HashMap<>();
+        //listDataChild = new HashMap<>();
 
         for(int i = 0; i < playlistName.size(); i++){
             listDataChild.put(playlistName.get(i), tracksLists.get(i));

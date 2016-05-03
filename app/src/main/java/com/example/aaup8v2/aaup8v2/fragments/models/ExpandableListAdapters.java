@@ -1,8 +1,5 @@
 package com.example.aaup8v2.aaup8v2.fragments.models;
 
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -12,6 +9,9 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.R;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by lasse on 28-04-2016.
