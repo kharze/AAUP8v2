@@ -152,9 +152,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_queue:
                 fragmentClass = QueueFragment.class;
                 break;
-            case R.id.nav_home:
-                fragmentClass = HomeFragment.class;
-                break;
+            // case R.id.nav_home:
+             //   fragmentClass = HomeFragment.class;
+             //   break;
             case R.id.nav_playlist:
                 fragmentClass = PlayListFragment.class;
                 break;

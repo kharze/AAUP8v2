@@ -10,7 +10,8 @@
             android:id="@+id/searchMusicButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/Search"/>
+            android:text="@string/Search"
+            android:layout_alignParentRight="true"/>
 
         <EditText
             android:id="@+id/Search_Text"
@@ -20,9 +21,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:width="300dp"
-            android:layout_toRightOf="@id/searchMusicButton"
-            android:layout_toEndOf="@id/searchMusicButton"
-            android:singleLine="true"/>
+            android:layout_toLeftOf="@id/searchMusicButton"
+            android:layout_toStartOf="@id/searchMusicButton"
+            android:singleLine="true"
+            android:layout_alignParentRight="false"/>
 
         <ListView
             android:id="@+id/Search_Results"
