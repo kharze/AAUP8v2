@@ -36,6 +36,7 @@ import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +88,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
+
         //receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
         list = (ListView) findViewById(R.id.listviewPeers);
 
@@ -243,14 +245,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void receiveHostSpawn(){
-        if(worker != null && worker.isInterrupted())
-            worker.start();
-
-        Thread.State s = null;
-        if(worker != null)
-            s = worker.getState();
-
-        if (worker == null || !worker.isAlive()) {
+        if (worker == null || !worker.isAlive() || worker.isInterrupted()) {
             worker = new Thread(new Runnable(){
 
                 private void updateUI(final List<String> output)
@@ -345,7 +340,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             if(false)
                                 throw new InterruptedException();
 
-                        } catch (InterruptedException e){
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                             try {
                                 serverSocket.close();
@@ -353,6 +348,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 e1.printStackTrace();
                             }
                             break;
+                        }catch (ClosedByInterruptException e){
+                            e.getCause();
                         }catch (IOException e) {
                             e.printStackTrace();
                             try {
@@ -368,19 +365,14 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 }
 
             });
+            worker.setName("HostSpawn");
             worker.start();
         }
 
     }
 
     public void receiveDataSpawn(){
-        if(worker != null && worker.isInterrupted())
-            worker.start();
-        Thread.State s = null;
-        if(worker != null)
-            s = worker.getState();
-
-        if(worker == null || !worker.isAlive()) {
+        if(worker == null || !worker.isAlive() || worker.isInterrupted()) {
             worker = new Thread(new Runnable() {
 
                 private void updateUI(final List<String> output) {
@@ -446,7 +438,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             if(false)
                                 throw new InterruptedException();
                             //return data;
-                        } catch (InterruptedException e){
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                             try {
                                 serverSocket.close();
@@ -454,6 +446,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 e1.printStackTrace();
                             }
                             break;
+                        }catch (ClosedByInterruptException e){
+                            e.getCause();
                         }catch (IOException e) {
                             Log.e(WifiDirectActivity.TAG, e.getMessage());
                             try {
@@ -472,6 +466,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 }
 
             });
+            worker.setName("DataSpawn");
             worker.start();
         }
     }
