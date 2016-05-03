@@ -99,7 +99,8 @@
                     android:text="Rock"
                     android:textSize="10sp"
                     android:textStyle="bold"
-                    android:textColor="@color/textColor"/>
+                    android:textColor="@color/textColor"
+                    android:buttonTint="@color/textColor"/>
                 <CheckBox
                     android:id="@+id/jazzCheckbox"
                     android:layout_width="0dp"
@@ -111,7 +112,8 @@
                     android:text="Jazz"
                     android:textSize="10sp"
                     android:textStyle="bold"
-                    android:textColor="@color/textColor"/>
+                    android:textColor="@color/textColor"
+                    android:buttonTint="@color/textColor"/>
                 <CheckBox
                     android:id="@+id/HouseCheckbox"
                     android:layout_width="0dp"
@@ -123,7 +125,8 @@
                     android:text="House"
                     android:textSize="10sp"
                     android:textStyle="bold"
-                    android:textColor="@color/textColor"/>
+                    android:textColor="@color/textColor"
+                    android:buttonTint="@color/textColor"/>
             </TableRow>
         </LinearLayout>
 
