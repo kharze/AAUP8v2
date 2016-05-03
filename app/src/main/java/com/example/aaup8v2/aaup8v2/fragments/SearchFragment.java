@@ -157,11 +157,12 @@ public class SearchFragment extends Fragment{
         if(MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
             MainActivity.mQueueFragment.addTrack(mTracklist.get(position));
             String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-            MainActivity.mWifiDirectActivity.transferDataHost(queueList, WifiDirectActivity.TRACK_ADDED);
+            MainActivity.mWifiDirectActivity.sendDataToPeers(queueList, WifiDirectActivity.TRACK_ADDED);
         }
         else if (MainActivity.mWifiDirectActivity.info != null){
             String track = gson.toJson(mTracklist.get(position));
-            MainActivity.mWifiDirectActivity.transferDataPeer(track, WifiDirectActivity.TRACK_ADDED, MainActivity.mQueueFragment.myIP);
+
+            MainActivity.mWifiDirectActivity.sendDataToHost(track, WifiDirectActivity.TRACK_ADDED, MainActivity.mQueueFragment.myIP);
             }
         else{ //in case we aren't connected to a network, we just add it as a jukebox.
             MainActivity.mQueueFragment.addTrack(mTracklist.get(position));
