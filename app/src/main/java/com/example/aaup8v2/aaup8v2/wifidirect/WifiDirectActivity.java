@@ -480,8 +480,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     protected void onDestroy()
     {
         super.onDestroy();
-        if(worker != null)
-            worker.interrupt();
+        /*if(worker != null)
+            worker.interrupt();*/
     }
     @Override
     public void onChannelDisconnected() {
