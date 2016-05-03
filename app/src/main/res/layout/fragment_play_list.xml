@@ -4,11 +4,12 @@
     android:layout_height="match_parent"
     tools:context=".fragments.PlayListFragment"
     android:layout_below="@+id/toolbar"
-    android:layout_above="@+id/playbarLayout">
+    android:layout_above="@+id/playbarLayout"
+    android:orientation="vertical">
 
     <ExpandableListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/expand_list"
-        android:layout_gravity="left|top" />
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+
 </FrameLayout>

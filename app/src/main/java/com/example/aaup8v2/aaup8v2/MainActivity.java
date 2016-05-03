@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;
+    public static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

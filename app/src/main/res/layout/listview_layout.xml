@@ -1,51 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="55dip"
+    android:orientation="vertical" >
 
-    <ImageView
-        android:id="@+id/flag"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/lblListItem"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/Playlist"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"/>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp">
-
-        <ImageView
-            android:id="@+id/add_track"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:clickable="true"
-            android:onClick="click_search_add_track"/>
-
-        <TextView
-            android:id="@+id/trackName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:textColor="@color/textColor"
-            android:lines="1"
-            android:layout_alignParentLeft="true"
-            android:layout_toStartOf="@id/add_track"
-            android:layout_toLeftOf="@id/add_track"/>
-
-        <TextView
-            android:id="@+id/artist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/textColor"
-            android:lines="1"
-            android:layout_below="@id/trackName"/>
-
-    </RelativeLayout>
+        android:textSize="17dip"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"
+        android:textColor="@color/textColor"/>
 
 </LinearLayout>
