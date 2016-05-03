@@ -17,25 +17,22 @@
             android:textColor="@color/textColor"/>
     </TableRow>
 
-
-
     <TableRow
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal">
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/modify_account"
             android:textSize="15sp"
-            android:id="@+id/modifyAcc"
-            android:layout_column="0"/>
+            android:id="@+id/modifyAcc"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/disconnect_account"
             android:textSize="15sp"
-            android:id="@+id/disAccount"
-            android:layout_column="1"/>
+            android:id="@+id/disAccount"/>
     </TableRow>
     <TableRow android:minHeight="20dp">
 
@@ -60,7 +57,8 @@
             android:text="@string/rock"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:textColor="@color/textColor"/>
+            android:textColor="@color/textColor"
+            android:buttonTint="@color/textColor"/>
         <CheckBox
             android:id="@+id/jazzCheckbox"
             android:layout_width="0dp"
@@ -73,7 +71,8 @@
             android:text="@string/jazz"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:textColor="@color/textColor"/>
+            android:textColor="@color/textColor"
+            android:buttonTint="@color/textColor"/>
         <CheckBox
             android:id="@+id/HouseCheckbox"
             android:layout_width="0dp"
@@ -86,7 +85,8 @@
             android:text="@string/house"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:textColor="@color/textColor"/>
+            android:textColor="@color/textColor"
+            android:buttonTint="@color/textColor"/>
 
     </TableRow>
 
