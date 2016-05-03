@@ -212,12 +212,14 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             receiveHostSpawn();
 
         } else if (info.groupFormed) {
-            Intent serviceIntent = new Intent(this, HostTransferService.class);
+            sendDataToHost("ip_sent", "", MainActivity.mQueueFragment.myIP);
+
+            /*Intent serviceIntent = new Intent(this, HostTransferService.class);
             serviceIntent.setAction(HostTransferService.ACTION_FIRST_TIME);
             serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
                     info.groupOwnerAddress.getHostAddress());
             serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
-            startService(serviceIntent);
+            startService(serviceIntent);*/
 
             //Remove play/pause button for peers
             //MainActivity.initializePeer();
@@ -248,6 +250,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                         {
                             String type = output.get(0);
                             String data = output.get(1);
+                            String sender = output.get(2);
                             Gson gson = new Gson();
 
                             switch (type) {
@@ -271,6 +274,14 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     sendDataToPeers("track_added", queueList);
 
                                     break;
+                                case "disconnect":
+                                    //Handle disconnect
+
+
+                                    if(ipsOnNetwork.contains(sender))
+                                        ipsOnNetwork.remove(sender);
+
+                                    break;
                                 default:
                                     break;
                             }
@@ -292,10 +303,12 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
                             Object type = objectInputStream.readObject();
                             Object object = objectInputStream.readObject();
+                            Object sender = objectInputStream.readObject();
 
                             List<String> data = new ArrayList<>();
                             data.add((String) type);
                             data.add((String) object);
+                            data.add((String) sender);
                             updateUI(data);
                             serverSocket.close();
 
@@ -419,6 +432,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
     @Override
     public void disconnect() {
+        //Add data communication that peer left the network.
+
         if(manager != null) {
             manager.removeGroup(channel, new ActionListener() {
                 @Override
@@ -433,6 +448,12 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             });
         }
     }
+
+    public void disconnectTellHost(){
+        sendDataToHost("disconnect", "", MainActivity.mQueueFragment.myIP);
+        disconnect();
+    }
+
     @Override
     protected void onDestroy()
     {
