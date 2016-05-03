@@ -243,6 +243,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void receiveHostSpawn(){
+        if(worker != null && worker.isInterrupted())
+            worker.start();
+
+        Thread.State s = null;
+        if(worker != null)
+            s = worker.getState();
+
         if (worker == null || !worker.isAlive()) {
             worker = new Thread(new Runnable(){
 
@@ -317,8 +324,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 {
                     Log.d(TAG, "Thread run()");
                     while (true) {
+                        ServerSocket serverSocket = null;
                         try {
-                            ServerSocket serverSocket = new ServerSocket(8888);
+                            serverSocket = new ServerSocket(8888);
                             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
                             Socket client = serverSocket.accept();
                             Log.d(WifiDirectActivity.TAG, "Server: connection done");
@@ -339,9 +347,19 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                         } catch (InterruptedException e){
                             e.printStackTrace();
+                            try {
+                                serverSocket.close();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                             break;
                         }catch (IOException e) {
                             e.printStackTrace();
+                            try {
+                                serverSocket.close();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                             break;
@@ -356,6 +374,12 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void receiveDataSpawn(){
+        if(worker != null && worker.isInterrupted())
+            worker.start();
+        Thread.State s = null;
+        if(worker != null)
+            s = worker.getState();
+
         if(worker == null || !worker.isAlive()) {
             worker = new Thread(new Runnable() {
 
@@ -399,8 +423,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 public void run() {
                     Log.d(TAG, "Thread run()");
                     while (true) {
+                        ServerSocket serverSocket = null;
                         try {
-                            ServerSocket serverSocket = new ServerSocket(8988);
+                            serverSocket = new ServerSocket(8988);
                             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
                             Socket client = serverSocket.accept();
                             Log.d(WifiDirectActivity.TAG, "Server: connection done");
@@ -423,9 +448,21 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             //return data;
                         } catch (InterruptedException e){
                             e.printStackTrace();
+                            try {
+                                serverSocket.close();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                             break;
                         }catch (IOException e) {
                             Log.e(WifiDirectActivity.TAG, e.getMessage());
+                            try {
+                                serverSocket.close();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            } catch (Exception e2){
+                                e2.getCause();
+                            }
                             //return null;
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
