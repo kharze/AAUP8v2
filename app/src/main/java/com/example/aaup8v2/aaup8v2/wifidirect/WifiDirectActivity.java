@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -49,6 +48,11 @@ import java.util.List;
  * WiFi state related events.
  */
 public class WifiDirectActivity extends Activity implements ChannelListener, DeviceActionListener, WifiP2pManager.ConnectionInfoListener {
+    public static final String IP_SENT = "ip_sent";
+    public static final String TRACK_ADDED = "track_added";
+    public static final String UP_VOTE = "up_vote";
+    public static final String DOWN_VOTE = "down_vote";
+
     public static final String TAG = "wifidirectdemo";
     private WifiP2pManager manager;
     private boolean isWifiP2pEnabled = false;
@@ -254,16 +258,16 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             Gson gson = new Gson();
 
                             switch (type) {
-                                case "ip_sent":
+                                case IP_SENT:
                                     if (!ipsOnNetwork.contains(data)) {
                                         ipsOnNetwork.add(data);
                                     }
                                     break;
-                                case "up_vote":
+                                case UP_VOTE:
                                     break;
-                                case "down_vote":
+                                case DOWN_VOTE:
                                     break;
-                                case "track_added":
+                                case TRACK_ADDED:
                                     Type mClass = new TypeToken<myTrack>() {
                                     }.getType();
                                     myTrack track = gson.fromJson(data, mClass);
@@ -348,11 +352,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             Gson gson = new Gson();
 
                             switch (type) {
-                                case "up_vote":
+                                case UP_VOTE:
                                     break;
-                                case "down_vote":
+                                case DOWN_VOTE:
                                     break;
-                                case "track_added":
+                                case TRACK_ADDED:
                                     Type mClass = new TypeToken<List<QueueElement>>() {
                                     }.getType();
                                     MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
@@ -573,6 +577,32 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, type);
             startService(dataIntent);
         }
+    }
+
+    public void transferDataHost(String data, String transferType){
+
+            for(int j = 0; j < MainActivity.mWifiDirectActivity.ipsOnNetwork.size(); j++){
+                Intent dataIntent = new Intent(MainActivity.mWifiDirectActivity, DataTransferService.class);
+                dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+                dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, MainActivity.mWifiDirectActivity.ipsOnNetwork.get(j));
+                dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
+                dataIntent.putExtra(DataTransferService.EXTRAS_DATA, data);
+                dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, transferType);
+                this.startService(dataIntent);
+            }
+    }
+
+    public void transferDataPeer(String data, String transferType, String ip){
+
+        Intent serviceIntent = new Intent(MainActivity.mWifiDirectActivity, HostTransferService.class);
+        serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
+                MainActivity.mWifiDirectActivity.info.groupOwnerAddress.getHostAddress());
+        serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, data);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_TYPE, transferType);
+        serviceIntent.putExtra(HostTransferService.EXTRAS_SENDER, ip);
+        this.startService(serviceIntent);
     }
 }
 
