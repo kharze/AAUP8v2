@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity
     public static SpotifyAccess mSpotifyAccess;
     public PearsonRecommend mRecommend;
     public MusicPlayer musicPlayer;
+    public static UserPrivate me;
 
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        me = up; //Saves the user for later use
                         if(up.product.equals("premium")){ initializePeer(true); }
                         else { initializePeer(false); }
                     }

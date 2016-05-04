@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.Runnables.SearchMusicRunnable;
+import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 import com.example.aaup8v2.aaup8v2.fragments.models.SearchListAdapter;
 import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
@@ -153,7 +154,7 @@ public class SearchFragment extends Fragment{
 
 
     public void startSearchThread(String id){
-        SearchMusicRunnable searchMusicRunnable = new SearchMusicRunnable(id, new SearchMusicRunnable.ThreadResponse() {
+        SearchMusicRunnable searchMusicRunnable = new SearchMusicRunnable(id, new ThreadResponseInterface.ThreadResponse<List<myTrack>>() {
 
             @Override
             public void processFinish(final List<myTrack> output) {

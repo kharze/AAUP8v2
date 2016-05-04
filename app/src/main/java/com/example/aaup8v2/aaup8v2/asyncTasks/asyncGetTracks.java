@@ -7,7 +7,6 @@ import com.example.aaup8v2.aaup8v2.MainActivity;
 import java.util.HashMap;
 import java.util.Map;
 
-import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Tracks;
 
 public class asyncGetTracks extends AsyncTask<String, Void, Tracks> {
@@ -58,8 +57,6 @@ public class asyncGetTracks extends AsyncTask<String, Void, Tracks> {
             e.getCause();
             return null;
         }
-
-        //return MainActivity.mSpotifyAccess.mService.getTracks(id[0]);
     }
 
     @Override

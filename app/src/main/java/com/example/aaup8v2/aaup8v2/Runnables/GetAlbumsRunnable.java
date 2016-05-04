@@ -10,14 +10,13 @@ import kaaes.spotify.webapi.android.models.Albums;
 public class GetAlbumsRunnable extends ThreadResponseInterface<Albums> implements Runnable {
     private String id;
 
-    public GetAlbumsRunnable(String id, ThreadResponse delegate) {
+    public GetAlbumsRunnable(String id, ThreadResponse<Albums> delegate) {
         this.id = id;
         this.delegate = delegate;
     }
 
     public void run() {
-        Albums result = MainActivity.mSpotifyAccess.mService.getAlbums(id);
-
-        delegate.processFinish(result);
+        try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getAlbums(id)); }
+        catch (Exception e) { delegate.processFinish(null); }
     }
 }

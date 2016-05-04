@@ -5,7 +5,7 @@ package com.example.aaup8v2.aaup8v2.Runnables;
  */
 public class ThreadResponseInterface<T> {
 
-    public ThreadResponse delegate = null;
+    public ThreadResponse<T> delegate = null;
 
     public interface ThreadResponse<T> {
         void processFinish(T output);
