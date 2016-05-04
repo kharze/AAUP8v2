@@ -53,6 +53,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public static final String TRACK_ADDED = "track_added";
     public static final String UP_VOTE = "up_vote";
     public static final String DOWN_VOTE = "down_vote";
+    public static final String DISCONNECT = "disconnect";
 
     public static final String TAG = "wifidirectdemo";
     private WifiP2pManager manager;
@@ -238,6 +239,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             } catch (Exception e) {
                 e.printStackTrace();
             }*/
+            MainActivity.initializePeer(false);
 
             receiveDataSpawn();
         }
@@ -260,11 +262,12 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             String sender = output.get(2);
                             Gson gson = new Gson();
 
+                            if (!ipsOnNetwork.contains(sender)) {
+                                ipsOnNetwork.add(sender);
+                            }
+
                             switch (type) {
                                 case IP_SENT:
-                                    if (!ipsOnNetwork.contains(sender)) {
-                                        ipsOnNetwork.add(sender);
-                                    }
                                     break;
                                 case UP_VOTE:
                                     MainActivity.mQueueFragment.mQueueElementList.get(Integer.parseInt(data)).upvoteList.add(sender);
@@ -298,7 +301,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                         sendDataToPeers(TRACK_ADDED, queueList);
                                     }
                                     break;
-                                case "disconnect":
+                                case DISCONNECT:
                                     //Handle disconnect
 
 
@@ -491,8 +494,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void disconnectTellHost(){
-        sendDataToHost("disconnect", "", MainActivity.mQueueFragment.myIP);
-        disconnect();
+        sendDataToHost(DISCONNECT, "", MainActivity.mQueueFragment.myIP);
     }
 
     @Override

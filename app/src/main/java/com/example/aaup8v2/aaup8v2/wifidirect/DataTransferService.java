@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -64,6 +66,8 @@ public class DataTransferService extends IntentService {
                         }
                     }
                 }
+                if(dataType != null && dataType.equals(WifiDirectActivity.DISCONNECT))
+                    MainActivity.mWifiDirectActivity.disconnect();
             }
         }
     }
