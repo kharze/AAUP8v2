@@ -262,8 +262,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             switch (type) {
                                 case IP_SENT:
-                                    if (!ipsOnNetwork.contains(data)) {
-                                        ipsOnNetwork.add(data);
+                                    if (!ipsOnNetwork.contains(sender)) {
+                                        ipsOnNetwork.add(sender);
                                     }
                                     break;
                                 case UP_VOTE:
@@ -558,7 +558,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 //String s = i.next().deviceName;
                 WifiP2pDevice dev = peersCollection.get(i);
                 WifiP2pConfig conf = new WifiP2pConfig();
-                conf.groupOwnerIntent = 0;
+                conf.groupOwnerIntent = 15;
                 conf.deviceAddress =  peersCollection.get(i).deviceAddress;
                 conf.wps.setup = WpsInfo.PBC;
                 connect(conf);
