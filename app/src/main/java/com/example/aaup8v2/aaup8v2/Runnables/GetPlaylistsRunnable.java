@@ -9,7 +9,7 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
 /**
- * Created by MSI on 04-05-2016.
+ * Created by Sean Skov Them on 04-05-2016.
  */
 public class GetPlaylistsRunnable extends ThreadResponseInterface<Pager<PlaylistSimple>> implements Runnable {
     String id;

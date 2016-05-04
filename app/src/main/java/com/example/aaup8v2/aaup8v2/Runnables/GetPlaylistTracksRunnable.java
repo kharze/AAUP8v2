@@ -10,7 +10,7 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
 /**
- * Created by MSI on 04-05-2016.
+ * Created by Sean Skov Them on 04-05-2016.
  */
 public class GetPlaylistTracksRunnable extends ThreadResponseInterface<Pager<PlaylistTrack>> implements Runnable {
     String userID;

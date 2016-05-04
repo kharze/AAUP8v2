@@ -5,7 +5,7 @@ import com.example.aaup8v2.aaup8v2.MainActivity;
 import kaaes.spotify.webapi.android.models.Tracks;
 
 /**
- * Created by MSI on 04-05-2016.
+ * Created by Sean Skov Them on 04-05-2016.
  */
 public class GetArtistTopTrackRunnable extends ThreadResponseInterface<Tracks> implements Runnable {
     String id;
