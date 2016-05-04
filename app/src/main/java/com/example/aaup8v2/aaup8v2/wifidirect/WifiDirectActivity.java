@@ -554,24 +554,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         // These two lines are used to find out which line of the list the button is in.
         ListView listviewconteasdnt = (ListView)view.getParent().getParent().getParent();
         int bIndex = listviewconteasdnt.indexOfChild((View) view.getParent().getParent());
-        int index = 0;
 
-
-        for(int i = 0; i < peersCollection.size(); i++){
-
-            if (index == bIndex)
-            {
-                //String s = i.next().deviceName;
-                WifiP2pDevice dev = peersCollection.get(i);
-                WifiP2pConfig conf = new WifiP2pConfig();
-                conf.groupOwnerIntent = 15;
-                conf.deviceAddress =  peersCollection.get(i).deviceAddress;
-                conf.wps.setup = WpsInfo.PBC;
-                connect(conf);
-                break;
-            }
-            index++;
-        }
+        WifiP2pDevice dev = peersCollection.get(bIndex);
+        WifiP2pConfig conf = new WifiP2pConfig();
+        conf.groupOwnerIntent = 15;
+        conf.deviceAddress =  peersCollection.get(bIndex).deviceAddress;
+        conf.wps.setup = WpsInfo.PBC;
+        connect(conf);
     }
 
     public void sendInfo(View view){
@@ -588,7 +577,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 if (!info.isGroupOwner) {
                     sendDataToHost("", "I sent something", "");
                 } else {
-                    sendDataToPeers("", "I'm number " + i);
+                    sendDataToPeers("", "I'm number " + bIndex);
                 }
 
             }
