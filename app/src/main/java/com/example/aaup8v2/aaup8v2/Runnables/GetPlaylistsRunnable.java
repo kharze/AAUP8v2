@@ -5,6 +5,7 @@ import com.example.aaup8v2.aaup8v2.MainActivity;
 import java.util.HashMap;
 import java.util.Map;
 
+import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
@@ -28,7 +29,7 @@ public class GetPlaylistsRunnable extends ThreadResponseInterface<Pager<Playlist
 
             do{
                 Map<String, Object> options = new HashMap<>();
-                options.put(MainActivity.mSpotifyAccess.mService.OFFSET, offset);
+                options.put(SpotifyService.OFFSET, offset);
                 temp = MainActivity.mSpotifyAccess.mService.getPlaylists(id, options);
                 if (playlists == null){
                     playlists = temp;

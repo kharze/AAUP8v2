@@ -8,9 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
+import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
+import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistsRunnable;
+import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylists;
 import com.example.aaup8v2.aaup8v2.fragments.models.ExpandableListAdapters;
 
 import java.util.ArrayList;
@@ -25,28 +28,11 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 public class PlayListFragment extends Fragment{
     public ExpandableListView expListView;
     //List<List<HashMap<String, String>>> tracksLists = new ArrayList<>();
-    List<List<String>> tracksLists = new ArrayList<>();
+    //List<List<String>> tracksLists = new ArrayList<>();
     public List<String> playlistName;
     //HashMap<String, List<HashMap<String, String>>> listDataChild;
     public HashMap<String, List<String>> listDataChild;
-    List<String> playlistIds = new ArrayList<>();
     ExpandableListAdapters listAdapter;
-
-    int[] flags = new int[]{
-            R.drawable.ic_home,
-            R.drawable.ic_cancel,
-            R.drawable.ic_menu_camera,
-            R.drawable.ic_home,
-            R.drawable.ic_home,
-            R.drawable.ic_home,
-            R.drawable.ic_home,
-            R.drawable.ic_home,
-            R.drawable.ic_home,
-            R.drawable.ic_home,
-            R.drawable.ic_home,
-            R.drawable.ic_home,
-            R.drawable.ic_home
-    };
 
     private OnFragmentInteractionListener mListener;
 
@@ -79,6 +65,8 @@ public class PlayListFragment extends Fragment{
         expListView = (ExpandableListView) v.findViewById(R.id.expand_list);
 
         expListView.setAdapter(listAdapter);
+
+        createListeners();
 
         // Inflate the layout for this fragment
         return v;
@@ -138,14 +126,13 @@ public class PlayListFragment extends Fragment{
         });
     }
 
-    public void prepareListData(){
+    public void prepareListData(List<List<String>> tracksLists){
         //listDataChild = new HashMap<>();
 
         for(int i = 0; i < playlistName.size(); i++){
             listDataChild.put(playlistName.get(i), tracksLists.get(i));
         }
 
-        int o = 0;
         /**
         playlistName = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
@@ -188,24 +175,70 @@ public class PlayListFragment extends Fragment{
     }
 
     public void getPlaylists(){
-        try {
-            new asyncGetPlaylists(new asyncGetPlaylists.AsyncResponse() {
-                @Override
-                public void processFinish(Pager<PlaylistSimple> output) {
-                    for (int i = 0; i < output.items.size(); i++){
-                        playlistIds.add(output.items.get(i).id);
-                        playlistName.add(output.items.get(i).name);
+//        try {
+//            new asyncGetPlaylists(new asyncGetPlaylists.AsyncResponse() {
+//                @Override
+//                public void processFinish(Pager<PlaylistSimple> output) {
+//                    for (int i = 0; i < output.items.size(); i++){
+//                        playlistIds.add(output.items.get(i).id);
+//                        playlistName.add(output.items.get(i).name);
+//
+//                        getPlaylistTracks(output.items.get(i).owner.id, output.items.get(i).id);
+//                    }
+//                    prepareListData();
+//                    createListeners();
+//                    listAdapter.notifyDataSetChanged();
+//                }
+//            }).execute("aaup8");
+//        } catch (Exception e) {
+//            e.getMessage();
+//        }
 
-                        getPlaylistTracks(output.items.get(i).owner.id, output.items.get(i).id);
-                    }
-                    prepareListData();
-                    createListeners();
-                    listAdapter.notifyDataSetChanged();
+        GetPlaylistsRunnable runnable = new GetPlaylistsRunnable(MainActivity.me.id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
+            @Override
+            public void processFinish(Pager<PlaylistSimple> output) {
+                List<String> playlistIds = new ArrayList<>();
+                final List<List<String>> tracksLists = new ArrayList<>();
+                for (int i = 0; i < output.items.size(); i++){
+                    playlistIds.add(output.items.get(i).id);
+                    playlistName.add(output.items.get(i).name);
+
+                    new GetPlaylistTracksRunnable(output.items.get(i).owner.id, output.items.get(i).id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistTrack>>() {
+                        Pager<PlaylistTrack> tracks = new Pager();
+
+                        @Override
+                        public void processFinish(Pager<PlaylistTrack> output) {
+                            tracks = output;
+
+                                final List<String> aList = new ArrayList<>();
+                                for(int i=0;i < tracks.items.size(); i++) {
+
+                                    PlaylistTrack p = tracks.items.get(i);
+                                    String s = p.track.name;
+
+                                    aList.add(s);
+                                }
+                                tracksLists.add(aList);
+                        }
+                    }).run();
+                    //getPlaylistTracks(output.items.get(i).owner.id, output.items.get(i).id);
                 }
-            }).execute("aaup8");
-        } catch (Exception e) {
-            e.getMessage();
-        }
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        prepareListData(tracksLists);
+                        //createListeners();
+                        if(listAdapter != null)
+                            listAdapter.notifyDataSetChanged();
+                    }
+                });
+
+            }
+        });
+        Thread worker = new Thread(runnable);
+        worker.setName("Playlist builder");
+        worker.start();
     }
 
     public void getPlaylistTracks(String userId, String playlistId){
@@ -229,7 +262,7 @@ public class PlayListFragment extends Fragment{
                 //hm.put("flag", Integer.toString(flags[5]));
                 aList.add(s);
             }
-            tracksLists.add(aList);
+            //tracksLists.add(aList);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
