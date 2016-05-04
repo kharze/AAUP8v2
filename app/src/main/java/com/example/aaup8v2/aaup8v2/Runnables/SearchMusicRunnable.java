@@ -31,7 +31,6 @@ public class SearchMusicRunnable implements Runnable {
         this.delegate = delegate;
     }
 
-
     public void run() {
         List<myTrack> mSearchTracks = new ArrayList<>();
         Pager mArtistAlbums;
