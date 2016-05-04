@@ -81,6 +81,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifidirect);
         this.worker = MainActivity.mWifiDirectActivity.worker;
+        this.ipsOnNetwork = MainActivity.mWifiDirectActivity.ipsOnNetwork;
         MainActivity.mWifiDirectActivity = this;
         // add necessary intent values to be matched.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
