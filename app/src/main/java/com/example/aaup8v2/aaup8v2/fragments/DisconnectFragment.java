@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
@@ -73,7 +74,13 @@ public class DisconnectFragment extends Fragment {
         disconnectNetworkButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                MainActivity.mWifiDirectActivity.disconnectTellHost();
+                Toast.makeText(getContext(), "Disconnecting", Toast.LENGTH_SHORT).show();
+                if (MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
+                    MainActivity.mWifiDirectActivity.sendDataToPeers(MainActivity.mWifiDirectActivity.DISCONNECT, "");
+                }else if(MainActivity.mWifiDirectActivity.info != null) {
+                    MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.DISCONNECT, "", MainActivity.mQueueFragment.myIP);
+                }
+                Toast.makeText(getContext(), "Disconnected", Toast.LENGTH_SHORT).show();
             }
         });
 

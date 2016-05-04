@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -107,6 +109,8 @@ public class HostTransferService extends IntentService {
                         }
                     }
                 }
+                if(type != null && type.equals(WifiDirectActivity.DISCONNECT))
+                    MainActivity.mWifiDirectActivity.disconnect();
             }
         }
     }

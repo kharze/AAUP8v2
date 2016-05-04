@@ -216,29 +216,12 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         this.info = info;
 
         if (info.groupFormed && info.isGroupOwner) {
-            //new asyncDataTransfer(this).execute();
             receiveHostSpawn();
 
+            MainActivity.initializePeer(true);
         } else if (info.groupFormed) {
             sendDataToHost("ip_sent", "", MainActivity.mQueueFragment.myIP);
 
-            /*Intent serviceIntent = new Intent(this, HostTransferService.class);
-            serviceIntent.setAction(HostTransferService.ACTION_FIRST_TIME);
-            serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,
-                    info.groupOwnerAddress.getHostAddress());
-            serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
-            startService(serviceIntent);*/
-
-            //Remove play/pause button for peers
-            //MainActivity.initializePeer();
-
-            /*try {
-                setContentView(R.layout.content_main);
-                findViewById(R.id.playButtonImage).setVisibility(View.INVISIBLE);
-                //setContentView(R.layout.activity_wifidirect);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
             MainActivity.initializePeer(false);
 
             receiveDataSpawn();
@@ -303,8 +286,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     break;
                                 case DISCONNECT:
                                     //Handle disconnect
-
-
                                     if(ipsOnNetwork.contains(sender))
                                         ipsOnNetwork.remove(sender);
 
@@ -335,7 +316,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             List<String> data = new ArrayList<>();
                             data.add((String) type);
                             data.add((String)object);
-                            data.add((String)sender);
+                            data.add((String) sender);
                             updateUI(data);
 
                         }catch (ClosedByInterruptException e){
@@ -398,6 +379,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     if(MainActivity.mSearchFragment.searchAdapter != null)
                                         MainActivity.mSearchFragment.searchAdapter.notifyDataSetChanged();
+                                    break;
+                                case DISCONNECT:
+                                    Toast.makeText(getApplicationContext(), "Host left network", Toast.LENGTH_LONG).show();
                                     break;
                                 default:
                                     break;
@@ -491,10 +475,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 }
             });
         }
-    }
-
-    public void disconnectTellHost(){
-        sendDataToHost(DISCONNECT, "", MainActivity.mQueueFragment.myIP);
     }
 
     @Override
