@@ -151,20 +151,27 @@ public class SearchFragment extends Fragment{
 //        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, searchString);//.execute(searchString);
 //    }
 
-    public void startSearchThread(String id){
-        SearchMusicRunnable searchMusicRunnable = new SearchMusicRunnable(id, getActivity(), new Runnable() {
-            @Override
-            public void run() {
-                if(SearchMusicRunnable.output.getClass() == mTracklist.getClass()) {
-                    mTracklist.clear(); //Clears the whole list
-                    mTracklist.addAll(SearchMusicRunnable.output);
-                }
 
-                if(searchAdapter != null)
-                    searchAdapter.notifyDataSetChanged();
+    public void startSearchThread(String id){
+        SearchMusicRunnable searchMusicRunnable = new SearchMusicRunnable(id, new SearchMusicRunnable.ThreadResponse() {
+
+            @Override
+            public void processFinish(final List<myTrack> output) {
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (output.getClass() == mTracklist.getClass()) {
+                            mTracklist.clear(); //Clears the whole list
+                            mTracklist.addAll(output);
+                        }
+
+                        if (searchAdapter != null)
+                            searchAdapter.notifyDataSetChanged();
+                    }
+                });
             }
         });
-
         Thread worker = new Thread(searchMusicRunnable);
         worker.setName("Search Music Thread");
         worker.start();

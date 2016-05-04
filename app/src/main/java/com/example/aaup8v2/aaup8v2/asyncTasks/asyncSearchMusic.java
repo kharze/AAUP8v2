@@ -24,7 +24,7 @@ import kaaes.spotify.webapi.android.models.TracksPager;
  */
 public class asyncSearchMusic extends AsyncTask<String, Void, List<myTrack>> {
     public interface AsyncResponse {
-        void processFinish(List output);
+        void processFinish(List<myTrack> output);
     }
 
     public AsyncResponse delegate = null;
