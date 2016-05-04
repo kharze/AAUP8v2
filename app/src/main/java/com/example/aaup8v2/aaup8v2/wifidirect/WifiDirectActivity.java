@@ -324,30 +324,21 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             Socket client = serverSocket.accept();
                             Log.d(WifiDirectActivity.TAG, "Server: connection done");
                             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
-                            Object type = objectInputStream.readObject();
-                            Object object = objectInputStream.readObject();
-                            Object sender = objectInputStream.readObject();
+                            String type = objectInputStream.readUTF();
+                            String object = objectInputStream.readUTF();
+                            String sender = objectInputStream.readUTF();
 
                             List<String> data = new ArrayList<>();
-                            data.add((String) type);
-                            data.add((String) object);
-                            data.add((String) sender);
+                            data.add(type);
+                            data.add(object);
+                            data.add(sender);
                             updateUI(data);
                             serverSocket.close();
 
-                            if(false)
-                                throw new InterruptedException();
-
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            break;
                         }catch (ClosedByInterruptException e){
                             e.getCause();
                         }catch (IOException e) {
                             e.printStackTrace();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            break;
                         }
                     }
                 }
@@ -377,19 +368,24 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             switch (type) {
                                 case UP_VOTE:
-                                    MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                                    MainActivity.mQueueFragment.mQueueElementList.clear();
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll((List<QueueElement>)gson.fromJson(data, mClass));
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case DOWN_VOTE:
-                                    MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                                    MainActivity.mQueueFragment.mQueueElementList.clear();
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll((List<QueueElement>)gson.fromJson(data, mClass));
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case TRACK_ADDED:
-                                    MainActivity.mQueueFragment.mQueueElementList = gson.fromJson(data, mClass);
+                                    MainActivity.mQueueFragment.mQueueElementList.clear();
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll((List<QueueElement>)gson.fromJson(data, mClass));
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
+                                    if(MainActivity.mSearchFragment.searchAdapter != null)
+                                        MainActivity.mSearchFragment.searchAdapter.notifyDataSetChanged();
                                     break;
                                 default:
                                     break;
@@ -410,31 +406,21 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             Log.d(WifiDirectActivity.TAG, "Server: connection done");
 
                             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
-                            Object type = objectInputStream.readObject();
-                            Object object = objectInputStream.readObject();
-                            if (object.getClass().equals(String.class)) {
-                                Log.d(WifiDirectActivity.TAG, "Data received");
-                            }
+                            String type = objectInputStream.readUTF();
+                            String object = objectInputStream.readUTF();
+
                             List<String> data = new ArrayList<>();
-                            data.add((String) type);
-                            data.add((String) object);
+                            data.add(type);
+                            data.add(object);
                             updateUI(data);
 
                             objectInputStream.close();
                             serverSocket.close();
-                            if(false)
-                                throw new InterruptedException();
-                            //return data;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            break;
+
                         }catch (ClosedByInterruptException e){
                             e.getCause();
                         }catch (IOException e) {
                             Log.e(WifiDirectActivity.TAG, e.getMessage());
-                            //return null;
-                        } catch (ClassNotFoundException e) {
-                            e.printStackTrace();
                             //return null;
                         }
                     }

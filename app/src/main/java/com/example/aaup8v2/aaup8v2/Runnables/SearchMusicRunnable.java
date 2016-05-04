@@ -30,7 +30,6 @@ public class SearchMusicRunnable implements Runnable {
         this.id = id;
         this.onUIThread = onUIThread;
         this.activity = activity;
-
     }
 
     private void updateUI(List<myTrack> output){

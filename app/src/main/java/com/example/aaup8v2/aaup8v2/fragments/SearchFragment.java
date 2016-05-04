@@ -36,7 +36,7 @@ import java.util.List;
 public class SearchFragment extends Fragment{
 
     private List<myTrack> mTracklist = new ArrayList<>();
-    private SearchListAdapter searchAdapter;
+    public SearchListAdapter searchAdapter;
 
     ListView Search_Results;
     private EditText mText;

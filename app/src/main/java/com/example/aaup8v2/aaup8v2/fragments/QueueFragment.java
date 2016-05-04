@@ -35,7 +35,7 @@ public class QueueFragment extends Fragment {
 
     public String myIP = FindIP.getIPAddress(true); //The ip of the device
 
-    public QueueListAdapter queueAdapter; // Out custom adapter for the queue
+    public QueueListAdapter queueAdapter; // Our custom adapter for the queue
 
     private OnFragmentInteractionListener mListener; //Is is needed to be here, get an error if removed.
 

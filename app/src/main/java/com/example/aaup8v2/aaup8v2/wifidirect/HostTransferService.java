@@ -1,7 +1,6 @@
 package com.example.aaup8v2.aaup8v2.wifidirect;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -88,9 +87,9 @@ public class HostTransferService extends IntentService {
 
                 OutputStream stream = socket.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(stream);
-                oos.writeObject(type);
-                oos.writeObject(data);
-                oos.writeObject(sender);
+                oos.writeUTF(type);
+                oos.writeUTF(data);
+                oos.writeUTF(sender);
                 oos.close();
                 socket.close();
 
