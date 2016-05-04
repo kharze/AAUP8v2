@@ -48,8 +48,8 @@ public class DataTransferService extends IntentService {
                 Log.d(WifiDirectActivity.TAG, "Client socket - " + socket.isConnected());
                 OutputStream stream = socket.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(stream);
-                oos.writeUTF(dataType);
-                oos.writeUTF(data);
+                oos.writeObject(dataType);
+                oos.writeObject(data);
                 Log.d(WifiDirectActivity.TAG, "Client: Data written");
             } catch (IOException e) {
                 Log.e(WifiDirectActivity.TAG, e.getMessage());

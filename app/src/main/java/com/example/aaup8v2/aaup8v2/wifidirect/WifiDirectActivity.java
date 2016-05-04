@@ -318,27 +318,36 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 {
                     Log.d(TAG, "Thread run()");
                     while (true) {
+                        ServerSocket serverSocket = null;
                         try {
-                            ServerSocket serverSocket = new ServerSocket(8888);
+                            serverSocket = new ServerSocket(8888);
                             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
                             Socket client = serverSocket.accept();
                             Log.d(WifiDirectActivity.TAG, "Server: connection done");
                             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
-                            String type = objectInputStream.readUTF();
-                            String object = objectInputStream.readUTF();
-                            String sender = objectInputStream.readUTF();
+                            Object type = objectInputStream.readObject();
+                            Object object = objectInputStream.readObject();
+                            Object sender = objectInputStream.readObject();
 
                             List<String> data = new ArrayList<>();
-                            data.add(type);
-                            data.add(object);
-                            data.add(sender);
+                            data.add((String) type);
+                            data.add((String)object);
+                            data.add((String)sender);
                             updateUI(data);
-                            serverSocket.close();
 
                         }catch (ClosedByInterruptException e){
                             e.getCause();
                         }catch (IOException e) {
                             e.printStackTrace();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if(serverSocket != null)
+                                    serverSocket.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -399,29 +408,38 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 public void run() {
                     Log.d(TAG, "Thread run()");
                     while (true) {
+                        ServerSocket serverSocket = null;
                         try {
-                            ServerSocket serverSocket = new ServerSocket(8988);
+                            serverSocket = new ServerSocket(8988);
                             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
                             Socket client = serverSocket.accept();
                             Log.d(WifiDirectActivity.TAG, "Server: connection done");
 
                             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
-                            String type = objectInputStream.readUTF();
-                            String object = objectInputStream.readUTF();
+                            Object type = objectInputStream.readObject();
+                            Object object = objectInputStream.readObject();
 
                             List<String> data = new ArrayList<>();
-                            data.add(type);
-                            data.add(object);
+                            data.add((String)type);
+                            data.add((String)object);
                             updateUI(data);
 
                             objectInputStream.close();
-                            serverSocket.close();
 
                         }catch (ClosedByInterruptException e){
                             e.getCause();
                         }catch (IOException e) {
                             Log.e(WifiDirectActivity.TAG, e.getMessage());
                             //return null;
+                        }catch (Exception e){
+                            e.getCause();
+                        } finally {
+                            try {
+                                if(serverSocket != null)
+                                    serverSocket.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }

@@ -87,9 +87,9 @@ public class HostTransferService extends IntentService {
 
                 OutputStream stream = socket.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(stream);
-                oos.writeUTF(type);
-                oos.writeUTF(data);
-                oos.writeUTF(sender);
+                oos.writeObject(type);
+                oos.writeObject(data);
+                oos.writeObject(sender);
                 oos.close();
                 socket.close();
 
