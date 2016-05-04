@@ -18,13 +18,8 @@ import kaaes.spotify.webapi.android.models.TracksPager;
 /**
  * Created by MSI on 04-05-2016.
  */
-public class SearchMusicRunnable implements Runnable {
+public class SearchMusicRunnable extends ThreadResponseInterface<List<myTrack>> implements Runnable {
     private String id;
-
-    public interface ThreadResponse {
-        void processFinish(List<myTrack> output);
-    }
-    public ThreadResponse delegate = null;
 
     public SearchMusicRunnable(String id, ThreadResponse delegate) {
         this.id = id;

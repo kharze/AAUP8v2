@@ -7,13 +7,8 @@ import kaaes.spotify.webapi.android.models.Album;
 /**
  * Created by MSI on 04-05-2016.
  */
-public class GetAlbumRunnable implements Runnable {
+public class GetAlbumRunnable extends ThreadResponseInterface<Album> implements Runnable {
     private String id;
-
-    public interface ThreadResponse {
-        void processFinish(Album output);
-    }
-    public ThreadResponse delegate = null;
 
     public GetAlbumRunnable(String id, ThreadResponse delegate) {
         this.id = id;
@@ -25,4 +20,5 @@ public class GetAlbumRunnable implements Runnable {
 
         delegate.processFinish(result);
     }
+
 }
