@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;
+    public static PlayListFragment mPlaylistFragment;
     public static ImageView playButton;
     public static TextView playedName;
     public static TextView playedArtist;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity
         mSearchFragment = new SearchFragment();
         mQueueFragment = new QueueFragment();
         musicPlayer = new MusicPlayer();
+        mPlaylistFragment = new PlayListFragment();
 
         // Instantiate the playbar
         playedName = (TextView)findViewById(R.id.track_name);
@@ -185,6 +187,11 @@ public class MainActivity extends AppCompatActivity
 
                 ((QueueFragment)fragment).mQueueElementList = mQueueFragment.mQueueElementList;
                 mQueueFragment = (QueueFragment) fragment;
+            }
+            else if(fragmentClass == PlayListFragment.class){
+                ((PlayListFragment)fragment).listDataChild = mPlaylistFragment.listDataChild;
+                ((PlayListFragment)fragment).playlistName = mPlaylistFragment.playlistName;
+                mPlaylistFragment = (PlayListFragment) fragment;
             }
         } catch (Exception e) {
             e.printStackTrace();

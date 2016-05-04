@@ -245,7 +245,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void receiveHostSpawn(){
-        if (worker == null || !worker.isAlive() || worker.isInterrupted()) {
+        if (worker == null || !worker.isAlive()) {
             worker = new Thread(new Runnable(){
 
                 private void updateUI(final List<String> output)
@@ -313,15 +313,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                     });
                 }
 
-
                 @Override
                 public void run()
                 {
                     Log.d(TAG, "Thread run()");
                     while (true) {
-                        ServerSocket serverSocket = null;
                         try {
-                            serverSocket = new ServerSocket(8888);
+                            ServerSocket serverSocket = new ServerSocket(8888);
                             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
                             Socket client = serverSocket.accept();
                             Log.d(WifiDirectActivity.TAG, "Server: connection done");
@@ -342,21 +340,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                            try {
-                                serverSocket.close();
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
                             break;
                         }catch (ClosedByInterruptException e){
                             e.getCause();
                         }catch (IOException e) {
                             e.printStackTrace();
-                            try {
-                                serverSocket.close();
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                             break;
@@ -372,7 +360,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void receiveDataSpawn(){
-        if(worker == null || !worker.isAlive() || worker.isInterrupted()) {
+        if(worker == null || !worker.isAlive()) {
             worker = new Thread(new Runnable() {
 
                 private void updateUI(final List<String> output) {
@@ -415,9 +403,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 public void run() {
                     Log.d(TAG, "Thread run()");
                     while (true) {
-                        ServerSocket serverSocket = null;
                         try {
-                            serverSocket = new ServerSocket(8988);
+                            ServerSocket serverSocket = new ServerSocket(8988);
                             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
                             Socket client = serverSocket.accept();
                             Log.d(WifiDirectActivity.TAG, "Server: connection done");
@@ -440,23 +427,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             //return data;
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                            try {
-                                serverSocket.close();
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
                             break;
                         }catch (ClosedByInterruptException e){
                             e.getCause();
                         }catch (IOException e) {
                             Log.e(WifiDirectActivity.TAG, e.getMessage());
-                            try {
-                                serverSocket.close();
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            } catch (Exception e2){
-                                e2.getCause();
-                            }
                             //return null;
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
@@ -583,6 +558,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 //String s = i.next().deviceName;
                 WifiP2pDevice dev = peersCollection.get(i);
                 WifiP2pConfig conf = new WifiP2pConfig();
+                conf.groupOwnerIntent = 0;
                 conf.deviceAddress =  peersCollection.get(i).deviceAddress;
                 conf.wps.setup = WpsInfo.PBC;
                 connect(conf);

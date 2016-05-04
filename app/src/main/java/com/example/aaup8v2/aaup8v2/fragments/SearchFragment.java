@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncSearchMusic;
+import com.example.aaup8v2.aaup8v2.Runnables.SearchMusicRunnable;
 import com.example.aaup8v2.aaup8v2.fragments.models.SearchListAdapter;
 import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
@@ -82,7 +82,8 @@ public class SearchFragment extends Fragment{
                     im.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                     Toast.makeText(getContext(), "Search started", Toast.LENGTH_SHORT).show();
-                    MainActivity.mSearchFragment.SearchForMusic(searchString);
+                    startSearchThread(searchString);
+                    //SearchForMusic(searchString);
                 } else
                     Toast.makeText(getContext(),"Search input too short", Toast.LENGTH_SHORT).show();
             }
@@ -133,21 +134,40 @@ public class SearchFragment extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
 
-    public void SearchForMusic(String searchString){
-        new asyncSearchMusic(new asyncSearchMusic.AsyncResponse() {
-            @Override
-            public void processFinish(List output) {
+//    public void SearchForMusic(String searchString){
+//        new asyncSearchMusic(new asyncSearchMusic.AsyncResponse() {
+//            @Override
+//            public void processFinish(List output) {
+//
+//                if(output.getClass() == mTracklist.getClass()) {
+//                    mTracklist.clear(); //Clears the whole list
+//                    mTracklist.addAll(output);
+//                }
+//
+//                if(searchAdapter != null)
+//                    searchAdapter.notifyDataSetChanged();
+//
+//            }
+//        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, searchString);//.execute(searchString);
+//    }
 
-                if(output.getClass() == mTracklist.getClass()) {
+    public void startSearchThread(String id){
+        SearchMusicRunnable searchMusicRunnable = new SearchMusicRunnable(id, getActivity(), new Runnable() {
+            @Override
+            public void run() {
+                if(SearchMusicRunnable.output.getClass() == mTracklist.getClass()) {
                     mTracklist.clear(); //Clears the whole list
-                    mTracklist.addAll(output);
+                    mTracklist.addAll(SearchMusicRunnable.output);
                 }
 
                 if(searchAdapter != null)
                     searchAdapter.notifyDataSetChanged();
-
             }
-        }).execute(searchString);
+        });
+
+        Thread worker = new Thread(searchMusicRunnable);
+        worker.setName("Search Music Thread");
+        worker.start();
     }
 
 

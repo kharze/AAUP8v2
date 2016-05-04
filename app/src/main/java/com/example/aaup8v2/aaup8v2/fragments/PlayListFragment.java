@@ -26,7 +26,7 @@ public class PlayListFragment extends Fragment{
     public ExpandableListView expListView;
     //List<List<HashMap<String, String>>> tracksLists = new ArrayList<>();
     List<List<String>> tracksLists = new ArrayList<>();
-    public List<String> playlistName = new ArrayList<>();
+    public List<String> playlistName;
     //HashMap<String, List<HashMap<String, String>>> listDataChild;
     public HashMap<String, List<String>> listDataChild;
     List<String> playlistIds = new ArrayList<>();
@@ -65,8 +65,12 @@ public class PlayListFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(listDataChild == null)
+        //Made to only update the playlist once in a runtime.
+        if(listDataChild == null || playlistName == null){
             listDataChild = new HashMap<>();
+            playlistName = new ArrayList<>();
+            getPlaylists();
+        }
 
         final View v = inflater.inflate(R.layout.fragment_play_list, container,false);
 
@@ -75,8 +79,6 @@ public class PlayListFragment extends Fragment{
         expListView = (ExpandableListView) v.findViewById(R.id.expand_list);
 
         expListView.setAdapter(listAdapter);
-
-        getPlaylists();
 
         // Inflate the layout for this fragment
         return v;
