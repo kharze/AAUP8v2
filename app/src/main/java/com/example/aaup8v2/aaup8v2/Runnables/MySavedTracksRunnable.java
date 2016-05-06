@@ -4,20 +4,32 @@ import com.example.aaup8v2.aaup8v2.MainActivity;
 
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.SavedTrack;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
- * Created by MSI on 06-05-2016.
+ * Created by Sean Skov Them on 06-05-2016.
  */
 public class MySavedTracksRunnable extends ThreadResponseInterface<Pager<SavedTrack>> implements Runnable {
 
+    private static final String TAG = "Saved track";
 
     public MySavedTracksRunnable(ThreadResponse<Pager<SavedTrack>> delegate){
         this.delegate = delegate;
     }
 
     @Override
-    public void run() {
-        try{ delegate.processFinish(MainActivity.mSpotifyAccess.mService.getMySavedTracks()); }
-        catch (Exception e){ delegate.processFinish(null); }
+    public void run() { //For some reason this only works with a callback
+        MainActivity.mSpotifyAccess.mService.getMySavedTracks(new Callback<Pager<SavedTrack>>() {
+            @Override
+            public void success(Pager<SavedTrack> savedTrackPager, Response response) {
+                delegate.processFinish(savedTrackPager);
+            }
+            @Override
+            public void failure(RetrofitError error) {
+                delegate.processFinish(null);
+            }
+        });
     }
 }

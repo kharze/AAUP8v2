@@ -12,6 +12,7 @@ import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistsRunnable;
+import com.example.aaup8v2.aaup8v2.Runnables.MySavedTracksRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 import com.example.aaup8v2.aaup8v2.fragments.models.ExpandableListAdapters;
 import com.example.aaup8v2.aaup8v2.myTrack;
@@ -24,6 +25,7 @@ import java.util.List;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
+import kaaes.spotify.webapi.android.models.SavedTrack;
 
 public class PlayListFragment extends Fragment{
     public ExpandableListView expListView;
@@ -74,6 +76,22 @@ public class PlayListFragment extends Fragment{
             @Override
             public void processFinish(Pager<PlaylistSimple> output) {
                 final List<List<myTrack>> tracksLists = new ArrayList<>();
+                playlistName.add("Saved Tracks");
+
+                new MySavedTracksRunnable(new ThreadResponseInterface.ThreadResponse<Pager<SavedTrack>>() {
+                    @Override
+                    public void processFinish(Pager<SavedTrack> tracks) {
+                        final List<myTrack> aList = new ArrayList<>();
+                        if(tracks != null) {
+                            for (int i = 0; tracks.items.size() > i; i++) {
+                                myTrack track = new myTrack(tracks.items.get(i));
+                                aList.add(track);
+                            }
+                        }
+                        tracksLists.add(aList);
+                    }
+                }).run();
+
                 for (int i = 0; i < output.items.size(); i++){
                     playlistName.add(output.items.get(i).name);
 
@@ -81,7 +99,7 @@ public class PlayListFragment extends Fragment{
                         @Override
                         public void processFinish(Pager<PlaylistTrack> tracks) {
                                 final List<myTrack> aList = new ArrayList<>();
-                                for(int i=0;i < tracks.items.size(); i++) {
+                                for(int i = 0; tracks.items.size() > i; i++) {
                                     myTrack track = new myTrack(tracks.items.get(i));
                                     aList.add(track);
                                 }
