@@ -7,23 +7,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylists;
+import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistsRunnable;
+import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Pager;
-import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
-import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
 
 public class AdminFragment extends Fragment {
@@ -56,12 +53,9 @@ public class AdminFragment extends Fragment {
 
 
 
-
-        new asyncGetPlaylists(new asyncGetPlaylists.AsyncResponse(){
-
+        new Thread(new GetPlaylistsRunnable(MainActivity.me.id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
             @Override
-            public void processFinish(Pager<PlaylistSimple> output){
-
+            public void processFinish(Pager<PlaylistSimple> output) {
                 for(int i=0;i < output.items.size();i++){
                     HashMap<String, String> hm = new HashMap<>();
 
@@ -71,26 +65,49 @@ public class AdminFragment extends Fragment {
                     aList.add(hm);
                 }
 
-                String[] from = { "txt","cur" };
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String[] from = { "txt","cur" };
 
-                int[] to = {R.id.txt,R.id.cur,R.id.textView};
-                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_playlistshostview_layout,from,to );
+                        int[] to = {R.id.txt,R.id.cur,R.id.textView};
+                        SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_playlistshostview_layout,from,to );
 
-               // Apply the adapter to the spinner
-                list.setAdapter(adapter);
+                        // Apply the adapter to the spinner
+                        list.setAdapter(adapter);
+                    }
+                });
+
             }
-        }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV");
+        })).start();
+
+//        new asyncGetPlaylists(new asyncGetPlaylists.AsyncResponse(){
+//
+//            @Override
+//            public void processFinish(Pager<PlaylistSimple> output){
+//
+//                for(int i=0;i < output.items.size();i++){
+//                    HashMap<String, String> hm = new HashMap<>();
+//
+//                    PlaylistSimple p = output.items.get(i);
+//                    String s = p.name;
+//                    hm.put("txt", s);
+//                    aList.add(hm);
+//                }
+//
+//                String[] from = { "txt","cur" };
+//
+//                int[] to = {R.id.txt,R.id.cur,R.id.textView};
+//                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_playlistshostview_layout,from,to );
+//
+//               // Apply the adapter to the spinner
+//                list.setAdapter(adapter);
+//            }
+//        }).execute(MainActivity.me.id);
 
         View v = inflater.inflate(R.layout.fragment_admin, container,false);
         list = (ListView)v.findViewById(R.id.playlist_list);
         return v;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -110,18 +127,7 @@ public class AdminFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

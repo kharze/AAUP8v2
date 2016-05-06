@@ -1,5 +1,6 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ public class PlayListFragment extends Fragment{
     public List<String> playlistName;
     public List<List<myTrack>> listDataChild;
     public ExpandableListAdapters listAdapter;
+    Activity activity;
 
     private OnFragmentInteractionListener mListener;
 
@@ -47,6 +49,7 @@ public class PlayListFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        activity = getActivity();
         //Made to only update the playlist once in a runtime.
         if(listDataChild == null || playlistName == null){
             listDataChild = new ArrayList<>();
@@ -92,7 +95,7 @@ public class PlayListFragment extends Fragment{
                     listDataChild.add(tracksLists.get(i));
                 }
 
-                getActivity().runOnUiThread(new Runnable() {
+                activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if(listAdapter != null)

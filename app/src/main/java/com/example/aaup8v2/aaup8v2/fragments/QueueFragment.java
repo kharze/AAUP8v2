@@ -99,7 +99,6 @@ public class QueueFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -119,17 +118,14 @@ public class QueueFragment extends Fragment {
     }
     public void addTrack(Track track){
         myTrack mytrack = new myTrack(track);
-
         addTrack(mytrack);
     }
     public void addTrack(TrackSimple track){
         myTrack mytrack = new myTrack(track);
-
         addTrack(mytrack);
     }
     public void addTrack(PlaylistTrack track){
         myTrack mytrack = new myTrack(track);
-
         addTrack(mytrack);
     }
 

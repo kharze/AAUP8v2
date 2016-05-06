@@ -1,5 +1,6 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,14 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SearchFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SearchFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class SearchFragment extends Fragment{
 
     private List<myTrack> mTracklist = new ArrayList<>();
@@ -41,6 +35,7 @@ public class SearchFragment extends Fragment{
 
     ListView Search_Results;
     private EditText mText;
+    Activity activity;
 
     private OnFragmentInteractionListener mListener;
 
@@ -50,9 +45,7 @@ public class SearchFragment extends Fragment{
 
 
     public static SearchFragment newInstance() {
-        SearchFragment fragment = new SearchFragment();
-
-        return fragment;
+        return new SearchFragment();
     }
 
     @Override
@@ -68,6 +61,7 @@ public class SearchFragment extends Fragment{
         Search_Results = (ListView)v.findViewById(R.id.Search_Results);
         Button searchButton = (Button)v.findViewById(R.id.searchMusicButton);
         mText = (EditText) v.findViewById(R.id.Search_Text);
+        activity = getActivity();
 
         //listener for the search button
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +78,6 @@ public class SearchFragment extends Fragment{
 
                     Toast.makeText(getContext(), "Search started", Toast.LENGTH_SHORT).show();
                     startSearchThread(searchString);
-                    //SearchForMusic(searchString);
                 } else
                     Toast.makeText(getContext(),"Search input too short", Toast.LENGTH_SHORT).show();
             }
@@ -96,7 +89,6 @@ public class SearchFragment extends Fragment{
         return v; // Inflate the layout for this fragment
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -120,37 +112,10 @@ public class SearchFragment extends Fragment{
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-//    public void SearchForMusic(String searchString){
-//        new asyncSearchMusic(new asyncSearchMusic.AsyncResponse() {
-//            @Override
-//            public void processFinish(List output) {
-//
-//                if(output.getClass() == mTracklist.getClass()) {
-//                    mTracklist.clear(); //Clears the whole list
-//                    mTracklist.addAll(output);
-//                }
-//
-//                if(searchAdapter != null)
-//                    searchAdapter.notifyDataSetChanged();
-//
-//            }
-//        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, searchString);//.execute(searchString);
-//    }
 
 
     public void startSearchThread(String id){
@@ -159,13 +124,11 @@ public class SearchFragment extends Fragment{
             @Override
             public void processFinish(final List<myTrack> output) {
 
-                getActivity().runOnUiThread(new Runnable() {
+                activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (output.getClass() == mTracklist.getClass()) {
-                            mTracklist.clear(); //Clears the whole list
-                            mTracklist.addAll(output);
-                        }
+                        mTracklist.clear(); //Clears the whole list
+                        mTracklist.addAll(output);
 
                         if (searchAdapter != null)
                             searchAdapter.notifyDataSetChanged();
