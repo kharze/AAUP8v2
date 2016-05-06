@@ -13,8 +13,6 @@ import retrofit.client.Response;
  */
 public class MySavedTracksRunnable extends ThreadResponseInterface<Pager<SavedTrack>> implements Runnable {
 
-    private static final String TAG = "Saved track";
-
     public MySavedTracksRunnable(ThreadResponse<Pager<SavedTrack>> delegate){
         this.delegate = delegate;
     }
