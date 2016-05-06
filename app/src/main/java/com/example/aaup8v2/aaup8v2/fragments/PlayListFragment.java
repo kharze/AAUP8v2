@@ -75,8 +75,6 @@ public class PlayListFragment extends Fragment{
                     playlistName.add(output.items.get(i).name);
 
                     new GetPlaylistTracksRunnable(output.items.get(i).owner.id, output.items.get(i).id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistTrack>>() {
-                        Pager<PlaylistTrack> tracks = new Pager<>();
-
                         @Override
                         public void processFinish(Pager<PlaylistTrack> tracks) {
 

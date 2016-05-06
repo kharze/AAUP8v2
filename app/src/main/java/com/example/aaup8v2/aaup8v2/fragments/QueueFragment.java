@@ -98,16 +98,6 @@ public class QueueFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -128,26 +118,22 @@ public class QueueFragment extends Fragment {
         applyWeight();
     }
     public void addTrack(Track track){
-        myTrack mytrack = new myTrack();
-        mytrack.setMyTrack(track);
+        myTrack mytrack = new myTrack(track);
 
         addTrack(mytrack);
     }
     public void addTrack(TrackSimple track){
-        myTrack mytrack = new myTrack();
-        mytrack.setMyTrack(track);
+        myTrack mytrack = new myTrack(track);
 
         addTrack(mytrack);
     }
     public void addTrack(PlaylistTrack track){
-        myTrack mytrack = new myTrack();
-        mytrack.setMyTrack(track);
+        myTrack mytrack = new myTrack(track);
 
         addTrack(mytrack);
     }
 
     public void sortQueue(){
-
         // Comparator for the sorting
         Comparator<QueueElement> compareWeight = new Comparator<QueueElement>() {
             @Override
@@ -163,7 +149,9 @@ public class QueueFragment extends Fragment {
 
     public String nextSong(){
         String trackId = mQueueElementList.get(0).track.id;
-        MainActivity.playedArtist.setText("Artist: " + mQueueElementList.get(0).track.artist);
+        String artist = "Artist: " + mQueueElementList.get(0).track.artist;
+
+        MainActivity.playedArtist.setText(artist);
         MainActivity.playedName.setText(mQueueElementList.get(0).track.name);
         deleteTrack(0);
         return trackId;
@@ -205,7 +193,7 @@ public class QueueFragment extends Fragment {
             MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.DOWN_VOTE, queueList);
         }
         else if(MainActivity.mWifiDirectActivity.info != null){
-            MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.DOWN_VOTE,Integer.toString(position),myIP);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DOWN_VOTE,Integer.toString(position),myIP);
         } else {
             sortQueue();
         }
@@ -243,7 +231,7 @@ public class QueueFragment extends Fragment {
             MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.UP_VOTE, queueList);
         }
         else if(MainActivity.mWifiDirectActivity.info != null){
-            MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.UP_VOTE,Integer.toString(position),myIP);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.UP_VOTE,Integer.toString(position),myIP);
         } else {
             sortQueue();
         }
