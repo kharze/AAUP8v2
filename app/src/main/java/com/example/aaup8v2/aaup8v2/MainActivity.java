@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity
     public static TextView playedName;
     public static TextView playedArtist;
 
+    public static boolean isHost = true;
+    public static boolean isPeer = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -354,9 +357,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void pToP(View view){
-        //Start Peer-to-Peer
-        //Intent intent = new Intent(this, PeerToPeer.class);
-
+        if(findViewById(R.id.btn_connectView) == view){
+            isPeer = true;
+            isHost = false;
+        }
         Intent intent = new Intent(this, mWifiDirectActivity.getClass());
         startActivity(intent);
     }

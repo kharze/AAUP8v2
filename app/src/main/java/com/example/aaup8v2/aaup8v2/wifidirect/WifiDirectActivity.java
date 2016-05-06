@@ -55,7 +55,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public static final String DOWN_VOTE = "down_vote";
     public static final String DISCONNECT = "disconnect";
 
-    public static final String TAG = "wifidirectdemo";
+    public static final String TAG = "wifidirect";
     private WifiP2pManager manager;
     private boolean isWifiP2pEnabled = false;
     private boolean retryChannel = false;
@@ -65,11 +65,12 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public WifiP2pInfo info;
     ProgressDialog progressDialog = null;
     private List<WifiP2pDevice> peersCollection = new ArrayList();
-    //Collection<WifiP2pDevice> peersCollection;
     List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
     ListView list;
     public List<String> ipsOnNetwork = new ArrayList<>();
     public Thread worker;
+    private SimpleAdapter deviceAdapter;
+
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
      */
@@ -91,8 +92,17 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
 
-        //receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
+        String[] from = {"flag", "txt", "cur"};
+
+        int[] to = {R.id.flag, R.id.txt, R.id.cur, R.id.textView};
+        deviceAdapter = new SimpleAdapter(getApplicationContext(), aList, R.layout.listview_layout_p2p, from, to);
+
+        // Assign adapter to ListView
         list = (ListView) findViewById(R.id.listviewPeers);
+        list.setAdapter(deviceAdapter);
+
+        discoverPeers();
+        //list = (ListView) findViewById(R.id.listviewPeers);
 
     }
     /** register the BroadcastReceiver with the intent values to be matched */
@@ -123,13 +133,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             fragmentDetails.resetViews();
         }
     }
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_items, menu);
-        return true;
-    }*/
-
 
     public void enableP2P(View view){
         if (manager != null && channel != null) {
@@ -142,7 +145,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
-    public void discoverPeers(final View view){
+    public void discoverPeers(){
         if (!isWifiP2pEnabled) {
             Toast.makeText(WifiDirectActivity.this, R.string.p2p_off_warning,
                     Toast.LENGTH_SHORT).show();
@@ -184,16 +187,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 aList.add(hm);
                             }
 
-
-                            String[] from = {"flag", "txt", "cur"};
-
-                            int[] to = {R.id.flag, R.id.txt, R.id.cur, R.id.textView};
-                            SimpleAdapter a = new SimpleAdapter(view.getContext(), aList, R.layout.listview_layout_p2p, from, to);
-
-                            // Assign adapter to ListView
-                            list = (ListView) findViewById(R.id.listviewPeers);
-                            list.setAdapter(a);
-
+                            deviceAdapter.notifyDataSetChanged();
                         }
                     });
 
@@ -207,6 +201,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void refresh(View view){
+        discoverPeers();
     }
 
     @Override
