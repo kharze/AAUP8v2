@@ -60,9 +60,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/discover_peers_button"
+        android:text="@string/refresh"
         android:gravity="center_vertical"
-        android:onClick="discoverPeers" />
+        android:onClick="refresh" />
 
     <TextView
         android:layout_width="fill_parent"

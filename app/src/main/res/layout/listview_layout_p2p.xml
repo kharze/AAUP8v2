@@ -22,11 +22,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:onClick="on_listViewClik"/>
-        <Button
-            android:text="@string/send_info"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:onClick="sendInfo"/>
         <TextView
             android:id="@+id/cur"
             android:layout_width="wrap_content"
