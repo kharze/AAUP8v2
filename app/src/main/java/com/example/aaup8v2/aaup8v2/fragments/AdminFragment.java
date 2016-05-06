@@ -73,7 +73,7 @@ public class AdminFragment extends Fragment {
 
                 String[] from = { "flag","txt","cur" };
 
-                int[] to = { R.id.flag,R.id.txt,R.id.cur,R.id.textView};
+                int[] to = {R.id.txt,R.id.cur,R.id.textView};
                 SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_playlistshostview_layout,from,to );
 
                // Apply the adapter to the spinner

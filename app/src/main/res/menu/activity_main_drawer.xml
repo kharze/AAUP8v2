@@ -23,7 +23,7 @@
             android:title="@string/action_settings" />
         <item
             android:id="@+id/nav_disconnect"
-            android:icon="@drawable/ic_cancel"
+            android:icon="@drawable/ic_menu_share"
             android:title="@string/Connections" />
         <item
             android:id="@+id/nav_admin"

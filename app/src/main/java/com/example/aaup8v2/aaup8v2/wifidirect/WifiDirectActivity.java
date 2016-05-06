@@ -94,7 +94,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
         String[] from = {"flag", "txt", "cur"};
 
-        int[] to = {R.id.flag, R.id.txt, R.id.cur, R.id.textView};
+        int[] to = {R.id.txt, R.id.cur, R.id.textView};
         deviceAdapter = new SimpleAdapter(this, aList, R.layout.listview_layout_p2p, from, to);
 
         // Assign adapter to ListView
@@ -124,13 +124,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public void resetData() {
         DeviceListFragment fragmentList = (DeviceListFragment) getFragmentManager()
                 .findFragmentById(R.id.frag_list);
-        DeviceDetailFragment fragmentDetails = (DeviceDetailFragment) getFragmentManager()
-                .findFragmentById(R.id.frag_detail);
         if (fragmentList != null) {
             fragmentList.clearPeers();
-        }
-        if (fragmentDetails != null) {
-            fragmentDetails.resetViews();
         }
     }
 
@@ -444,9 +439,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
     @Override
     public void showDetails(WifiP2pDevice device) {
-        DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager()
-                .findFragmentById(R.id.frag_detail);
-        fragment.showDetails(device);
+
     }
     @Override
     public void connect(WifiP2pConfig config) {

@@ -38,18 +38,12 @@ public class QueueListAdapter extends ArrayAdapter<QueueElement>{
 
         if (element != null) {
             // Creates all the views
-            ImageView flagImage = (ImageView) v.findViewById(R.id.flag);
             TextView trackName = (TextView) v.findViewById(R.id.track_name);
             TextView trackArtist = (TextView) v.findViewById(R.id.artist_name);
             TextView upVotes = (TextView) v.findViewById(R.id.upCount);
             TextView downVotes = (TextView) v.findViewById(R.id.downCount);
             ImageView upVoteButton = (ImageView) v.findViewById(R.id.upVote);
             ImageView downVoteButton = (ImageView) v.findViewById(R.id.downVote);
-
-
-            int flag = R.drawable.ic_home;
-            if(flagImage != null)
-                flagImage.setImageResource(flag);
 
             if (trackName != null)
                 trackName.setText(element.track.name);

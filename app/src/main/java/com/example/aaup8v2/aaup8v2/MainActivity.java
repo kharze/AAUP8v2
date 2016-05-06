@@ -380,11 +380,13 @@ public class MainActivity extends AppCompatActivity
             hostButton.setVisibility(Button.VISIBLE);
             connectButton.setVisibility(Button.VISIBLE);
             disconnectButton.setVisibility(Button.GONE);
+            disconnectItem.setIcon(R.drawable.ic_menu_share);
             disconnectItem.setTitle(R.string.Connections);
         }else{
             hostButton.setVisibility(Button.GONE);
             connectButton.setVisibility(Button.GONE);
             disconnectButton.setVisibility(Button.VISIBLE);
+            disconnectItem.setIcon(R.drawable.ic_cancel);
             disconnectItem.setTitle(R.string.Disconnect);
         }
     }
