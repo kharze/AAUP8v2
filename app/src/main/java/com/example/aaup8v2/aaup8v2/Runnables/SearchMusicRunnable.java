@@ -28,7 +28,7 @@ public class SearchMusicRunnable extends ThreadResponseInterface<List<myTrack>> 
 
     public void run() {
         List<myTrack> mSearchTracks = new ArrayList<>();
-        Pager mArtistAlbums;
+        Pager<Album> mArtistAlbums;
         List<String> albumsList = new ArrayList<>();
 
         try {
