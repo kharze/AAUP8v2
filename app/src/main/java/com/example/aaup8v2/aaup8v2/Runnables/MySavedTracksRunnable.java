@@ -1,5 +1,7 @@
 package com.example.aaup8v2.aaup8v2.Runnables;
 
+import android.util.Log;
+
 import com.example.aaup8v2.aaup8v2.MainActivity;
 
 import kaaes.spotify.webapi.android.models.Pager;
@@ -26,7 +28,8 @@ public class MySavedTracksRunnable extends ThreadResponseInterface<Pager<SavedTr
             }
             @Override
             public void failure(RetrofitError error) {
-                delegate.processFinish(new Pager<SavedTrack>());
+                Log.e("TAG", "failure: ", error );
+                delegate.processFinish(null);
             }
         });
     }
