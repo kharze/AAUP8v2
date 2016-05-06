@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.Runnables.SearchMusicRunnable;
+import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 import com.example.aaup8v2.aaup8v2.fragments.models.SearchListAdapter;
 import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
@@ -151,20 +152,27 @@ public class SearchFragment extends Fragment{
 //        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, searchString);//.execute(searchString);
 //    }
 
-    public void startSearchThread(String id){
-        SearchMusicRunnable searchMusicRunnable = new SearchMusicRunnable(id, getActivity(), new Runnable() {
-            @Override
-            public void run() {
-                if(SearchMusicRunnable.output.getClass() == mTracklist.getClass()) {
-                    mTracklist.clear(); //Clears the whole list
-                    mTracklist.addAll(SearchMusicRunnable.output);
-                }
 
-                if(searchAdapter != null)
-                    searchAdapter.notifyDataSetChanged();
+    public void startSearchThread(String id){
+        SearchMusicRunnable searchMusicRunnable = new SearchMusicRunnable(id, new ThreadResponseInterface.ThreadResponse<List<myTrack>>() {
+
+            @Override
+            public void processFinish(final List<myTrack> output) {
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (output.getClass() == mTracklist.getClass()) {
+                            mTracklist.clear(); //Clears the whole list
+                            mTracklist.addAll(output);
+                        }
+
+                        if (searchAdapter != null)
+                            searchAdapter.notifyDataSetChanged();
+                    }
+                });
             }
         });
-
         Thread worker = new Thread(searchMusicRunnable);
         worker.setName("Search Music Thread");
         worker.start();

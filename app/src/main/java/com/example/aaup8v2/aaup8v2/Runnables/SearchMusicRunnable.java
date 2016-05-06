@@ -1,7 +1,5 @@
 package com.example.aaup8v2.aaup8v2.Runnables;
 
-import android.app.Activity;
-
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.myTrack;
 
@@ -18,25 +16,15 @@ import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TracksPager;
 
 /**
- * Created by MSI on 04-05-2016.
+ * Created by Sean Skov Them on 04-05-2016.
  */
-public class SearchMusicRunnable implements Runnable {
+public class SearchMusicRunnable extends ThreadResponseInterface<List<myTrack>> implements Runnable {
     private String id;
-    Runnable onUIThread;
-    Activity activity;
-    static public List<myTrack> output;
 
-    public SearchMusicRunnable(String id, Activity activity, Runnable onUIThread) {
+    public SearchMusicRunnable(String id, ThreadResponse<List<myTrack>> delegate) {
         this.id = id;
-        this.onUIThread = onUIThread;
-        this.activity = activity;
+        this.delegate = delegate;
     }
-
-    private void updateUI(List<myTrack> output){
-        SearchMusicRunnable.output = output;
-        activity.runOnUiThread(onUIThread);
-    }
-
 
     public void run() {
         List<myTrack> mSearchTracks = new ArrayList<>();
@@ -122,10 +110,10 @@ public class SearchMusicRunnable implements Runnable {
                     mSearchTracks.remove(i+1);
                 }
             }
-            updateUI(mSearchTracks);
+
+            delegate.processFinish(mSearchTracks);
         } catch (Exception e) {
-            e.printStackTrace();
-            updateUI(null);
+            delegate.processFinish(null);
         }
     }
 }

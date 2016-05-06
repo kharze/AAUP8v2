@@ -204,11 +204,11 @@ public class QueueFragment extends Fragment {
             String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
             MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.DOWN_VOTE, queueList);
         }
-        else{
+        else if(MainActivity.mWifiDirectActivity.info != null){
             MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.DOWN_VOTE,Integer.toString(position),myIP);
+        } else {
+            sortQueue();
         }
-
-
         if(queueAdapter != null)
             queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
     }
@@ -242,8 +242,10 @@ public class QueueFragment extends Fragment {
             String queueList = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
             MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.UP_VOTE, queueList);
         }
-        else{
+        else if(MainActivity.mWifiDirectActivity.info != null){
             MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.UP_VOTE,Integer.toString(position),myIP);
+        } else {
+            sortQueue();
         }
         if(queueAdapter != null)
             queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
