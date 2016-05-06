@@ -17,6 +17,6 @@ public class GetAlbumsRunnable extends ThreadResponseInterface<Albums> implement
 
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getAlbums(artistId)); }
-        catch (Exception e) { delegate.processFinish(null); }
+        catch (Exception e) { delegate.processFinish(new Albums()); }
     }
 }

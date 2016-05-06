@@ -18,6 +18,6 @@ public class SearchArtistsRunnable extends ThreadResponseInterface<ArtistsPager>
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.searchArtists(searchTerm)); }
-        catch (Exception e){ delegate.processFinish(null); }
+        catch (Exception e){ delegate.processFinish(new ArtistsPager()); }
     }
 }

@@ -18,6 +18,6 @@ public class GetTrackAudioFeatures extends ThreadResponseInterface<AudioFeatures
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getTrackAudioFeatures(trackId)); }
-        catch (Exception e){ delegate.processFinish(null); }
+        catch (Exception e){ delegate.processFinish(new AudioFeaturesTrack()); }
     }
 }

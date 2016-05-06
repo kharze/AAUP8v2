@@ -18,6 +18,6 @@ public class SearchTracksRunnable extends ThreadResponseInterface<TracksPager> i
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.searchTracks(searchTerm)); }
-        catch (Exception e){ delegate.processFinish(null); }
+        catch (Exception e){ delegate.processFinish(new TracksPager()); }
     }
 }

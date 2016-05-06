@@ -18,6 +18,6 @@ public class GetArtistTopTrackRunnable extends ThreadResponseInterface<Tracks> i
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getArtistTopTrack(artistId, MainActivity.me.country)); }
-        catch (Exception e){ delegate.processFinish(null); }
+        catch (Exception e){ delegate.processFinish(new Tracks()); }
     }
 }

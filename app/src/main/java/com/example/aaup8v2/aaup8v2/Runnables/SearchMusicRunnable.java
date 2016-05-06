@@ -110,7 +110,7 @@ public class SearchMusicRunnable extends ThreadResponseInterface<List<myTrack>> 
 
             delegate.processFinish(mSearchTracks);
         } catch (Exception e) {
-            delegate.processFinish(null);
+            delegate.processFinish(new ArrayList<myTrack>());
         }
     }
 }

@@ -28,7 +28,7 @@ public class MySavedTracksRunnable extends ThreadResponseInterface<Pager<SavedTr
             }
             @Override
             public void failure(RetrofitError error) {
-                delegate.processFinish(null);
+                delegate.processFinish(new Pager<SavedTrack>());
             }
         });
     }

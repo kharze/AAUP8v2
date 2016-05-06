@@ -18,6 +18,6 @@ public class GetTrackRunnable extends ThreadResponseInterface<Track> implements 
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getTrack(trackId)); }
-        catch (Exception e){ delegate.processFinish(null); }
+        catch (Exception e){ delegate.processFinish(new Track()); }
     }
 }

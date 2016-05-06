@@ -18,6 +18,6 @@ public class GetArtistsRunnable extends ThreadResponseInterface<Artists> impleme
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getArtists(artistIds)); }
-        catch (Exception e) { delegate.processFinish(null); }
+        catch (Exception e) { delegate.processFinish(new Artists()); }
     }
 }

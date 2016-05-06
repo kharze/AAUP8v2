@@ -44,7 +44,7 @@ public class GetTracksRunnable extends ThreadResponseInterface<Tracks> implement
             delegate.processFinish(tracks);
 
         } catch (Exception e) {
-            delegate.processFinish(null);
+            delegate.processFinish(new Tracks());
         }
     }
 }
