@@ -50,9 +50,6 @@ public class AdminFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-
-
         new Thread(new GetPlaylistsRunnable(MainActivity.me.id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
             @Override
             public void processFinish(Pager<PlaylistSimple> output) {
@@ -80,30 +77,6 @@ public class AdminFragment extends Fragment {
 
             }
         })).start();
-
-//        new asyncGetPlaylists(new asyncGetPlaylists.AsyncResponse(){
-//
-//            @Override
-//            public void processFinish(Pager<PlaylistSimple> output){
-//
-//                for(int i=0;i < output.items.size();i++){
-//                    HashMap<String, String> hm = new HashMap<>();
-//
-//                    PlaylistSimple p = output.items.get(i);
-//                    String s = p.name;
-//                    hm.put("txt", s);
-//                    aList.add(hm);
-//                }
-//
-//                String[] from = { "txt","cur" };
-//
-//                int[] to = {R.id.txt,R.id.cur,R.id.textView};
-//                SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_playlistshostview_layout,from,to );
-//
-//               // Apply the adapter to the spinner
-//                list.setAdapter(adapter);
-//            }
-//        }).execute(MainActivity.me.id);
 
         View v = inflater.inflate(R.layout.fragment_admin, container,false);
         list = (ListView)v.findViewById(R.id.playlist_list);
