@@ -1,5 +1,6 @@
 package com.example.aaup8v2.aaup8v2.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ public class AdminFragment extends Fragment {   // TODO: 06-05-2016 Improve this
     ListView list;
     List<HashMap<String,String>> aList = new ArrayList<>();
     private OnFragmentInteractionListener mListener;
+    Activity activity;
 
     public AdminFragment() {
         // Required empty public constructor
@@ -50,6 +52,8 @@ public class AdminFragment extends Fragment {   // TODO: 06-05-2016 Improve this
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        activity = getActivity();
+
         new Thread(new GetPlaylistsRunnable(MainActivity.me.id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
             @Override
             public void processFinish(Pager<PlaylistSimple> output) {
@@ -62,7 +66,7 @@ public class AdminFragment extends Fragment {   // TODO: 06-05-2016 Improve this
                     aList.add(hm);
                 }
 
-                getActivity().runOnUiThread(new Runnable() {
+                activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         String[] from = { "txt","cur" };
