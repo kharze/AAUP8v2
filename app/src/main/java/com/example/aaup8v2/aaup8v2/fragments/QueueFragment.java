@@ -239,7 +239,9 @@ public class QueueFragment extends Fragment {
             queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
     }
 
-    int numberOfPeers = 6;  //Number of people on the network, needs to be replaced
+
+
+    int numberOfPeers = MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1;
     double threshold = numberOfPeers * 0.66; //Setting the threshold limit
 
     public void applyWeight(){
@@ -249,7 +251,7 @@ public class QueueFragment extends Fragment {
 
     public void voteThreshold(int downVotedTrack) {
         //If track weight gets below the set threshold it will be removed from the list
-        if((threshold + mQueueElementList.get(downVotedTrack).upvoteList.size() - mQueueElementList.get(downVotedTrack).downvoteList.size()) <= 0)
+        if(((threshold + mQueueElementList.get(downVotedTrack).upvoteList.size() - mQueueElementList.get(downVotedTrack).downvoteList.size()) <= 0) || (MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1 == 1))
         {
             deleteTrack(downVotedTrack);
         }
