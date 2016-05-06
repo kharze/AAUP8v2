@@ -71,7 +71,7 @@ public class AdminFragment extends Fragment {
                     aList.add(hm);
                 }
 
-                String[] from = { "flag","txt","cur" };
+                String[] from = { "txt","cur" };
 
                 int[] to = {R.id.txt,R.id.cur,R.id.textView};
                 SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listview_playlistshostview_layout,from,to );
