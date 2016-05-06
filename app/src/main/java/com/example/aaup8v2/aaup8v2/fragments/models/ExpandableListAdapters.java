@@ -105,6 +105,7 @@ public class ExpandableListAdapters extends BaseExpandableListAdapter {
         }
 
         TextView playlistName = (TextView) convertView.findViewById(R.id.playlist_name);
+        TextView trackCount = (TextView) convertView.findViewById(R.id.track_count);
 
         String headerTitle = (String) getGroup(groupPosition);
 
@@ -118,6 +119,11 @@ public class ExpandableListAdapters extends BaseExpandableListAdapter {
             }
             else
                 playlistName.setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        if(trackCount != null){
+            String trackCountText = getChildrenCount(groupPosition) + " Tracks";
+            trackCount.setText(trackCountText);
         }
 
         return convertView;
