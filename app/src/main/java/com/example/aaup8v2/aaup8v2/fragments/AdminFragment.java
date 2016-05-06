@@ -23,7 +23,7 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
 
-public class AdminFragment extends Fragment {
+public class AdminFragment extends Fragment {   // TODO: 06-05-2016 Improve this view a lot. Make a custom view for it, and an adapter. 
     ListView list;
     List<HashMap<String,String>> aList = new ArrayList<>();
     private OnFragmentInteractionListener mListener;

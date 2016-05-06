@@ -72,7 +72,7 @@ public class QueueFragment extends Fragment {
 
         //Resets the playqueue after resuming
         if(mQueueElementList != null)
-            sortQueue();
+            sortQueue(); // TODO: 06-05-2016 Find out if this is even needed 
         else
             mQueueElementList = new ArrayList<>();
     }
@@ -137,13 +137,13 @@ public class QueueFragment extends Fragment {
                 return (int)(rhs.weight - lhs.weight);
             }
         };
-
         Collections.sort(mQueueElementList,compareWeight);
+        
         if(queueAdapter != null)
             queueAdapter.notifyDataSetChanged();
     }
 
-    public String nextSong(){
+    public String nextSong(){ // TODO: 06-05-2016 Broadcast the track, so that peers can add the track to their playbar. 
         String trackId = mQueueElementList.get(0).track.id;
         String artist = "Artist: " + mQueueElementList.get(0).track.artist;
 
@@ -194,7 +194,7 @@ public class QueueFragment extends Fragment {
             sortQueue();
         }
         if(queueAdapter != null)
-            queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
+            queueAdapter.notifyDataSetChanged();
     }
 
     public void click_up_vote(int position){
@@ -202,7 +202,6 @@ public class QueueFragment extends Fragment {
         //Change the icon for the button.
         if(!mQueueElementList.get(position).upvoteList.contains(myIP))
         {
-            //elementList.get(trackChosenOnList).put("upVote", Integer.toString(likeActive));
             mQueueElementList.get(position).weight += 1;
             mQueueElementList.get(position).upvoteList.add(myIP);
 
@@ -232,11 +231,10 @@ public class QueueFragment extends Fragment {
             sortQueue();
         }
         if(queueAdapter != null)
-            queueAdapter.notifyDataSetChanged(); //Informs the adapter that it has been changed (Updates view)
+            queueAdapter.notifyDataSetChanged();
     }
 
-
-
+    // TODO: 06-05-2016 Make this more dynamic. 
     int numberOfPeers = MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1;
     double threshold = numberOfPeers * 0.66; //Setting the threshold limit
 
@@ -255,10 +253,7 @@ public class QueueFragment extends Fragment {
 
     public void trackWeightIncrease(){
         //Increases the weight of the individual tracks on the playlist everytime a track has been played
-        int i = 0;
-        int listCount = mQueueElementList.size();
-
-        while(i <  listCount) {
+        for(int i = 0; i <  mQueueElementList.size(); i++) {
             mQueueElementList.get(i).weight *= 1.1;
 
             if(i == 0){
@@ -270,7 +265,6 @@ public class QueueFragment extends Fragment {
             if(i == 2){
                 mQueueElementList.get(i).weight *= 30;
             }
-            i++;
         }
     }
 }

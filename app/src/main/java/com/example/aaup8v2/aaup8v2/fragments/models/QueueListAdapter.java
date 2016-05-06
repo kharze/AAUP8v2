@@ -15,7 +15,7 @@ import com.example.aaup8v2.aaup8v2.R;
 import java.util.List;
 
 /**
- * Created by MSI on 02-05-2016.
+ * Created by Sean Skov Them on 02-05-2016.
  */
 public class QueueListAdapter extends ArrayAdapter<QueueElement>{
 
@@ -38,24 +38,30 @@ public class QueueListAdapter extends ArrayAdapter<QueueElement>{
 
         if (element != null) {
             // Creates all the views
-            TextView trackName = (TextView) v.findViewById(R.id.track_name);
-            TextView trackArtist = (TextView) v.findViewById(R.id.artist_name);
-            TextView upVotes = (TextView) v.findViewById(R.id.upCount);
-            TextView downVotes = (TextView) v.findViewById(R.id.downCount);
-            ImageView upVoteButton = (ImageView) v.findViewById(R.id.upVote);
+            TextView  trackName      = (TextView)  v.findViewById(R.id.track_name);
+            TextView  trackArtist    = (TextView)  v.findViewById(R.id.artist_name);
+            TextView  upVotes        = (TextView)  v.findViewById(R.id.upCount);
+            TextView  downVotes      = (TextView)  v.findViewById(R.id.downCount);
+            ImageView upVoteButton   = (ImageView) v.findViewById(R.id.upVote);
             ImageView downVoteButton = (ImageView) v.findViewById(R.id.downVote);
 
             if (trackName != null)
                 trackName.setText(element.track.name);
 
-            if (trackArtist != null)
-                trackArtist.setText("Artist: " + element.track.artist);
+            if (trackArtist != null) {
+                String artistText = "Artist: " + element.track.artist;
+                trackArtist.setText(artistText);
+            }
 
-            if (downVotes != null)
-                downVotes.setText(Integer.toString(element.downvoteList.size()));
+            if (downVotes != null) {
+                String downVoteNumber = Integer.toString(element.downvoteList.size());
+                downVotes.setText(downVoteNumber);
+            }
 
-            if (upVotes != null)
-                upVotes.setText(Integer.toString(element.upvoteList.size()));
+            if (upVotes != null) {
+                String upVoteNumber = Integer.toString(element.upvoteList.size());
+                upVotes.setText(upVoteNumber);
+            }
 
             if (upVoteButton != null) {
                 upVoteButton.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +94,6 @@ public class QueueListAdapter extends ArrayAdapter<QueueElement>{
                     downVoteButton.setImageResource(dontlike);
             }
         }
-
         return v;
     }
 }

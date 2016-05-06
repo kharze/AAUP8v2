@@ -33,9 +33,8 @@ public class SearchFragment extends Fragment{
     private List<myTrack> mTracklist = new ArrayList<>();
     public SearchListAdapter searchAdapter;
 
-    ListView Search_Results;
     private EditText mText;
-    Activity activity;
+    private Activity activity;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,12 +57,12 @@ public class SearchFragment extends Fragment{
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_search, container,false);
-        Search_Results = (ListView)v.findViewById(R.id.Search_Results);
-        Button searchButton = (Button)v.findViewById(R.id.searchMusicButton);
+        ListView searchResultsList = (ListView) v.findViewById(R.id.Search_Results);
+        Button searchButton = (Button) v.findViewById(R.id.searchMusicButton);
         mText = (EditText) v.findViewById(R.id.Search_Text);
         activity = getActivity();
 
-        //listener for the search button
+        //listener for the search button // TODO: 06-05-2016 Should the creation of listener have its own function ?
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,15 +83,9 @@ public class SearchFragment extends Fragment{
         });
 
         searchAdapter = new SearchListAdapter(getContext(), R.layout.listview_search_layout, mTracklist);
-        Search_Results.setAdapter(searchAdapter); // Assign adapter to ListView
+        searchResultsList.setAdapter(searchAdapter);
 
         return v; // Inflate the layout for this fragment
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -113,10 +106,8 @@ public class SearchFragment extends Fragment{
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
 
     public void startSearchThread(String id){
         SearchMusicRunnable searchMusicRunnable = new SearchMusicRunnable(id, new ThreadResponseInterface.ThreadResponse<List<myTrack>>() {
@@ -140,7 +131,6 @@ public class SearchFragment extends Fragment{
         worker.setName("Search Music Thread");
         worker.start();
     }
-
 
     public void click_search_add_track(int position){
         Gson gson = new Gson();

@@ -80,7 +80,6 @@ public class PlayListFragment extends Fragment{
                     new GetPlaylistTracksRunnable(output.items.get(i).owner.id, output.items.get(i).id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistTrack>>() {
                         @Override
                         public void processFinish(Pager<PlaylistTrack> tracks) {
-
                                 final List<myTrack> aList = new ArrayList<>();
                                 for(int i=0;i < tracks.items.size(); i++) {
                                     myTrack track = new myTrack(tracks.items.get(i));
