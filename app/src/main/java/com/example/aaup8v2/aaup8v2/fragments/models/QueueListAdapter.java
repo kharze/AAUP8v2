@@ -49,8 +49,13 @@ public class QueueListAdapter extends ArrayAdapter<QueueElement>{
                 trackName.setText(element.track.name);
 
             if (trackArtist != null) {
-                String artistText = "Artist: " + element.track.artist;
-                trackArtist.setText(artistText);
+                String artists = "Artists: ";
+                for(int i = 0; element.track.artists.size() > i; i++){
+                    artists += element.track.artists.get(i).name;
+                    if(element.track.artists.size() != (i+1))
+                        artists += "; ";
+                }
+                trackArtist.setText(artists);
             }
 
             if (downVotes != null) {

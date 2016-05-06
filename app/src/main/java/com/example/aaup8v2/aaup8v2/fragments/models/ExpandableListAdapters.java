@@ -52,7 +52,13 @@ public class ExpandableListAdapters extends BaseExpandableListAdapter {
             }
 
             if (artistName != null) {
-                final String artistText = "Artist: " + track.artist;
+                String artistText = "Artists: ";
+                for(int i = 0; track.artists.size() > i; i++){
+                    artistText += track.artists.get(i).name;
+                    if(track.artists.size() != (i+1)){
+                        artistText += "; ";
+                    }
+                }
                 artistName.setText(artistText);
             }
 

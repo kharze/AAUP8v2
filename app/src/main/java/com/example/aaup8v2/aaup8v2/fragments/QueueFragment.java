@@ -145,9 +145,14 @@ public class QueueFragment extends Fragment {
 
     public String nextSong(){ // TODO: 06-05-2016 Broadcast the track, so that peers can add the track to their playbar. 
         String trackId = mQueueElementList.get(0).track.id;
-        String artist = "Artist: " + mQueueElementList.get(0).track.artist;
+        String artists = "Artists: ";
+        for(int i = 0; mQueueElementList.get(0).track.artists.size() > i; i++) {
+            artists += mQueueElementList.get(0).track.artists.get(i).name;
+            if(mQueueElementList.get(0).track.artists.size() != (i+1))
+                artists += "; ";
+        }
 
-        MainActivity.playedArtist.setText(artist);
+        MainActivity.playedArtist.setText(artists);
         MainActivity.playedName.setText(mQueueElementList.get(0).track.name);
         deleteTrack(0);
         return trackId;
