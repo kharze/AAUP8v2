@@ -12,10 +12,10 @@ import kaaes.spotify.webapi.android.models.Tracks;
  * Created by Sean Skov Them on 04-05-2016.
  */
 public class GetTracksRunnable extends ThreadResponseInterface<Tracks> implements Runnable {
-    String ids;
+    String trackIds;
 
-    public GetTracksRunnable(String ids, ThreadResponse<Tracks> delegate){
-        this.ids = ids;
+    public GetTracksRunnable(String trackIds, ThreadResponse<Tracks> delegate){
+        this.trackIds = trackIds;
         this.delegate = delegate;
     }
 
@@ -29,7 +29,7 @@ public class GetTracksRunnable extends ThreadResponseInterface<Tracks> implement
             do{
                 Map<String, Object> options = new HashMap<>();
                 options.put(SpotifyService.OFFSET, offset);
-                temp = MainActivity.mSpotifyAccess.mService.getTracks(ids, options);
+                temp = MainActivity.mSpotifyAccess.mService.getTracks(trackIds, options);
                 if (tracks == null){
                     tracks = temp;
                 }

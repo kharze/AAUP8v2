@@ -16,10 +16,10 @@ import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TracksPager;
 
 public class SearchMusicRunnable extends ThreadResponseInterface<List<myTrack>> implements Runnable {
-    private String id;
+    private String searchTerm;
 
-    public SearchMusicRunnable(String id, ThreadResponse<List<myTrack>> delegate) {
-        this.id = id;
+    public SearchMusicRunnable(String searchTerm, ThreadResponse<List<myTrack>> delegate) {
+        this.searchTerm = searchTerm;
         this.delegate = delegate;
     }
 
@@ -30,7 +30,7 @@ public class SearchMusicRunnable extends ThreadResponseInterface<List<myTrack>> 
 
         try {
             //Call to the Spotify API searchTracks function, returns a TracksPager object containing the search result.
-            TracksPager mTracks = MainActivity.mSpotifyAccess.mService.searchTracks(id);
+            TracksPager mTracks = MainActivity.mSpotifyAccess.mService.searchTracks(searchTerm);
 
             //Extracting the list of tracks to make code cleaner.
             List<Track> mTracksHelper = mTracks.tracks.items;
@@ -43,7 +43,7 @@ public class SearchMusicRunnable extends ThreadResponseInterface<List<myTrack>> 
             }
 
             //Call to the Spotify API searchArtists function, returns a ArtistsPager object containing the search result.
-            ArtistsPager mArtists = MainActivity.mSpotifyAccess.mService.searchArtists(id);
+            ArtistsPager mArtists = MainActivity.mSpotifyAccess.mService.searchArtists(searchTerm);
 
             //Go through each result from the artist search.
             for(int i = 0; i < mArtists.artists.items.size(); i++){

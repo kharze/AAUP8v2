@@ -13,10 +13,10 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
  * Created by Sean Skov Them on 04-05-2016.
  */
 public class GetPlaylistsRunnable extends ThreadResponseInterface<Pager<PlaylistSimple>> implements Runnable {
-    String id;
+    String playlistIds;
 
-    public GetPlaylistsRunnable(String id, ThreadResponse<Pager<PlaylistSimple>> delegate){
-        this.id = id;
+    public GetPlaylistsRunnable(String playlistIds, ThreadResponse<Pager<PlaylistSimple>> delegate){
+        this.playlistIds = playlistIds;
         this.delegate = delegate;
     }
 
@@ -30,7 +30,7 @@ public class GetPlaylistsRunnable extends ThreadResponseInterface<Pager<Playlist
             do{
                 Map<String, Object> options = new HashMap<>();
                 options.put(SpotifyService.OFFSET, offset);
-                temp = MainActivity.mSpotifyAccess.mService.getPlaylists(id, options);
+                temp = MainActivity.mSpotifyAccess.mService.getPlaylists(playlistIds, options);
                 if (playlists == null){
                     playlists = temp;
                 }

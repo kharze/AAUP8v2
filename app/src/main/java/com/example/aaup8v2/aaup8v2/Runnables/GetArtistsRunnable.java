@@ -8,16 +8,16 @@ import kaaes.spotify.webapi.android.models.Artists;
  * Created by MSI on 04-05-2016.
  */
 public class GetArtistsRunnable extends ThreadResponseInterface<Artists> implements Runnable {
-    String id;
+    String artistIds;
 
-    public GetArtistsRunnable(String id, ThreadResponse<Artists> delegate){
-        this.id = id;
+    public GetArtistsRunnable(String artistIds, ThreadResponse<Artists> delegate){
+        this.artistIds = artistIds;
         this.delegate = delegate;
     }
 
     @Override
     public void run() {
-        try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getArtists(id)); }
+        try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getArtists(artistIds)); }
         catch (Exception e) { delegate.processFinish(null); }
     }
 }

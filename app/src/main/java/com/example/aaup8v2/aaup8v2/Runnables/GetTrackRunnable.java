@@ -8,16 +8,16 @@ import kaaes.spotify.webapi.android.models.Track;
  * Created by Sean Skov Them on 04-05-2016.
  */
 public class GetTrackRunnable extends ThreadResponseInterface<Track> implements Runnable {
-    String id;
+    String trackId;
 
-    public GetTrackRunnable(String id, ThreadResponse<Track> delegate){
-        this.id = id;
+    public GetTrackRunnable(String trackId, ThreadResponse<Track> delegate){
+        this.trackId = trackId;
         this.delegate = delegate;
     }
 
     @Override
     public void run() {
-        try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getTrack(id)); }
+        try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getTrack(trackId)); }
         catch (Exception e){ delegate.processFinish(null); }
     }
 }

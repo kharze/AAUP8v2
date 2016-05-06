@@ -8,16 +8,16 @@ import kaaes.spotify.webapi.android.models.Tracks;
  * Created by Sean Skov Them on 04-05-2016.
  */
 public class GetArtistTopTrackRunnable extends ThreadResponseInterface<Tracks> implements Runnable {
-    String id;
+    String artistId;
 
-    public GetArtistTopTrackRunnable(String id, ThreadResponse<Tracks> delegate){
-        this.id = id;
+    public GetArtistTopTrackRunnable(String artistId, ThreadResponse<Tracks> delegate){
+        this.artistId = artistId;
         this.delegate = delegate;
     }
 
     @Override
     public void run() {
-        try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getArtistTopTrack(id, MainActivity.me.country)); }
+        try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getArtistTopTrack(artistId, MainActivity.me.country)); }
         catch (Exception e){ delegate.processFinish(null); }
     }
 }
