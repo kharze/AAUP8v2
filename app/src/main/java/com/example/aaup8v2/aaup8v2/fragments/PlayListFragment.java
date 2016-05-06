@@ -27,7 +27,7 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 public class PlayListFragment extends Fragment{
     public ExpandableListView expListView;
     public List<String> playlistName;
-    public HashMap<String, List<String>> listDataChild;
+    public List<List<myTrack>> listDataChild;
     public ExpandableListAdapters listAdapter;
 
     private OnFragmentInteractionListener mListener;
