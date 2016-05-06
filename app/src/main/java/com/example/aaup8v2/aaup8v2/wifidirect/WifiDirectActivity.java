@@ -95,7 +95,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         String[] from = {"flag", "txt", "cur"};
 
         int[] to = {R.id.flag, R.id.txt, R.id.cur, R.id.textView};
-        deviceAdapter = new SimpleAdapter(getApplicationContext(), aList, R.layout.listview_layout_p2p, from, to);
+        deviceAdapter = new SimpleAdapter(this, aList, R.layout.listview_layout_p2p, from, to);
 
         // Assign adapter to ListView
         list = (ListView) findViewById(R.id.listviewPeers);
@@ -218,12 +218,16 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             receiveHostSpawn();
 
             MainActivity.initializePeer(true);
+
+            MainActivity.toggleConnectionButtons(false);
         } else if (info.groupFormed) {
             sendDataToHost("ip_sent", "", MainActivity.mQueueFragment.myIP);
 
             MainActivity.initializePeer(false);
 
             receiveDataSpawn();
+
+            MainActivity.toggleConnectionButtons(false);
         }
 
     }
@@ -378,6 +382,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     if(MainActivity.mSearchFragment.searchAdapter != null)
                                         MainActivity.mSearchFragment.searchAdapter.notifyDataSetChanged();
+                                    if(MainActivity.mPlaylistFragment.listAdapter != null)
+                                        MainActivity.mPlaylistFragment.listAdapter.notifyDataSetChanged();
                                     break;
                                 case DISCONNECT:
                                     Toast.makeText(getApplicationContext(), "Host left network", Toast.LENGTH_LONG).show();
@@ -529,39 +535,18 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
-    public void on_listViewClik(View view) {
+    public void on_listViewClick(View view) {
         // These two lines are used to find out which line of the list the button is in.
-        ListView listviewconteasdnt = (ListView)view.getParent().getParent().getParent();
-        int bIndex = listviewconteasdnt.indexOfChild((View) view.getParent().getParent());
+        ListView listviewcontent = (ListView)view.getParent().getParent().getParent();
+        int bIndex = listviewcontent.indexOfChild((View) view.getParent().getParent());
 
-        WifiP2pDevice dev = peersCollection.get(bIndex);
+        //WifiP2pDevice dev = peersCollection.get(bIndex);
         WifiP2pConfig conf = new WifiP2pConfig();
-        conf.groupOwnerIntent = 15;
+        if(MainActivity.isHost)
+            conf.groupOwnerIntent = 15;
         conf.deviceAddress =  peersCollection.get(bIndex).deviceAddress;
         conf.wps.setup = WpsInfo.PBC;
         connect(conf);
-    }
-
-    public void sendInfo(View view){
-
-
-        ListView listviewconteasdnt = (ListView)view.getParent().getParent().getParent();
-        int bIndex = listviewconteasdnt.indexOfChild((View) view.getParent().getParent());
-        int index = 0;
-
-        for(int i = 0; i < peersCollection.size(); i++){
-
-            if (index == bIndex)
-            {
-                if (!info.isGroupOwner) {
-                    sendDataToHost("", "I sent something", "");
-                } else {
-                    sendDataToPeers("", "I'm number " + bIndex);
-                }
-
-            }
-            index++;
-        }
     }
 
     public void sendDataToHost(String type, String data, String ip){

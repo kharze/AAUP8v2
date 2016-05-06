@@ -42,4 +42,6 @@
     <string name="house">House</string>
     <string name="disconnect">Disconnect</string>
     <string name="refresh">Refresh</string>
+    <string name="Disconnect_from_network">Disconnect from Network</string>
+    <string name="Connections">Connections</string>
 </resources>

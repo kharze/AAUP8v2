@@ -1,6 +1,7 @@
 package com.example.aaup8v2.aaup8v2;
 
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -64,9 +66,14 @@ public class MainActivity extends AppCompatActivity
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;
     public static PlayListFragment mPlaylistFragment;
+    public static DisconnectFragment mDisconnectFragment;
     public static ImageView playButton;
     public static TextView playedName;
     public static TextView playedArtist;
+    public static Button hostButton;
+    public static Button connectButton;
+    public static Button disconnectButton;
+    public static MenuItem disconnectItem;
 
     public static boolean isHost = true;
     public static boolean isPeer = false;
@@ -108,6 +115,7 @@ public class MainActivity extends AppCompatActivity
         mQueueFragment = new QueueFragment();
         musicPlayer = new MusicPlayer();
         mPlaylistFragment = new PlayListFragment();
+        mDisconnectFragment = new DisconnectFragment();
 
         // Instantiate the playbar
         playedName = (TextView)findViewById(R.id.track_name);
@@ -173,6 +181,8 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_disconnect:
                 fragmentClass = DisconnectFragment.class;
+                //Instantiate the disconnect MenuItem
+                disconnectItem = menuItem;
                 break;
             case R.id.nav_search:
                 fragmentClass = SearchFragment.class;
@@ -197,6 +207,8 @@ public class MainActivity extends AppCompatActivity
                 ((PlayListFragment)fragment).listDataChild = mPlaylistFragment.listDataChild;
                 ((PlayListFragment)fragment).playlistName = mPlaylistFragment.playlistName;
                 mPlaylistFragment = (PlayListFragment) fragment;
+            } else if(fragmentClass == DisconnectFragment.class){
+                mDisconnectFragment = (DisconnectFragment) fragment;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -248,8 +260,6 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
         selectDrawerItem(item);
 
         return super.onOptionsItemSelected(item);
@@ -365,15 +375,25 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public static void toggleConnectionButtons(boolean show){
+        if(show){
+            hostButton.setVisibility(Button.VISIBLE);
+            connectButton.setVisibility(Button.VISIBLE);
+            disconnectButton.setVisibility(Button.GONE);
+            disconnectItem.setTitle(R.string.Connections);
+        }else{
+            hostButton.setVisibility(Button.GONE);
+            connectButton.setVisibility(Button.GONE);
+            disconnectButton.setVisibility(Button.VISIBLE);
+            disconnectItem.setTitle(R.string.Disconnect);
+        }
+    }
+
     public static void initializePeer(boolean show){
         if(show)
             playButton.setVisibility(ImageView.VISIBLE);
         else
             playButton.setVisibility(ImageView.GONE);
     }
-
-
-    //Sends the button click to the search fragment
-    //public void click_search_add_track(View view){ mSearchFragment.click_search_add_track(view); }
 
 }

@@ -32,7 +32,7 @@ public class PlayListFragment extends Fragment{
     public List<String> playlistName;
     //HashMap<String, List<HashMap<String, String>>> listDataChild;
     public HashMap<String, List<String>> listDataChild;
-    ExpandableListAdapters listAdapter;
+    public ExpandableListAdapters listAdapter;
 
     private OnFragmentInteractionListener mListener;
 
