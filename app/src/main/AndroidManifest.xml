@@ -3,8 +3,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.aaup8v2.aaup8v2">
 
-    <!-- Used for PeerToPeer -->
-    <uses-sdk android:minSdkVersion="14" />
+    <!-- Used for WifiDirect -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
@@ -35,12 +34,6 @@
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity
-            android:name=".PeerToPeer"
-            android:label="@string/title_activity_peer_to_peer"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"><!-- We only want to have portrait mode -->
-        </activity>
         <activity
             android:name=".wifidirect.WifiDirectActivity"
             android:label="@string/title_activity_peer_to_peer"

@@ -15,9 +15,6 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TracksPager;
 
-/**
- * Created by Sean Skov Them on 04-05-2016.
- */
 public class SearchMusicRunnable extends ThreadResponseInterface<List<myTrack>> implements Runnable {
     private String id;
 

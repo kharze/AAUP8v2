@@ -64,8 +64,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     private BroadcastReceiver receiver = null;
     public WifiP2pInfo info;
     ProgressDialog progressDialog = null;
-    private List<WifiP2pDevice> peersCollection = new ArrayList();
-    List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
+    private List<WifiP2pDevice> peersCollection = new ArrayList<>();
+
+    List<HashMap<String,String>> aList = new ArrayList<>();
     ListView list;
     public List<String> ipsOnNetwork = new ArrayList<>();
     public Thread worker;
@@ -175,7 +176,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             peersCollection.addAll(peers.getDeviceList());
 
                             for (int i = 0; i < peersCollection.size(); i++) {
-                                HashMap<String, String> hm = new HashMap<String, String>();
+                                HashMap<String, String> hm = new HashMap<>();
 
                                 String s = peersCollection.get(i).deviceName;
                                 hm.put("txt", s);
@@ -317,11 +318,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             data.add((String) sender);
                             updateUI(data);
 
+                            //Just to have a way out of the while loop, should never become true
+                            if(data.size() == 100)
+                                break;
+
                         }catch (ClosedByInterruptException e){
                             e.getCause();
-                        }catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (ClassNotFoundException e) {
+                        }catch (IOException | ClassNotFoundException e) {
                             e.printStackTrace();
                         } finally {
                             try {
@@ -357,22 +360,24 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             Type mClass = new TypeToken<List<QueueElement>>() {
                             }.getType();
 
+                            List<QueueElement> newQueueList = gson.fromJson(data,mClass);
+
                             switch (type) {
                                 case UP_VOTE:
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
-                                    MainActivity.mQueueFragment.mQueueElementList.addAll((List<QueueElement>)gson.fromJson(data, mClass));
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueList);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case DOWN_VOTE:
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
-                                    MainActivity.mQueueFragment.mQueueElementList.addAll((List<QueueElement>)gson.fromJson(data, mClass));
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueList);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case TRACK_ADDED:
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
-                                    MainActivity.mQueueFragment.mQueueElementList.addAll((List<QueueElement>)gson.fromJson(data, mClass));
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueList);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     if(MainActivity.mSearchFragment.searchAdapter != null)
@@ -412,6 +417,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             updateUI(data);
 
                             objectInputStream.close();
+
+                            //Just to have a way out of the while loop, should never become true
+                            if(data.size() == 100)
+                                break;
 
                         }catch (ClosedByInterruptException e){
                             e.getCause();
