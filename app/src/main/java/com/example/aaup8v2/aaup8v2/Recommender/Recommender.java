@@ -2,43 +2,68 @@ package com.example.aaup8v2.aaup8v2.Recommender;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Created by Flaka_000 on 05-05-2016.
  */
 public class Recommender extends MainActivity {
-    private HashMap<String, Double> mWeights;
-    private Integer count = 0;
+    private Double[][] mGenreWeights;
+    private Double[][] mArtistWeights;
+    private ArrayList<String> mGenreOrder;
+    private ArrayList<String> mArtistOrder;
 
-    public Recommender(HashMap<String, Double> weights){
-        mWeights.putAll(weights);
+    public Recommender(String uid){
+        init(uid);
     }
 
-    public void adjWeights(HashMap<String, Double> inWeights){
-        count++;
-        //Make an iterator to process the incoming weights
-        Iterator<HashMap.Entry<String, Double>> inIter = inWeights.entrySet().iterator();
-        while(inIter.hasNext()){
-            HashMap.Entry<String, Double> inPair = inIter.next();
-            boolean isNew = false;
-            Iterator<HashMap.Entry<String, Double>> localIter = mWeights.entrySet().iterator();
+    //Initializes recommender
+    //Takes user id - Currently not implemented
+    private void init(String uid){
 
-            while(localIter.hasNext()){
-                HashMap.Entry<String, Double> localPair = localIter.next();
+    }
 
-                if(inPair.getKey().equals(localPair.getKey())){
+    //Updates the matrix with a new user-row
+    //Works on both genres and artists. Takes as param. Returns the updated matrix.
+    //Bool for type of weights. True for mGenre. False for mArtist.
+    public Double[][] addWeights(Double[][] lArr, ArrayList<String> inOrder, Double[] inArr, boolean isGenre){
+        ArrayList<String> order;
+        //Get the order in the arraylist.
+        if (isGenre){
+            order = mGenreOrder;
+        } else{
+            order = mArtistOrder;
+        }
 
-                } else {    //New genre/artist, add to weights
-                    isNew = true;
-                }
-            }
-
-            if(isNew){  //Add it to hashmap of weights
-                mWeights.put(inPair.getKey(), inPair.getValue()/count);
+        //Add new occurrences to the order
+        for (String str: inOrder) {
+            if (!order.contains(str)){
+                order.add(str);
             }
         }
+
+        //Replace the old array - one dimension the size of new number of genres/artists
+        Double[][] local = new Double[order.size()][];
+        for (int i = 0; i < order.size(); i++){
+            //Fill in each row with length of former array plus one (new peer)
+            //Fill in old information
+            local[i] = new Double[lArr[0].length + 1];
+            for (int j = 0; j < lArr[0].length - 1; j++){
+                local[i][j] = lArr[i][j];
+            }
+            //Last row is the new peer
+            local[i][local[0].length - 1] = inArr[inOrder.indexOf(order.get(i))];
+        }
+
+        return local;
+    }
+
+    //Not yet implemented
+    private void personsim(){
+    }
+
+    //Not yet implemented
+    public void predict(){
+
     }
 }
