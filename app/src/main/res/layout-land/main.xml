@@ -16,11 +16,5 @@
             android:layout_height="match_parent">
             <!-- Preview: layout=@layout/row_devices -->
         </fragment>
-        <fragment class="com.example.aaup8v2.aaup8v2.wifidirect.DeviceDetailFragment"
-            android:id="@+id/frag_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <!-- Preview: layout=@layout/device_detail -->
-        </fragment>
     </LinearLayout>
 </LinearLayout>

@@ -6,18 +6,36 @@
     android:layout_below="@+id/toolbar"
     android:layout_above="@+id/playbarLayout">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/disconnect"
-        android:textColor="@color/textColor"/>
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Disconnect from Network"
+        android:text="@string/Disconnect_from_network"
         android:id="@+id/btn_disconnect_from_network"
         android:layout_gravity="center"
-        android:onClick="" />
+        android:onClick=""
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/relativeLayout">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_host"
+            android:text="@string/Host"
+            android:onClick="pToP"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/btn_host"
+            android:id="@+id/btn_connectView"
+            android:text="@string/Connect"
+            android:onClick="pToP"/>
+    </RelativeLayout>
 
 </FrameLayout>

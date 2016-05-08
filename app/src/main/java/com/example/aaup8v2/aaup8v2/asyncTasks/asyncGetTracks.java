@@ -7,6 +7,7 @@ import com.example.aaup8v2.aaup8v2.MainActivity;
 import java.util.HashMap;
 import java.util.Map;
 
+import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Tracks;
 
 public class asyncGetTracks extends AsyncTask<String, Void, Tracks> {
@@ -40,7 +41,7 @@ public class asyncGetTracks extends AsyncTask<String, Void, Tracks> {
 
             do{
                 Map<String, Object> options = new HashMap<>();
-                options.put(MainActivity.mSpotifyAccess.mService.OFFSET, offset);
+                options.put(SpotifyService.OFFSET, offset);
                 temp = MainActivity.mSpotifyAccess.mService.getTracks(id[0], options);
                 if (tracks == null){
                     tracks = temp;

@@ -11,6 +11,7 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.util.Log;
 
+import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
 
 /**
@@ -71,9 +72,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             if (networkInfo.isConnected()) {
                 // we are connected with the other device, request connection
                 // info to find group owner IP
-                DeviceDetailFragment fragment = (DeviceDetailFragment) activity
-                        .getFragmentManager().findFragmentById(R.id.frag_detail);
-                manager.requestConnectionInfo(channel, fragment);
+                manager.requestConnectionInfo(channel, MainActivity.mWifiDirectActivity);
             } else {
                 // It's a disconnect
                 activity.resetData();

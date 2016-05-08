@@ -7,9 +7,11 @@ import com.example.aaup8v2.aaup8v2.MainActivity;
 import java.util.HashMap;
 import java.util.Map;
 
+import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
-public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
+public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager<PlaylistTrack>> {
 
     public interface AsyncResponse {
         void processFinish(Pager output);
@@ -32,19 +34,15 @@ public class asyncGetPlaylistTracks extends AsyncTask<String, Void, Pager> {
     }
 
     @Override
-    protected Pager doInBackground(String... id) {
+    protected Pager<PlaylistTrack> doInBackground(String... id) {
         try {
-            Pager tracks = null;
+            Pager<PlaylistTrack> tracks = null;
             int offset = 0;
-            Pager temp;
-            /**
-            Map<String, Object> options = new HashMap<>();
-            options.put(MainActivity.mSpotifyAccess.mService.OFFSET, offset);
-            tracks = MainActivity.mSpotifyAccess.mService.getPlaylistTracks(id[0], id[1], options);
-             **/
+            Pager<PlaylistTrack> temp;
+
             do{
                 Map<String, Object> options = new HashMap<>();
-                options.put(MainActivity.mSpotifyAccess.mService.OFFSET, offset);
+                options.put(SpotifyService.OFFSET, offset);
                 temp = MainActivity.mSpotifyAccess.mService.getPlaylistTracks(id[0], id[1], options);
                 if (tracks == null){
                     tracks = temp;

@@ -20,6 +20,6 @@ public class GetPlaylistRunnable extends ThreadResponseInterface<Playlist> imple
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getPlaylist(userID, playlistID)); }
-        catch (Exception e) { delegate.processFinish(null); }
+        catch (Exception e) { delegate.processFinish(new Playlist()); }
     }
 }

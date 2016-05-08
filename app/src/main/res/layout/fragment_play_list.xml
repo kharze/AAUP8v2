@@ -9,7 +9,8 @@
 
     <ExpandableListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/expand_list"
+        android:groupIndicator="@drawable/group_indicator"
         android:layout_gravity="start|top" />
 </FrameLayout>

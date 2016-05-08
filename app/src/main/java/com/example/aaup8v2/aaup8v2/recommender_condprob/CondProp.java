@@ -5,14 +5,11 @@ import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtists;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
 import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylists;
 
-import java.security.Key;
-import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
@@ -35,7 +32,7 @@ public class CondProp extends MainActivity {
     }
 
     public List<String> generateFullGenreList(Pager<PlaylistSimple> playlists){
-        List<String> result = null;
+        List<String> result = new ArrayList<>();
         for (PlaylistSimple playlist : playlists.items){
             result.addAll(generateGenreList(localHost.getID(), playlist.id));
         }
@@ -45,10 +42,9 @@ public class CondProp extends MainActivity {
     //Returns a list of genres from a playlist,
     //given a string of User id and playlist id
     public List<String> generateGenreList(String u_id, String p_id){
-        Pager tracksPager= null;
+        Pager<PlaylistTrack> tracksPager = new Pager<>();
         Track track;
-        Track t = null;
-        Artists mArtists = null;
+        Artists mArtists = new Artists();
         List<String> artistsList = new ArrayList<>();
         try{
             tracksPager = new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
@@ -56,7 +52,7 @@ public class CondProp extends MainActivity {
                 public void processFinish(Pager output){
                 }
             }).execute(u_id, p_id).get();
-        }catch (Exception e){}
+        }catch (Exception e){e.getCause();}
 
         List<PlaylistTrack> tracksList = tracksPager.items;
         for(int j=0; j < tracksList.size(); j++){
@@ -66,7 +62,7 @@ public class CondProp extends MainActivity {
             }
         }
 
-        List<String> genres = new ArrayList();
+        List<String> genres = new ArrayList<>();
         try{
             do{
                 String artistsRequests = null;
@@ -90,15 +86,13 @@ public class CondProp extends MainActivity {
                         public void processFinish(Artists output){
                         }
                     }).execute(artistsRequests).get();
-                }catch (Exception e){}
+                }catch (Exception e){e.getCause();}
 
                 for (int i = 0; i < mArtists.artists.size(); i++){
                     int temp = mArtists.artists.get(i).genres.size();
                     for(int j = 0; j < temp; j++){
                         String[] tempGenres = mArtists.artists.get(i).genres.get(j).split("\\W+");
-                        for(int y = 0; y < tempGenres.length; y++){
-                            genres.add(tempGenres[y]);
-                        }
+                        Collections.addAll(genres, tempGenres);
                     }
                 }
             }while (!artistsList.isEmpty());

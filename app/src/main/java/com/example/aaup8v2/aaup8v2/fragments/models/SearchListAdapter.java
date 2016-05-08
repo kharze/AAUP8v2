@@ -46,8 +46,15 @@ public class SearchListAdapter extends ArrayAdapter<myTrack> {
             if (trackName != null)
                 trackName.setText(element.name);
 
-            if (artistName != null)
-                artistName.setText("Artist: " + element.artist);
+            if (artistName != null) {
+                String artists = "Artists: ";
+                    for(int i = 0; element.artists.size() > i; i++){
+                        artists += element.artists.get(i).name;
+                        if(element.artists.size() != (i+1))
+                            artists += "; ";
+                    }
+                artistName.setText(artists);
+            }
 
             if(addTrack != null){
                 boolean inList = false;

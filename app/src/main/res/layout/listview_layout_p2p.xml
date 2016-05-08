@@ -21,7 +21,7 @@
             android:text="@string/connect"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:onClick="on_listViewClik"/>
+            android:onClick="on_listViewClick"/>
         <TextView
             android:id="@+id/cur"
             android:layout_width="wrap_content"

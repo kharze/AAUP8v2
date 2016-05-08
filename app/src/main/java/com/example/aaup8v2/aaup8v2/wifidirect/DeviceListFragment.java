@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.aaup8v2.aaup8v2.R;
@@ -26,7 +25,7 @@ import java.util.List;
  * parent activity to handle user interaction events
  */
 public class DeviceListFragment extends ListFragment implements PeerListListener {
-    private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
+    private List<WifiP2pDevice> peers = new ArrayList<>();
     ProgressDialog progressDialog = null;
     View mContentView = null;
     private WifiP2pDevice device;
@@ -63,14 +62,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
                 return "Unknown";
         }
     }
-    /**
-     * Initiate a connection with the peer.
-     */
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        WifiP2pDevice device = (WifiP2pDevice) getListAdapter().getItem(position);
-        ((DeviceActionListener) getActivity()).showDetails(device);
-    }
+
     /**
      * Array adapter for ListFragment that maintains WifiP2pDevice list.
      */

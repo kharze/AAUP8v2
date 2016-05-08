@@ -64,8 +64,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     private BroadcastReceiver receiver = null;
     public WifiP2pInfo info;
     ProgressDialog progressDialog = null;
-    private List<WifiP2pDevice> peersCollection = new ArrayList();
-    List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
+    private List<WifiP2pDevice> peersCollection = new ArrayList<>();
+
+    List<HashMap<String,String>> aList = new ArrayList<>();
     ListView list;
     public List<String> ipsOnNetwork = new ArrayList<>();
     public Thread worker;
@@ -94,8 +95,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
         String[] from = {"flag", "txt", "cur"};
 
-        int[] to = {R.id.flag, R.id.txt, R.id.cur, R.id.textView};
-        deviceAdapter = new SimpleAdapter(getApplicationContext(), aList, R.layout.listview_layout_p2p, from, to);
+        int[] to = {R.id.txt, R.id.cur, R.id.textView};
+        deviceAdapter = new SimpleAdapter(this, aList, R.layout.listview_layout_p2p, from, to);
 
         // Assign adapter to ListView
         list = (ListView) findViewById(R.id.listviewPeers);
@@ -124,13 +125,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public void resetData() {
         DeviceListFragment fragmentList = (DeviceListFragment) getFragmentManager()
                 .findFragmentById(R.id.frag_list);
-        DeviceDetailFragment fragmentDetails = (DeviceDetailFragment) getFragmentManager()
-                .findFragmentById(R.id.frag_detail);
         if (fragmentList != null) {
             fragmentList.clearPeers();
-        }
-        if (fragmentDetails != null) {
-            fragmentDetails.resetViews();
         }
     }
 
@@ -180,7 +176,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             peersCollection.addAll(peers.getDeviceList());
 
                             for (int i = 0; i < peersCollection.size(); i++) {
-                                HashMap<String, String> hm = new HashMap<String, String>();
+                                HashMap<String, String> hm = new HashMap<>();
 
                                 String s = peersCollection.get(i).deviceName;
                                 hm.put("txt", s);
@@ -218,12 +214,16 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             receiveHostSpawn();
 
             MainActivity.initializePeer(true);
+
+            MainActivity.toggleConnectionButtons(false);
         } else if (info.groupFormed) {
             sendDataToHost("ip_sent", "", MainActivity.mQueueFragment.myIP);
 
             MainActivity.initializePeer(false);
 
             receiveDataSpawn();
+
+            MainActivity.toggleConnectionButtons(false);
         }
 
     }
@@ -318,11 +318,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             data.add((String) sender);
                             updateUI(data);
 
+                            //Just to have a way out of the while loop, should never become true
+                            if(data.size() == 100)
+                                break;
+
                         }catch (ClosedByInterruptException e){
                             e.getCause();
-                        }catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (ClassNotFoundException e) {
+                        }catch (IOException | ClassNotFoundException e) {
                             e.printStackTrace();
                         } finally {
                             try {
@@ -358,26 +360,30 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             Type mClass = new TypeToken<List<QueueElement>>() {
                             }.getType();
 
+                            List<QueueElement> newQueueList = gson.fromJson(data,mClass);
+
                             switch (type) {
                                 case UP_VOTE:
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
-                                    MainActivity.mQueueFragment.mQueueElementList.addAll((List<QueueElement>)gson.fromJson(data, mClass));
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueList);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case DOWN_VOTE:
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
-                                    MainActivity.mQueueFragment.mQueueElementList.addAll((List<QueueElement>)gson.fromJson(data, mClass));
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueList);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case TRACK_ADDED:
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
-                                    MainActivity.mQueueFragment.mQueueElementList.addAll((List<QueueElement>)gson.fromJson(data, mClass));
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueList);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     if(MainActivity.mSearchFragment.searchAdapter != null)
                                         MainActivity.mSearchFragment.searchAdapter.notifyDataSetChanged();
+                                    if(MainActivity.mPlaylistFragment.listAdapter != null)
+                                        MainActivity.mPlaylistFragment.listAdapter.notifyDataSetChanged();
                                     break;
                                 case DISCONNECT:
                                     Toast.makeText(getApplicationContext(), "Host left network", Toast.LENGTH_LONG).show();
@@ -412,6 +418,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             objectInputStream.close();
 
+                            //Just to have a way out of the while loop, should never become true
+                            if(data.size() == 100)
+                                break;
+
                         }catch (ClosedByInterruptException e){
                             e.getCause();
                         }catch (IOException e) {
@@ -438,9 +448,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
     @Override
     public void showDetails(WifiP2pDevice device) {
-        DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager()
-                .findFragmentById(R.id.frag_detail);
-        fragment.showDetails(device);
+
     }
     @Override
     public void connect(WifiP2pConfig config) {
@@ -529,39 +537,18 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
-    public void on_listViewClik(View view) {
+    public void on_listViewClick(View view) {
         // These two lines are used to find out which line of the list the button is in.
-        ListView listviewconteasdnt = (ListView)view.getParent().getParent().getParent();
-        int bIndex = listviewconteasdnt.indexOfChild((View) view.getParent().getParent());
+        ListView listviewcontent = (ListView)view.getParent().getParent().getParent();
+        int bIndex = listviewcontent.indexOfChild((View) view.getParent().getParent());
 
-        WifiP2pDevice dev = peersCollection.get(bIndex);
+        //WifiP2pDevice dev = peersCollection.get(bIndex);
         WifiP2pConfig conf = new WifiP2pConfig();
-        conf.groupOwnerIntent = 15;
+        if(MainActivity.isHost)
+            conf.groupOwnerIntent = 15;
         conf.deviceAddress =  peersCollection.get(bIndex).deviceAddress;
         conf.wps.setup = WpsInfo.PBC;
         connect(conf);
-    }
-
-    public void sendInfo(View view){
-
-
-        ListView listviewconteasdnt = (ListView)view.getParent().getParent().getParent();
-        int bIndex = listviewconteasdnt.indexOfChild((View) view.getParent().getParent());
-        int index = 0;
-
-        for(int i = 0; i < peersCollection.size(); i++){
-
-            if (index == bIndex)
-            {
-                if (!info.isGroupOwner) {
-                    sendDataToHost("", "I sent something", "");
-                } else {
-                    sendDataToPeers("", "I'm number " + bIndex);
-                }
-
-            }
-            index++;
-        }
     }
 
     public void sendDataToHost(String type, String data, String ip){

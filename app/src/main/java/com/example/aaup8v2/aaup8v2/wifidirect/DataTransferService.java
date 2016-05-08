@@ -18,7 +18,7 @@ import java.net.Socket;
  * socket connection with the WiFi Direct Group Owner and writing the file
  */
 public class DataTransferService extends IntentService {
-    private static final int SOCKET_TIMEOUT = 5000;
+    private static final int SOCKET_TIMEOUT = 1000;
     public static final String ACTION_SEND_DATA = "com.example.aaup8v2.aaup8v2.wifidirect.SEND_DATA";
     public static final String EXTRAS_FILE_PATH = "file_url";
     public static final String EXTRAS_PEER_ADDRESS = "go_host";

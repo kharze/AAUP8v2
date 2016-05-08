@@ -12,87 +12,48 @@ import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
+import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DisconnectFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DisconnectFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DisconnectFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
     public DisconnectFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DisconnectFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DisconnectFragment newInstance(String param1, String param2) {
-        DisconnectFragment fragment = new DisconnectFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_disconnect, container,false);
         Button disconnectNetworkButton = (Button)v.findViewById(R.id.btn_disconnect_from_network);
 
-        disconnectNetworkButton.setOnClickListener(new View.OnClickListener(){
+        //Instantiate the connection buttons
+        MainActivity.hostButton = (Button)v.findViewById(R.id.btn_host);
+        MainActivity.connectButton = (Button)v.findViewById(R.id.btn_connectView);
+        MainActivity.disconnectButton = disconnectNetworkButton;
+
+        disconnectNetworkButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 Toast.makeText(getContext(), "Disconnecting", Toast.LENGTH_SHORT).show();
-                if (MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
-                    MainActivity.mWifiDirectActivity.sendDataToPeers(MainActivity.mWifiDirectActivity.DISCONNECT, "");
-                }else if(MainActivity.mWifiDirectActivity.info != null) {
-                    MainActivity.mWifiDirectActivity.sendDataToHost(MainActivity.mWifiDirectActivity.DISCONNECT, "", MainActivity.mQueueFragment.myIP);
+                if (MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner) {
+                    MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.DISCONNECT, "");
+                } else if (MainActivity.mWifiDirectActivity.info != null) {
+                    MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DISCONNECT, "", MainActivity.mQueueFragment.myIP);
                 }
                 Toast.makeText(getContext(), "Disconnected", Toast.LENGTH_SHORT).show();
+                MainActivity.toggleConnectionButtons(true);
             }
         });
 
-        // Inflate the layout for this fragment
         return v;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -112,18 +73,7 @@ public class DisconnectFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }
