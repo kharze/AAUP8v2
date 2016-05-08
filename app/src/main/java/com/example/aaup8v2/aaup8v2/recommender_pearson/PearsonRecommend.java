@@ -1,7 +1,13 @@
 package com.example.aaup8v2.aaup8v2.recommender_pearson;
 
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetArtists;
+import android.app.Activity;
+import android.content.Context;
+import android.widget.Toast;
+
+import com.example.aaup8v2.aaup8v2.Runnables.GetArtistsRunnable;
+import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
+import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistsRunnable;
+import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,8 +15,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -20,68 +28,100 @@ import kaaes.spotify.webapi.android.models.Track;
 
 public class PearsonRecommend{
 
+    List<Artist> artistsList = new ArrayList<>();
+    List<String> p_id = new ArrayList<>();
+    List<String> playlistOwnerId = new ArrayList<>();
     List<Track> trackList = new ArrayList<>();
+    Pager<PlaylistTrack> tracksPager;
+    Artists mArtists;
+    Context context;
+    Activity activity;
+
+    //List<PlaylistTrack> tracksList = new ArrayList<>();
+
+    public PearsonRecommend(Context context, Activity activity){
+        this.context = context;
+        this.activity = activity;
+    }
+
     /*
     Getting a list of artist based on tracks from a playlist
      */
-    private List<Artist> getArtists(String u_id, String p_id){
 
-        Pager tracksPager= null;
-        Track track;
-        Artists mArtists = null;
-        List<String> artistsIdList = new ArrayList<>();
-        List<Artist> artistsList = new ArrayList<>();
+
+    private List<Artist> getArtists(String u_id){
         try{
-            tracksPager = new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
-                @Override
-                public void processFinish(Pager output){
-                }
-            }).execute(u_id, p_id).get();
-        }catch (Exception e){
-            e.getMessage();
-        }
-        List<PlaylistTrack> tracksList = tracksPager.items;
 
-        for(int j=0; j < tracksList.size(); j++){
-            track = tracksList.get(j).track;
-            trackList.add(track);
-            for(int i=0; i < track.artists.size(); i++){
-                artistsIdList.add(track.artists.get(i).id);
-            }
-        }
-        try {
-            do {
-                String artistsRequests = null;
-                int counter = 0;
-                do {
-                    if (artistsRequests == null) {
-                        artistsRequests = artistsIdList.get(0);
-                        artistsIdList.remove(0);
-                        counter++;
-                    } else {
-                        artistsRequests += "," + artistsIdList.get(0);
-                        artistsIdList.remove(0);
-                        counter++;
+            new GetPlaylistsRunnable(u_id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
+                @Override
+                public void processFinish(Pager<PlaylistSimple> output) {
+                    for (int i = 0; i < output.items.size(); i++) {
+                        p_id.add(output.items.get(i).id);
+                        playlistOwnerId.add(output.items.get(i).owner.id);
                     }
-                } while (counter < 50 && !artistsIdList.isEmpty());
-                try {
-                    mArtists = new asyncGetArtists(new asyncGetArtists.AsyncResponse() {
+                }
+            }).run();
+
+            for(int k = 0; k < p_id.size(); k++){
+                try{
+                    new GetPlaylistTracksRunnable(playlistOwnerId.get(k), p_id.get(k), new ThreadResponseInterface.ThreadResponse<Pager<PlaylistTrack>>() {
                         @Override
-                        public void processFinish(Artists output) {
+                        public void processFinish(Pager<PlaylistTrack> output) {
+                            tracksPager = output;
                         }
-                    }).execute(artistsRequests).get();
-                } catch (Exception e) {
+                    }).run();
+
+                }catch (Exception e){
                     e.getMessage();
                 }
-                for (int i = 0; i < mArtists.artists.size(); i++) {
-                    artistsList.add(mArtists.artists.get(i));
-                }
-            } while (!artistsIdList.isEmpty());
 
-            return artistsList;
-        }catch (Exception e) {
-            return null;
+                List<PlaylistTrack> tracksList = tracksPager.items;
+                Track track;
+                List<String> artistsIdList = new ArrayList<>();
+
+                for(int j=0; j < tracksList.size(); j++){
+                    track = tracksList.get(j).track;
+                    trackList.add(track);
+                    for(int i = 0; i < track.artists.size(); i++){
+                        artistsIdList.add(track.artists.get(i).id);
+                    }
+                }
+                try {
+                    do {
+                        String artistsRequests = null;
+                        int counter = 0;
+                        do {
+                            if (artistsRequests == null) {
+                                artistsRequests = artistsIdList.get(0);
+                                artistsIdList.remove(0);
+                                counter++;
+                            } else {
+                                artistsRequests += "," + artistsIdList.get(0);
+                                artistsIdList.remove(0);
+                                counter++;
+                            }
+                        } while (counter < 50 && !artistsIdList.isEmpty());
+                        try {
+                            new GetArtistsRunnable(artistsRequests, new ThreadResponseInterface.ThreadResponse<Artists>() {
+                                @Override
+                                public void processFinish(Artists output) {
+                                    mArtists = output;
+                                }
+                            }).run();
+                        } catch (Exception e) {
+                            e.getMessage();
+                        }
+                        for (int i = 0; i < mArtists.artists.size(); i++) {
+                            artistsList.add(mArtists.artists.get(i));
+                        }
+                    } while (!artistsIdList.isEmpty());
+
+                }catch (Exception e) {
+                }
+            }
+        }catch (Exception e){
         }
+        return artistsList;
     }
     /*
     Converting artist list to a list of new artist objects contaning artist and weight of the artist
@@ -94,7 +134,7 @@ public class PearsonRecommend{
         Collections.sort(artistsList, new Comparator<Artist>() {
             @Override
             public int compare(Artist lhs, Artist rhs) {
-                return lhs.name.compareTo(rhs.name);
+                return lhs.id.compareTo(rhs.id);
             }
         });
 
@@ -115,7 +155,7 @@ public class PearsonRecommend{
                     occurrence = 0;
                 }
                 occurrence++;
-                if(i == artistsList.size()- 1){
+                if (i == artistsList.size()- 1){
                     occArtist.add(occurrence);
                 }
             }
@@ -231,64 +271,76 @@ public class PearsonRecommend{
     Should end up being the recommender
      */
 
-    public List<RecommenderArtist> recommend(String u_id, String p_id) {
-        List<Artist> artistsList = getArtists(u_id, p_id);
-        List<RecommenderArtist> artistList = getArtistList(artistsList);
-        List<RecommenderGenre> genreList = getGenreList(artistsList);
-        List<RecommenderArtist> recommended = new ArrayList<>();
-
-        for (int i = 0; i < artistList.size(); i++) {
-            double artistWeight = artistList.get(i).weight;
-            double genreWeight = 0;
-            for (int j = 0; j < genreList.size(); j++) {
-
-                double tempWeight = genreList.get(j).weight;
-                if (artistList.get(i).genre.contains(genreList.get(j).genre) && tempWeight > genreWeight ) {
-                    genreWeight = tempWeight;
-                }
-            }
-            double newWeight = genreWeight + artistWeight;
-            artistList.get(i).setWeight(newWeight);
-        }
-        /**
-        for(int i = 0; i < artistList.size(); i++){
-            double newWeight = 0;
-            for(int j = 0; j < genreList.size(); j++){
-                if (artistList.get(i).genre.contains(genreList.get(j).genre)) {
-                    newWeight += genreList.get(j).weight;
-                }
-            }
-            artistList.get(i).setWeight(newWeight);
-        }
-         **/
-
-        Collections.sort(artistList, new Comparator<RecommenderArtist>() {
+    public void recommend(final String u_id) {
+        new Thread(new Runnable() {
             @Override
-            public int compare(RecommenderArtist lhs, RecommenderArtist rhs) {
-                return lhs.weight.compareTo(rhs.weight);
-            }
-        });
-        Collections.reverse(artistList);
-    /**
-        for (int i = 0; i < artistList.size(); i++) {
-            List<String> artistTracks = new ArrayList<>();
-            String artist = artistList.get(i).name;
-            for (int j = 0; j < trackList.size(); j++) {
-                for (ArtistSimple trackArtist: trackList.get(j).artists) {
-                    String trackArtistName = trackArtist.name;
-                    if(trackArtistName.equals(artist)){
-                        String temp = trackList.get(j).name;
-                        if (!artistTracks.contains(temp)){
-                            artistTracks.add(temp);
+            public void run() {
+                List<Artist> artistsList = getArtists(u_id);
+                List<RecommenderArtist> artistList = getArtistList(artistsList);
+                List<RecommenderGenre> genreList = getGenreList(artistsList);
+                List<RecommenderArtist> recommended = new ArrayList<>();
+
+                /**
+                 * used when recommending for one user
+                 * DO NOT DELETE
+                 */
+                for (int i = 0; i < artistList.size(); i++) {
+                    double artistWeight = artistList.get(i).weight;
+                    double genreWeight = 0;
+                    for (int j = 0; j < genreList.size(); j++) {
+                        double tempWeight = genreList.get(j).weight;
+                        if (artistList.get(i).genre.contains(genreList.get(j).genre) && tempWeight > genreWeight ) {
+                            genreWeight = tempWeight;
                         }
                     }
+                    double newWeight = genreWeight + artistWeight;
+                    artistList.get(i).setWeight(newWeight);
                 }
+                /**
+                for(int i = 0; i < artistList.size(); i++){
+                    double newWeight = 0;
+                    for(int j = 0; j < genreList.size(); j++){
+                        if (artistList.get(i).genre.contains(genreList.get(j).genre)) {
+                            newWeight += genreList.get(j).weight;
+                        }
+                    }
+                    artistList.get(i).setWeight(newWeight);
+                }
+                **/
+                Collections.sort(artistList, new Comparator<RecommenderArtist>() {
+                    @Override
+                    public int compare(RecommenderArtist lhs, RecommenderArtist rhs) {
+                        return lhs.weight.compareTo(rhs.weight);
+                    }
+                });
+
+                Collections.reverse(artistList);
+
+                for (int i = 0; i < artistList.size(); i++) {
+                    
+                    List<String> artistTracks = new ArrayList<>();
+                    String artist = artistList.get(i).name;
+                    for (int j = 0; j < trackList.size(); j++) {
+                        for (ArtistSimple trackArtist: trackList.get(j).artists) {
+                            String trackArtistName = trackArtist.name;
+                            if(trackArtistName.equals(artist)){
+                                String temp = trackList.get(j).name;
+                                if (!artistTracks.contains(temp)){
+                                    artistTracks.add(temp);
+                                }
+                            }
+                        }
+                    }
+                    artistList.get(i).setTracks(artistTracks);
+
+                    recommended.add(artistList.get(i));
+                }activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, "Recommender done " + Integer.toString(trackList.size()), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-            artistList.get(i).setTracks(artistTracks);
-            recommended.add(artistList.get(i));
-        }
-     **/
-        int x = 0;
-        return recommended;
+        }).start();
     }
 }
