@@ -137,7 +137,7 @@ public class QueueFragment extends Fragment {
                 return (int)(rhs.weight - lhs.weight);
             }
         };
-        Collections.sort(mQueueElementList,compareWeight);
+        Collections.sort(mQueueElementList, compareWeight);
         
         if(queueAdapter != null)
             queueAdapter.notifyDataSetChanged();
@@ -164,27 +164,29 @@ public class QueueFragment extends Fragment {
             queueAdapter.notifyDataSetChanged();
     }
 
-    public void click_down_vote(int position){
-        //Change the value of the up/down votes depending if the button has already been pressed.
-        //Change the icon for the button.
-        if(!mQueueElementList.get(position).downvoteList.contains(myIP))
-        {
-            mQueueElementList.get(position).weight -= 1;
-            mQueueElementList.get(position).downvoteList.add(myIP);
-
-            if (mQueueElementList.get(position).upvoteList.contains(myIP))
-            {
+    public void downVoteAssist(int position, String ip){
+        if(position < mQueueElementList.size()) {
+            //Change the value of the up/down votes depending if the button has already been pressed.
+            //Change the icon for the button.
+            if (!mQueueElementList.get(position).downvoteList.contains(ip)) {
                 mQueueElementList.get(position).weight -= 1;
-                mQueueElementList.get(position).upvoteList.remove(myIP);
+                mQueueElementList.get(position).downvoteList.add(ip);
+
+                if (mQueueElementList.get(position).upvoteList.contains(ip)) {
+                    mQueueElementList.get(position).weight -= 1;
+                    mQueueElementList.get(position).upvoteList.remove(ip);
+                }
+            } else {
+                mQueueElementList.get(position).weight += 1;
+                mQueueElementList.get(position).downvoteList.remove(ip);
             }
         }
-        else
-        {
-            mQueueElementList.get(position).weight += 1;
-            mQueueElementList.get(position).downvoteList.remove(myIP);
-        }
+    }
 
+    public void click_down_vote(int position){
         Gson gson = new Gson();
+
+        downVoteAssist(position, myIP);
 
         if (MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
             voteThreshold(position);
@@ -196,33 +198,36 @@ public class QueueFragment extends Fragment {
         else if(MainActivity.mWifiDirectActivity.info != null){
             MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DOWN_VOTE,Integer.toString(position),myIP);
         } else {
+            deleteTrack(position);
             sortQueue();
         }
         if(queueAdapter != null)
             queueAdapter.notifyDataSetChanged();
     }
 
-    public void click_up_vote(int position){
-        //Change the value of the up/down votes depending if the button has already been pressed.
-        //Change the icon for the button.
-        if(!mQueueElementList.get(position).upvoteList.contains(myIP))
-        {
-            mQueueElementList.get(position).weight += 1;
-            mQueueElementList.get(position).upvoteList.add(myIP);
-
-            if (mQueueElementList.get(position).downvoteList.contains(myIP))
-            {
+    public void upVoteAssist(int position, String ip){
+        if(position < mQueueElementList.size()) {
+            //Change the value of the up/down votes depending if the button has already been pressed.
+            //Change the icon for the button.
+            if (!mQueueElementList.get(position).upvoteList.contains(ip)) {
                 mQueueElementList.get(position).weight += 1;
-                mQueueElementList.get(position).downvoteList.remove(myIP);
+                mQueueElementList.get(position).upvoteList.add(ip);
+
+                if (mQueueElementList.get(position).downvoteList.contains(ip)) {
+                    mQueueElementList.get(position).weight += 1;
+                    mQueueElementList.get(position).downvoteList.remove(ip);
+                }
+            } else {
+                mQueueElementList.get(position).weight -= 1;
+                mQueueElementList.get(position).upvoteList.remove(ip);
             }
         }
-        else
-        {
-            mQueueElementList.get(position).weight -= 1;
-            mQueueElementList.get(position).upvoteList.remove(myIP);
-        }
+    }
 
+    public void click_up_vote(int position){
         Gson gson = new Gson();
+
+        upVoteAssist(position, myIP);
 
         if (MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner){
             sortQueue();
@@ -239,7 +244,7 @@ public class QueueFragment extends Fragment {
             queueAdapter.notifyDataSetChanged();
     }
 
-    // TODO: 06-05-2016 Make this more dynamic. 
+    // TODO: 06-05-2016 Make this more dynamic.
     int numberOfPeers = MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1;
     double threshold = numberOfPeers * 0.66; //Setting the threshold limit
 
@@ -249,10 +254,11 @@ public class QueueFragment extends Fragment {
     }
 
     public void voteThreshold(int downVotedTrack) {
-        //If track weight gets below the set threshold it will be removed from the list
-        if(((threshold + mQueueElementList.get(downVotedTrack).upvoteList.size() - mQueueElementList.get(downVotedTrack).downvoteList.size()) <= 0) || (MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1 == 1))
-        {
-            deleteTrack(downVotedTrack);
+        if(downVotedTrack < mQueueElementList.size()) {
+            //If track weight gets below the set threshold it will be removed from the list
+            if (((threshold + mQueueElementList.get(downVotedTrack).upvoteList.size() - mQueueElementList.get(downVotedTrack).downvoteList.size()) <= 0) || (MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1 == 1)) {
+                deleteTrack(downVotedTrack);
+            }
         }
     }
 

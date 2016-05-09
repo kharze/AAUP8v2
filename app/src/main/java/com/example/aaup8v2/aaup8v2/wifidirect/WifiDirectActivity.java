@@ -252,13 +252,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 case IP_SENT:
                                     break;
                                 case UP_VOTE:
-                                    MainActivity.mQueueFragment.mQueueElementList.get(Integer.parseInt(data)).upvoteList.add(sender);
+                                    MainActivity.mQueueFragment.upVoteAssist(Integer.parseInt(data), sender);
                                     MainActivity.mQueueFragment.sortQueue();
                                     String queueListUp = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
                                     sendDataToPeers(WifiDirectActivity.UP_VOTE, queueListUp);
                                     break;
                                 case DOWN_VOTE:
-                                    MainActivity.mQueueFragment.mQueueElementList.get(Integer.parseInt(data)).downvoteList.add(sender);
+                                    MainActivity.mQueueFragment.downVoteAssist(Integer.parseInt(data), sender);
                                     MainActivity.mQueueFragment.voteThreshold(Integer.parseInt(data));
                                     MainActivity.mQueueFragment.sortQueue();
                                     String queueListDown = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
