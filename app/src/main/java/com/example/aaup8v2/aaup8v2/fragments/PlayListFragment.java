@@ -77,6 +77,7 @@ public class PlayListFragment extends Fragment{
             public void processFinish(Pager<PlaylistSimple> output) {
                 final List<List<myTrack>> tracksLists = new ArrayList<>();
                 playlistName.add("Saved Tracks");
+                tracksLists.add(new ArrayList<myTrack>());
 
                 new MySavedTracksRunnable(new ThreadResponseInterface.ThreadResponse<Pager<SavedTrack>>() {
                     @Override
@@ -84,11 +85,13 @@ public class PlayListFragment extends Fragment{
                         final List<myTrack> aList = new ArrayList<>();
                         if(tracks != null) {
                             for (int i = 0; tracks.items.size() > i; i++) {
-                                myTrack track = new myTrack(tracks.items.get(i));
-                                aList.add(track);
+                                if(tracks.items.get(i).track.available_markets.contains(MainActivity.me.country)) {
+                                    myTrack track = new myTrack(tracks.items.get(i));
+                                    aList.add(track);
+                                }
                             }
                         }
-                        tracksLists.add(aList);
+                        tracksLists.set(0, aList);
                     }
                 }).run();
 
@@ -100,8 +103,10 @@ public class PlayListFragment extends Fragment{
                         public void processFinish(Pager<PlaylistTrack> tracks) {
                                 final List<myTrack> aList = new ArrayList<>();
                                 for(int i = 0; tracks.items.size() > i; i++) {
-                                    myTrack track = new myTrack(tracks.items.get(i));
-                                    aList.add(track);
+                                    if(tracks.items.get(i).track.available_markets.contains(MainActivity.me.country)) {
+                                        myTrack track = new myTrack(tracks.items.get(i));
+                                        aList.add(track);
+                                    }
                                 }
                                 tracksLists.add(aList);
                         }

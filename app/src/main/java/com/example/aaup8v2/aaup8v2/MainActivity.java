@@ -1,7 +1,6 @@
 package com.example.aaup8v2.aaup8v2;
 
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -231,7 +230,8 @@ public class MainActivity extends AppCompatActivity
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, //authentication
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
+        //builder.setScopes(new String[]{"user-read-private", "streaming"}); //Old version
+        builder.setScopes(new String[]{"user-library-read", "streaming"}); //New version
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
