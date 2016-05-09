@@ -20,9 +20,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylist;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetPlaylistTracks;
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
 import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
 import com.example.aaup8v2.aaup8v2.fragments.HomeFragment;
@@ -39,9 +36,6 @@ import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.Spotify;
 
-import kaaes.spotify.webapi.android.models.Pager;
-import kaaes.spotify.webapi.android.models.Playlist;
-import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.UserPrivate;
 
 public class MainActivity extends AppCompatActivity
@@ -335,36 +329,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void Test_spotify(View view){
-        //mSpotifyAccess.getPlaylist("jmperezperez", "3cEYpjA9oz9GiPac4AsH4n");;
         /** ID's
          * Empty list: user:aaup8 :playlist:6B3WEOcvqjEsURp4Icu9vN
          * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
          *https://play.spotify.com/user/117012207/playlist/4cFMwqkMGdO2OBAjxGZDyl
          */
         mRecommend.recommend("lasse.d.c91");
-        /**
-        try {
-            Track b = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
-                @Override
-                public void processFinish(Track output){
-                }
-            }).execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
-            Pager c = new asyncGetPlaylistTracks(new asyncGetPlaylistTracks.AsyncResponse(){
-                @Override
-                public void processFinish(Pager output){
-                }
-            }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
-            //Track t = ((Track) c.items.get(1));
-            Playlist z = new asyncGetPlaylist(new asyncGetPlaylist.AsyncResponse(){
-                @Override
-                public void processFinish(Playlist output){
-                }
-            }).execute("spotify_denmark", "2qPIOBAKYc1SQI1QHDV4EV").get();
-            String a = b.album.name;
-        }
-        catch (Exception e){
-            e.getMessage();
-        }**/
     }
 
     public void pToP(View view){

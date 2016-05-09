@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by MSI on 12-04-2016.
+ * Created by Sean Skov Them on 12-04-2016.
  */
 
 // class for storing the elements of the play queue, and their ranking/votes;
