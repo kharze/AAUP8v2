@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity
          authenticate(); //Authenticates Spotify
 
         mSpotifyAccess = new SpotifyAccess(); //Sets the SpotifyAccess class
-        mRecommend = new PearsonRecommend(); //Sets the PearsonRecommend class
+        mRecommend = new PearsonRecommend(this, this); //Sets the PearsonRecommend class
 
         mWifiDirectActivity = new WifiDirectActivity();
 
@@ -341,7 +341,8 @@ public class MainActivity extends AppCompatActivity
          * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
          *https://play.spotify.com/user/117012207/playlist/4cFMwqkMGdO2OBAjxGZDyl
          */
-        mRecommend.recommend("117012207", "4cFMwqkMGdO2OBAjxGZDyl");
+        mRecommend.recommend("lasse.d.c91");
+        /**
         try {
             Track b = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
                 @Override
@@ -363,7 +364,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception e){
             e.getMessage();
-        }
+        }**/
     }
 
     public void pToP(View view){
