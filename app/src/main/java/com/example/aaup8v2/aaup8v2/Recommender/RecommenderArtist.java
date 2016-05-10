@@ -1,4 +1,4 @@
-package com.example.aaup8v2.aaup8v2.recommender_pearson;
+package com.example.aaup8v2.aaup8v2.Recommender;
 
 import java.util.List;
 

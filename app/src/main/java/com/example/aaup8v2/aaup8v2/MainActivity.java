@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.aaup8v2.aaup8v2.Recommender.Recommender;
 import com.example.aaup8v2.aaup8v2.fragments.AdminFragment;
 import com.example.aaup8v2.aaup8v2.fragments.DisconnectFragment;
 import com.example.aaup8v2.aaup8v2.fragments.HomeFragment;
@@ -51,10 +52,10 @@ public class MainActivity extends AppCompatActivity
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
-    public PearsonRecommend mRecommend;
     public MusicPlayer musicPlayer;
     public static UserPrivate me;
 
+    public static Recommender mRecommend;
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity
          authenticate(); //Authenticates Spotify
 
         mSpotifyAccess = new SpotifyAccess(); //Sets the SpotifyAccess class
-        mRecommend = new PearsonRecommend(this, this); //Sets the PearsonRecommend class
+        mRecommend = new Recommender(this, this, me.id); //Sets the PearsonRecommend class
 
         mWifiDirectActivity = new WifiDirectActivity();
 
@@ -338,7 +339,7 @@ public class MainActivity extends AppCompatActivity
          * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
          *https://play.spotify.com/user/117012207/playlist/4cFMwqkMGdO2OBAjxGZDyl
          */
-        mRecommend.recommend("lasse.d.c91");
+        //mRecommend.recommend("lasse.d.c91");
     }
 
     public void pToP(View view){

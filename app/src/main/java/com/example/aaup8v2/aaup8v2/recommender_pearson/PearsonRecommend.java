@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
+import com.example.aaup8v2.aaup8v2.Recommender.RecommenderArtist;
+import com.example.aaup8v2.aaup8v2.Recommender.RecommenderGenre;
 import com.example.aaup8v2.aaup8v2.Runnables.GetArtistsRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistsRunnable;

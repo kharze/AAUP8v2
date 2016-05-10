@@ -1,6 +1,5 @@
 package com.example.aaup8v2.aaup8v2;
 
-import com.example.aaup8v2.aaup8v2.asyncTasks.asyncGetTrack;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,12 +31,6 @@ public class SpotifyAccessTest {
         try {
             //Track a = new asyncGetTrack().execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
             //b = a.name;
-            Track a = new asyncGetTrack(new asyncGetTrack.AsyncResponse(){
-                @Override
-                public void processFinish(Track output){
-                }
-            }).execute("1zHlj4dQ8ZAtrayhuDDmkY").get();
-            b = a.name;
         }
         catch (Exception e){
             e.getCause();
