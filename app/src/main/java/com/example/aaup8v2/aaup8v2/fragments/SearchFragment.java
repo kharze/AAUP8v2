@@ -47,6 +47,7 @@ public class SearchFragment extends Fragment{
     private Button searchButton;
     private EditText mText;
     private Activity activity;
+    private ListView searchResultsList;
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,26 +68,25 @@ public class SearchFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
-
+        // Sets views.
         View v = inflater.inflate(R.layout.fragment_search, container,false);
-        ListView searchResultsList = (ListView) v.findViewById(R.id.Search_Results);
+        searchResultsList = (ListView) v.findViewById(R.id.Search_Results);
         searchButton = (Button) v.findViewById(R.id.searchMusicButton);
         mText = (EditText) v.findViewById(R.id.Search_Text);
+
         activity = getActivity();
 
-        // Sets so that search start when pressing done on the keyboard.
-        mText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    searchButton.performClick();
-                    return true;
-                }
-                return false;
-            }
-        });
+        searchAdapter = new SearchListAdapter(getContext(), R.layout.listview_search_layout, mTracklist);
+        searchResultsList.setAdapter(searchAdapter);
 
-        //listener for the search button // TODO: 06-05-2016 Should the creation of listener have its own function ?
+        setSearchRunnable();
+        setListeners();
+
+        return v; // Inflate the layout for this fragment
+    }
+
+    private void setListeners() {
+        //listener for the search button
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,11 +106,19 @@ public class SearchFragment extends Fragment{
             }
         });
 
-        searchAdapter = new SearchListAdapter(getContext(), R.layout.listview_search_layout, mTracklist);
-        searchResultsList.setAdapter(searchAdapter);
+        // Sets so that search start when pressing done on the keyboard.
+        mText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    searchButton.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
-        setSearchRunnable();
-
+        //Sets a listener for the scroll that detects when the list is scrolled to the bottom.
         searchResultsList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {}
@@ -130,8 +138,6 @@ public class SearchFragment extends Fragment{
                 }
             }
         });
-
-        return v; // Inflate the layout for this fragment
     }
 
     @Override
@@ -166,7 +172,7 @@ public class SearchFragment extends Fragment{
         searchThread.start();
     }
 
-    private void setSearchRunnable() {
+    private void setSearchRunnable() { //Runnable used to search for tracks. Both for the search butten and scroll listener.
         searchRunnable = new Runnable() {
             @Override
             public void run() {
