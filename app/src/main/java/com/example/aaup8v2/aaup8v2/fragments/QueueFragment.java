@@ -244,19 +244,23 @@ public class QueueFragment extends Fragment {
             queueAdapter.notifyDataSetChanged();
     }
 
-    // TODO: 06-05-2016 Make this more dynamic.
-    int numberOfPeers = MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1;
-    double threshold = numberOfPeers * 0.66; //Setting the threshold limit
+    public double thresholdUpdate(){
+
+        // TODO: 06-05-2016 Make this more dynamic.
+        double threshold;
+        int numberOfPeers = MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1;
+        return threshold = numberOfPeers * 0.66; //Setting the threshold limit
+    }
 
     public void applyWeight(){
         //Applies a basic weight to each track represented on the playlist
-        mQueueElementList.get(mQueueElementList.size()-1).weight = threshold;
+        mQueueElementList.get(mQueueElementList.size()-1).weight = thresholdUpdate();
     }
 
     public void voteThreshold(int downVotedTrack) {
         if(downVotedTrack < mQueueElementList.size()) {
             //If track weight gets below the set threshold it will be removed from the list
-            if (((threshold + mQueueElementList.get(downVotedTrack).upvoteList.size() - mQueueElementList.get(downVotedTrack).downvoteList.size()) <= 0) || (MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1 == 1)) {
+            if (((thresholdUpdate() + mQueueElementList.get(downVotedTrack).upvoteList.size() - mQueueElementList.get(downVotedTrack).downvoteList.size()) <= 0) || (MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1 == 1)) {
                 deleteTrack(downVotedTrack);
             }
         }

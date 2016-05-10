@@ -5,27 +5,33 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
-import com.example.aaup8v2.aaup8v2.Runnables.SearchMusicRunnable;
-import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 import com.example.aaup8v2.aaup8v2.fragments.models.SearchListAdapter;
 import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.TracksPager;
 
 
 public class SearchFragment extends Fragment{
@@ -33,8 +39,19 @@ public class SearchFragment extends Fragment{
     private List<myTrack> mTracklist = new ArrayList<>();
     public SearchListAdapter searchAdapter;
 
+    // Values used for the search
+    private String searchTerm;
+    private int preLast;
+    private int offset = 0;
+    private int limit = 50;
+    private HashMap<String, Object> options = new HashMap<>();
+    private Runnable searchRunnable;
+
+    // Views
+    private Button searchButton;
     private EditText mText;
     private Activity activity;
+    private ListView searchResultsList;
 
     private OnFragmentInteractionListener mListener;
 
@@ -54,15 +71,26 @@ public class SearchFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+                             final Bundle savedInstanceState) {
+        // Sets views.
         View v = inflater.inflate(R.layout.fragment_search, container,false);
-        ListView searchResultsList = (ListView) v.findViewById(R.id.Search_Results);
-        Button searchButton = (Button) v.findViewById(R.id.searchMusicButton);
+        searchResultsList = (ListView) v.findViewById(R.id.Search_Results);
+        searchButton = (Button) v.findViewById(R.id.searchMusicButton);
         mText = (EditText) v.findViewById(R.id.Search_Text);
+
         activity = getActivity();
 
-        //listener for the search button // TODO: 06-05-2016 Should the creation of listener have its own function ?
+        searchAdapter = new SearchListAdapter(getContext(), R.layout.listview_search_layout, mTracklist);
+        searchResultsList.setAdapter(searchAdapter);
+
+        setSearchRunnable();
+        setListeners();
+
+        return v; // Inflate the layout for this fragment
+    }
+
+    private void setListeners() {
+        //listener for the search button
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,16 +104,45 @@ public class SearchFragment extends Fragment{
                     im.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                     Toast.makeText(getContext(), "Search started", Toast.LENGTH_SHORT).show();
-                    startSearchThread(searchString);
+                    searchTerm = searchString;
+                    startSearchThread();
                 } else
                     Toast.makeText(getContext(),"Search input too short", Toast.LENGTH_SHORT).show();
             }
         });
 
-        searchAdapter = new SearchListAdapter(getContext(), R.layout.listview_search_layout, mTracklist);
-        searchResultsList.setAdapter(searchAdapter);
+        // Sets so that search start when pressing done on the keyboard.
+        mText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    searchButton.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
-        return v; // Inflate the layout for this fragment
+        //Sets a listener for the scroll that detects when the list is scrolled to the bottom.
+        searchResultsList.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {}
+
+            @Override
+            public void onScroll(AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+                final int lastItem = firstVisibleItem + visibleItemCount;
+                if(lastItem == totalItemCount) {
+                    if (preLast != lastItem) { //to avoid multiple calls for last item
+                        Log.d("Last", "Last");
+                        preLast = lastItem;
+
+                        Thread searchThread = new Thread(searchRunnable);
+                        searchThread.setName("Seach Thread");
+                        searchThread.start();
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -109,27 +166,37 @@ public class SearchFragment extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
 
-    public void startSearchThread(String id){
-        SearchMusicRunnable searchMusicRunnable = new SearchMusicRunnable(id, new ThreadResponseInterface.ThreadResponse<List<myTrack>>() {
+    public void startSearchThread(){
+        // Resets the search
+        mTracklist.clear();
+        preLast = 0;
+        offset = 0;
 
+        Thread searchThread = new Thread(searchRunnable);
+        searchThread.setName("Seach Thread");
+        searchThread.start();
+    }
+
+    private void setSearchRunnable() { //Runnable used to search for tracks. Both for the search butten and scroll listener.
+        searchRunnable = new Runnable() {
             @Override
-            public void processFinish(final List<myTrack> output) {
-
+            public void run() {
+                options.put(SpotifyService.LIMIT, limit);
+                options.put(SpotifyService.OFFSET, offset);
+                TracksPager result = MainActivity.mSpotifyAccess.mService.searchTracks(searchTerm, options);
+                offset += limit;
+                for(int i = 0; result.tracks.items.size() > i; i++){
+                    myTrack track = new myTrack(result.tracks.items.get(i));
+                    mTracklist.add(track);
+                }
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mTracklist.clear(); //Clears the whole list
-                        mTracklist.addAll(output);
-
-                        if (searchAdapter != null)
-                            searchAdapter.notifyDataSetChanged();
+                        searchAdapter.notifyDataSetChanged();
                     }
                 });
             }
-        });
-        Thread worker = new Thread(searchMusicRunnable);
-        worker.setName("Search Music Thread");
-        worker.start();
+        };
     }
 
     public void click_search_add_track(int position){
