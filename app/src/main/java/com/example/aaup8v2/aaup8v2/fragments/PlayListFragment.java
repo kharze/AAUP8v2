@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.R;
@@ -54,6 +55,7 @@ public class PlayListFragment extends Fragment{
         activity = getActivity();
         //Made to only update the playlist once in a runtime.
         if(listDataChild == null || playlistName == null){
+            Toast.makeText(getContext(), "Loading your playlists", Toast.LENGTH_LONG).show();
             listDataChild = new ArrayList<>();
             playlistName = new ArrayList<>();
             getPlaylists();

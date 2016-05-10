@@ -52,8 +52,10 @@ public class MainActivity extends AppCompatActivity
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
     private static final int REQUEST_CODE = 1337;
     public static SpotifyAccess mSpotifyAccess;
-    public MusicPlayer musicPlayer;
+    public static MusicPlayer musicPlayer;
     public static UserPrivate me;
+
+    public static int buttonState = 0;
 
     public static Recommender mRecommend;
     public static SearchFragment mSearchFragment;
@@ -98,10 +100,10 @@ public class MainActivity extends AppCompatActivity
 
         });
 
-         authenticate(); //Authenticates Spotify
+        authenticate(); //Authenticates Spotify
 
         mSpotifyAccess = new SpotifyAccess(); //Sets the SpotifyAccess class
-        mRecommend = new Recommender(this, this, me.id); //Sets the PearsonRecommend class
+        //mRecommend = new Recommender(this, this, me.id); //Sets the PearsonRecommend class
 
         mWifiDirectActivity = new WifiDirectActivity();
 
@@ -119,7 +121,6 @@ public class MainActivity extends AppCompatActivity
 
         //Create onClickListener for playButton
         playButton.setOnClickListener(new View.OnClickListener() {
-            int buttonState = 0;
             public void onClick(View v) {
                 if (buttonState == 0 && (!mQueueFragment.mQueueElementList.isEmpty() || musicPlayer.isPlaying)) {
                     musicPlayer.play();
@@ -145,7 +146,10 @@ public class MainActivity extends AppCompatActivity
                             initializePeer(true);
                             hasPremium = true;
                         }
-                        else { initializePeer(false); }
+                        else {
+                            initializePeer(false);
+                            hasPremium = false;
+                        }
                     }
                 });
             }
@@ -354,9 +358,26 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public void disconnectSpotify(View view){
+        MainActivity.musicPlayer.mPlayer.pause();
+        MainActivity.musicPlayer.mPlayer.clearQueue();
+        MainActivity.musicPlayer.isPlaying = false;
+        playButton.setImageResource(R.drawable.ic_action_playback_play);
+        buttonState = 0;
+        MainActivity.playedName.setText("No song playing");
+        MainActivity.playedArtist.setText("");
+        AuthenticationClient.clearCookies(getApplicationContext());
+        MainActivity.mPlaylistFragment.listDataChild = null;
+        MainActivity.mPlaylistFragment.playlistName = null;
+        authenticate();
+    }
+
     public static void toggleConnectionButtons(boolean show){
         if(show){
-            hostButton.setVisibility(Button.VISIBLE);
+            if(hasPremium)
+                hostButton.setVisibility(Button.VISIBLE);
+            else
+                hostButton.setVisibility(Button.GONE);
             connectButton.setVisibility(Button.VISIBLE);
             disconnectButton.setVisibility(Button.GONE);
             disconnectItem.setIcon(R.drawable.ic_menu_share);

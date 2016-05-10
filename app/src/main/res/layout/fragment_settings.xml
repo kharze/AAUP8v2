@@ -32,7 +32,8 @@
             android:layout_height="wrap_content"
             android:text="@string/disconnect_account"
             android:textSize="15sp"
-            android:id="@+id/disAccount"/>
+            android:id="@+id/disAccount"
+            android:onClick="disconnectSpotify"/>
     </TableRow>
     <TableRow android:minHeight="20dp">
 

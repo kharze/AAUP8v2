@@ -33,9 +33,9 @@
     <string name="search_term">Write search term here</string>
     <string name="connect">Connect</string>
     <string name="send_info">Send Info</string>
-    <string name="mange_spotify_account">Manage Spotify account</string>
+    <string name="mange_spotify_account">Manage spotify account</string>
     <string name="modify_account">Modify account</string>
-    <string name="disconnect_account">Disconnect Spotify Account</string>
+    <string name="disconnect_account">Disconnect Spotify account</string>
     <string name="genre_prefences">Genre prefences:</string>
     <string name="rock">Rock</string>
     <string name="jazz">Jazz</string>

@@ -40,6 +40,8 @@ public class DisconnectFragment extends Fragment {
         MainActivity.connectButton = (Button)v.findViewById(R.id.btn_connectView);
         MainActivity.disconnectButton = disconnectNetworkButton;
 
+
+
         if(MainActivity.mWifiDirectActivity.info == null)
             MainActivity.toggleConnectionButtons(true);
         else
