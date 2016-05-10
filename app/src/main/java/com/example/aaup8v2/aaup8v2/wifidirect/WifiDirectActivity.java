@@ -643,7 +643,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void sendDataToPeers(String type, String data){
-        if(type == DISCONNECT && ipsOnNetwork.isEmpty()) {
+        if(type.equals(DISCONNECT) && ipsOnNetwork.isEmpty()) {
             disconnect();
         } else {
             for (int j = 0; j < ipsOnNetwork.size(); j++) {
