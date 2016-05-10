@@ -19,7 +19,6 @@ import java.util.List;
  * Created by Sean Skov Them on 02-05-2016.
  */
 public class SearchListAdapter extends ArrayAdapter<myTrack> {
-
     public SearchListAdapter(Context context, int resource, List<myTrack> objects) {
         super(context, resource, objects);
     }

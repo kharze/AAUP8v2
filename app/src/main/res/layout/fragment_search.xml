@@ -12,7 +12,8 @@
             android:layout_height="wrap_content"
             android:text="@string/Search"
             android:backgroundTint="@color/textColor"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
 
         <EditText
             android:id="@+id/Search_Text"
@@ -25,7 +26,9 @@
             android:layout_toLeftOf="@id/searchMusicButton"
             android:layout_toStartOf="@id/searchMusicButton"
             android:singleLine="true"
-            android:layout_alignParentRight="false"/>
+            android:imeOptions="actionDone"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentEnd="false"/>
 
         <ListView
             android:id="@+id/Search_Results"
