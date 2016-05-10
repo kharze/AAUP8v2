@@ -75,7 +75,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public static  volatile ServerSocket serverSocket;
     private boolean interupt = false;
 
-    List<HashMap<String,String>> aList = new ArrayList<>();
     ListView list;
     public List<String> ipsOnNetwork = new ArrayList<>();
     public Thread worker;
@@ -106,12 +105,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
 
-        String[] from = {"flag", "txt", "cur"};
-
         deviceAdapter = new WifitDirectListAdapter(this,R.layout.listview_layout_p2p,peersCollection);
-
-        //int[] to = {R.id.txt, R.id.cur, R.id.textView};
-        //deviceAdapter = new SimpleAdapter(this, aList, R.layout.listview_layout_p2p, from, to);
 
         // Assign adapter to ListView
         list = (ListView) findViewById(R.id.listviewPeers);
@@ -131,8 +125,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             });
         }else
             discoverPeers();
-        //list = (ListView) findViewById(R.id.listviewPeers);
-
     }
     /** register the BroadcastReceiver with the intent values to be matched */
     @Override
@@ -198,8 +190,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             // DO WHATEVER YOU WANT HERE
                             // YOU CAN GET ACCESS TO ALL THE DEVICES YOU FOUND FROM peers OBJECT
-                            aList.clear();
-
                             peersCollection.clear();
 
                             List<WifiP2pDevice> list = new ArrayList<>();
