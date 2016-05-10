@@ -66,8 +66,11 @@ public class DataTransferService extends IntentService {
                         }
                     }
                 }
-                if(dataType != null && dataType.equals(WifiDirectActivity.DISCONNECT))
-                    MainActivity.mWifiDirectActivity.disconnect();
+                if(dataType != null && dataType.equals(WifiDirectActivity.DISCONNECT)) {
+                    MainActivity.mWifiDirectActivity.ipsOnNetwork.remove(host);
+                    if(MainActivity.mWifiDirectActivity.ipsOnNetwork.isEmpty())
+                        MainActivity.mWifiDirectActivity.disconnect();
+                }
             }
         }
     }

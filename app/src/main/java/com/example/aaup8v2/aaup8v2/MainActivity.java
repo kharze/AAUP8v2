@@ -345,6 +345,9 @@ public class MainActivity extends AppCompatActivity
         if(findViewById(R.id.btn_connectView) == view){
             isPeer = true;
             isHost = false;
+        } else {
+            isPeer = false;
+            isHost = true;
         }
         Intent intent = new Intent(this, mWifiDirectActivity.getClass());
         startActivity(intent);

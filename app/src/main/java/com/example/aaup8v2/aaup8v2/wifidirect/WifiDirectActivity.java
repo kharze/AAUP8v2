@@ -20,7 +20,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
@@ -88,6 +87,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         setContentView(R.layout.activity_wifidirect);
         this.worker = MainActivity.mWifiDirectActivity.worker;
         this.ipsOnNetwork = MainActivity.mWifiDirectActivity.ipsOnNetwork;
+        this.info = MainActivity.mWifiDirectActivity.info;
         MainActivity.mWifiDirectActivity = this;
         // add necessary intent values to be matched.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -108,7 +108,20 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         list = (ListView) findViewById(R.id.listviewPeers);
         list.setAdapter(deviceAdapter);
 
-        discoverPeers();
+        if(MainActivity.isHost){
+            manager.createGroup(channel, new ActionListener() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(getApplicationContext(), "Now hosting a group", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(int reason) {
+                    Toast.makeText(getApplicationContext(), "Failed to create Group", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else
+            discoverPeers();
         //list = (ListView) findViewById(R.id.listviewPeers);
 
     }
@@ -148,6 +161,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void discoverPeers(){
+        peersCollection.clear();
+        deviceAdapter.notifyDataSetChanged();
+
         if (!isWifiP2pEnabled) {
             Toast.makeText(WifiDirectActivity.this, R.string.p2p_off_warning,
                     Toast.LENGTH_SHORT).show();
@@ -175,19 +191,15 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             // YOU CAN GET ACCESS TO ALL THE DEVICES YOU FOUND FROM peers OBJECT
                             aList.clear();
 
-                            while (!peersCollection.isEmpty()) {
-                                peersCollection.remove(0);
+                            peersCollection.clear();
+
+                            List<WifiP2pDevice> list = new ArrayList<>();
+                            list.addAll(peers.getDeviceList());
+
+                            for(int i = 0; list.size() > i; i++){
+                                if(list.get(i).isGroupOwner())
+                                    peersCollection.add(list.get(i));
                             }
-
-                            peersCollection.addAll(peers.getDeviceList());
-
-                            /*for (int i = 0; i < peersCollection.size(); i++) {
-                                HashMap<String, String> hm = new HashMap<>();
-
-                                String s = peersCollection.get(i).deviceName;
-                                hm.put("txt", s);
-                                aList.add(hm);
-                            }*/
 
                             deviceAdapter.notifyDataSetChanged();
                         }
@@ -487,7 +499,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     @Override
     public void disconnect() {
         //Add data communication that peer left the network.
-
         if(manager != null) {
             manager.removeGroup(channel, new ActionListener() {
                 @Override
@@ -497,6 +508,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                 @Override
                 public void onSuccess() {
+                    Log.d(TAG, "Disconnect succesfull");
+                    info = null;
                     MainActivity.toggleConnectionButtons(true);
                 }
             });
@@ -583,8 +596,12 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     }
 
     public void sendDataToPeers(String type, String data){
-        for(int j = 0; j < ipsOnNetwork.size(); j++){
-            sendDataToPeer(type, data, ipsOnNetwork.get(j));
+        if(type == DISCONNECT && ipsOnNetwork.isEmpty()) {
+            disconnect();
+        } else {
+            for (int j = 0; j < ipsOnNetwork.size(); j++) {
+                sendDataToPeer(type, data, ipsOnNetwork.get(j));
+            }
         }
     }
 
