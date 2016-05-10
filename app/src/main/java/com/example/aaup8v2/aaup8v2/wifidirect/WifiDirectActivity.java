@@ -250,8 +250,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             if (!ipsOnNetwork.contains(sender)) {
                                 ipsOnNetwork.add(sender);
                                 //when user first joins the network, they receive the queue back, peer-side handling as if track was added
-                                String queueListJoin = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
-                                sendDataToPeers(WifiDirectActivity.TRACK_ADDED, queueListJoin);
+                                if(MainActivity.mQueueFragment.mQueueElementList != null) {
+                                    String queueListJoin = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+                                    sendDataToPeers(WifiDirectActivity.TRACK_ADDED, queueListJoin);
+                                }
                             }
 
                             switch (type) {
