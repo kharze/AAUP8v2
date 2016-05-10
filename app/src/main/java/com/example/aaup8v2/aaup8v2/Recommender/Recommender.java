@@ -93,15 +93,6 @@ public class Recommender extends MainActivity {
         return local;
     }
 
-    //Not yet implemented
-    private void personsim(){
-    }
-
-    //Not yet implemented
-    public void predict(){
-
-    }
-
     /*
     Getting a list of artist based on tracks from a playlist
      */
@@ -329,7 +320,7 @@ public class Recommender extends MainActivity {
     Should end up being the recommender
      */
 
-    public void recommend(final String u_id) {
+    public void weightAdjust(final String u_id) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -402,7 +393,13 @@ public class Recommender extends MainActivity {
         }).start();
     }
 
-    private void predictRating (RealMatrix weights, RealMatrix ratings){
+    //Not yet implemented
+    private void personSim(RealMatrix user1, RealMatrix user2){
+
+    }
+
+    //Not yet implemented
+    public void predict(){
 
     }
 
