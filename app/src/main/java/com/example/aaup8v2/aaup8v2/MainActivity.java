@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean isHost = true;
     public static boolean isPeer = false;
+    public static boolean hasPremium = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +140,10 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         me = up; //Saves the user for later use
-                        if(up.product.equals("premium")){ initializePeer(true); }
+                        if(up.product.equals("premium")){
+                            initializePeer(true);
+                            hasPremium = true;
+                        }
                         else { initializePeer(false); }
                     }
                 });

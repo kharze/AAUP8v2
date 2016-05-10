@@ -55,6 +55,8 @@ public class DisconnectFragment extends Fragment {
                 }
                 Toast.makeText(getContext(), "Disconnected", Toast.LENGTH_SHORT).show();
                 MainActivity.toggleConnectionButtons(true);
+                if(MainActivity.hasPremium)
+                    MainActivity.initializePeer(true);
             }
         });
 
