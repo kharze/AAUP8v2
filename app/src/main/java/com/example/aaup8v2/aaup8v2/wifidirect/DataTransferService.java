@@ -12,6 +12,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.HashMap;
 
 /**
  * A service that process each file transfer request i.e Intent by opening a
@@ -25,6 +27,7 @@ public class DataTransferService extends IntentService {
     public static final String EXTRAS_PEER_PORT = "go_port";
     public static final String EXTRAS_DATA = "data_to_send";
     public static final String EXTRAS_TYPE = "data_type";
+    private static HashMap<String, Long> timeOutFailed = new HashMap<>();
     public DataTransferService(String name) {
         super(name);
     }
@@ -53,6 +56,12 @@ public class DataTransferService extends IntentService {
                 oos.writeObject(dataType);
                 oos.writeObject(data);
                 Log.d(WifiDirectActivity.TAG, "Client: Data written");
+            } catch (SocketTimeoutException e){
+                if(!timeOutFailed.containsKey(host))
+                    timeOutFailed.put(host, (System.currentTimeMillis()/1000));
+                else if((timeOutFailed.get(host)+300) < (System.currentTimeMillis()/1000)){
+                    MainActivity.mWifiDirectActivity.ipsOnNetwork.remove(host);
+                }
             } catch (IOException e) {
                 Log.e(WifiDirectActivity.TAG, e.getMessage());
             } finally {

@@ -193,6 +193,9 @@ public class SearchFragment extends Fragment{
                     @Override
                     public void run() {
                         searchAdapter.notifyDataSetChanged();
+                        if(mTracklist.isEmpty()){
+                            Toast.makeText(getContext(), "Search did not find anything", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }

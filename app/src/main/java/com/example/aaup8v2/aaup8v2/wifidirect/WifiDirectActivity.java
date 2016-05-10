@@ -72,6 +72,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     ProgressDialog progressDialog = null;
     private List<WifiP2pDevice> peersCollection = new ArrayList<>();
 
+    public static  volatile ServerSocket serverSocket;
+    private boolean interupt = false;
+
     List<HashMap<String,String>> aList = new ArrayList<>();
     ListView list;
     public List<String> ipsOnNetwork = new ArrayList<>();
@@ -202,11 +205,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             List<WifiP2pDevice> list = new ArrayList<>();
                             list.addAll(peers.getDeviceList());
 
-                            for (int i = 0; list.size() > i; i++) {
-                                if (list.get(i).isGroupOwner())
+                            // Search the list of Group Owners
+                            for(int i = 0; list.size() > i; i++){
+                                if(list.get(i).isGroupOwner())
                                     peersCollection.add(list.get(i));
                             }
-
                             deviceAdapter.notifyDataSetChanged();
                         }
                     });
@@ -250,13 +253,16 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
             receiveDataSpawn();
 
+            Toast.makeText(this, "Connected to network", Toast.LENGTH_SHORT).show();
+
             MainActivity.toggleConnectionButtons(false);
         }
-
+        finish();
     }
 
     public void receiveHostSpawn(){
         if (worker == null || !worker.isAlive()) {
+            interupt = false;
             worker = new Thread(new Runnable(){
 
                 private void updateUI(final List<String> output)
@@ -350,8 +356,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 public void run()
                 {
                     Log.d(TAG, "Thread run()");
-                    while (true) {
-                        ServerSocket serverSocket = null;
+                    while (!interupt) {
+                        serverSocket = null;
                         try {
                             serverSocket = new ServerSocket(8888);
                             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
@@ -396,6 +402,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
     public void receiveDataSpawn(){
         if(worker == null || !worker.isAlive()) {
+            interupt = false;
             worker = new Thread(new Runnable() {
 
                 private void updateUI(final List<String> output) {
@@ -469,8 +476,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 @Override
                 public void run() {
                     Log.d(TAG, "Thread run()");
-                    while (true) {
-                        ServerSocket serverSocket = null;
+                    while (!interupt) {
+                        serverSocket = null;
                         try {
                             serverSocket = new ServerSocket(8988);
                             Log.d(WifiDirectActivity.TAG, "Server: Socket opened");
@@ -553,6 +560,17 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 }
             });
         }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    interupt = true;
+                    serverSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override
