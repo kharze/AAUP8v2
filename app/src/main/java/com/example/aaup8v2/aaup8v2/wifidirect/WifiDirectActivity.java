@@ -27,6 +27,8 @@ import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
 import com.example.aaup8v2.aaup8v2.fragments.models.WifitDirectListAdapter;
 import com.example.aaup8v2.aaup8v2.myTrack;
+import com.example.aaup8v2.aaup8v2.Recommender.RecommenderArtist;
+import com.example.aaup8v2.aaup8v2.Recommender.RecommenderGenre;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -241,6 +243,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         } else if (info.groupFormed) {
             sendDataToHost(IP_SENT, "", MainActivity.mQueueFragment.myIP);
 
+            //Send artist/weight information to host
+            MainActivity.mRecommend.sendToHost();
+
             MainActivity.initializePeer(false);
 
             receiveDataSpawn();
@@ -328,6 +333,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     if(ipsOnNetwork.size() == 0)
                                         disconnect();
 
+                                    break;
+                                case RECOMMENDER:
+                                    Type recHashMap = new TypeToken<HashMap<List<RecommenderArtist>, List<RecommenderGenre>>>() { }.getType();
+                                    HashMap<List<RecommenderArtist>, List<RecommenderGenre>> weights = gson.fromJson(data, recHashMap);
+                                    //MainActivity.mRecommend.addWeights()
                                     break;
                                 default:
                                     break;

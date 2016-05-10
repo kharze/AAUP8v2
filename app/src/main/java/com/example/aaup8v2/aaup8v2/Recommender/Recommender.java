@@ -9,8 +9,8 @@ import com.example.aaup8v2.aaup8v2.Runnables.GetArtistsRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistsRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
-import com.example.aaup8v2.aaup8v2.recommender_pearson.RecommenderArtist;
-import com.example.aaup8v2.aaup8v2.recommender_pearson.RecommenderGenre;
+import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
+import com.google.gson.Gson;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -37,6 +37,7 @@ public class Recommender extends MainActivity {
     private ArrayList<String> mGenreOrder;
     private ArrayList<String> mArtistOrder;
 
+    HashMap<List<RecommenderArtist>, List<RecommenderGenre>> userRecommendations = new HashMap<>();
     List<Artist> artistsList = new ArrayList<>();
     List<String> p_id = new ArrayList<>();
     List<String> playlistOwnerId = new ArrayList<>();
@@ -55,7 +56,7 @@ public class Recommender extends MainActivity {
     //Initializes recommender
     //Takes user id - Currently not implemented
     private void init(String uid){
-
+        weightAdjust(uid);
     }
 
     //Updates the matrix with a new user-row
@@ -383,6 +384,7 @@ public class Recommender extends MainActivity {
                     artistList.get(i).setTracks(artistTracks);
 
                     recommended.add(artistList.get(i));
+                    userRecommendations.put(artistList, genreList);
                 }activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -403,18 +405,10 @@ public class Recommender extends MainActivity {
 
     }
 
-    public void sendToHost(List<RecommenderArtist> artists, List<RecommenderGenre> genres){
-        HashMap<List<RecommenderArtist>, List<RecommenderGenre>> userRecommendations = new HashMap<>();
-        userRecommendations.put(artists, genres);
+    public void sendToHost(){
+        Gson data = new Gson();
+        data.toJson(userRecommendations);
 
-        artistsList = null;
-        p_id = null;
-        playlistOwnerId = null;
-        trackList = null;
-        tracksPager = null;
-        mArtists = null;
-
-
+        MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.RECOMMENDER, data.toString(), MainActivity.mQueueFragment.myIP);
     }
-
 }
