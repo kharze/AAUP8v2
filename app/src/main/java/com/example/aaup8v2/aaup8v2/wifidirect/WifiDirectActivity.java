@@ -292,7 +292,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     int position2 = MainActivity.mQueueFragment.checkPosition(Integer.parseInt(dataList2.get(0)), dataList2.get(1));
                                     if(position2 != -1) {
                                         MainActivity.mQueueFragment.downVoteAssist(position2, sender);
-                                        MainActivity.mQueueFragment.voteThreshold(Integer.parseInt(data));
+                                        MainActivity.mQueueFragment.voteThreshold(position2);
                                         MainActivity.mQueueFragment.sortQueue();
                                     }
                                     String queueListDown = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);

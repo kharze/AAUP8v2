@@ -46,6 +46,7 @@ public class SearchFragment extends Fragment{
     private int limit = 50;
     private HashMap<String, Object> options = new HashMap<>();
     private Runnable searchRunnable;
+    private Thread worker;
 
     // Views
     private Button searchButton;
@@ -84,6 +85,9 @@ public class SearchFragment extends Fragment{
         searchResultsList.setAdapter(searchAdapter);
 
         setSearchRunnable();
+        worker = new Thread(searchRunnable);
+        worker.setName("Search Thread");
+
         setListeners();
 
         return v; // Inflate the layout for this fragment
@@ -136,9 +140,12 @@ public class SearchFragment extends Fragment{
                         Log.d("Last", "Last");
                         preLast = lastItem;
 
-                        Thread searchThread = new Thread(searchRunnable);
-                        searchThread.setName("Seach Thread");
-                        searchThread.start();
+                        //Thread searchThread = new Thread(searchRunnable);
+                        //searchThread.setName("Seach Thread");
+                        if(!worker.isAlive()) {
+                            worker = new Thread(searchRunnable);
+                            worker.start();
+                        }
                     }
                 }
             }
@@ -169,12 +176,14 @@ public class SearchFragment extends Fragment{
     public void startSearchThread(){
         // Resets the search
         mTracklist.clear();
+        searchAdapter.notifyDataSetChanged();
         preLast = 0;
         offset = 0;
 
-        Thread searchThread = new Thread(searchRunnable);
-        searchThread.setName("Seach Thread");
-        searchThread.start();
+        if(!worker.isAlive()) {
+            worker = new Thread(searchRunnable);
+            worker.start();
+        }
     }
 
     private void setSearchRunnable() { //Runnable used to search for tracks. Both for the search butten and scroll listener.
