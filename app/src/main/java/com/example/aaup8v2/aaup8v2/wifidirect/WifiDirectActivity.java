@@ -57,6 +57,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public static final String DISCONNECT_SUCCESS = "disconnect_success";
     public static final String RECOMMENDER = "recommender";
     public static final String RECOMMENDER_SUCCESS = "recommender_success";
+    public static final String NEXT_SONG = "next_song";
 
     public static final String TAG = "wifidirect";
     private WifiP2pManager manager;
@@ -74,6 +75,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public List<String> ipsOnNetwork = new ArrayList<>();
     public Thread worker;
     WifitDirectListAdapter deviceAdapter;
+
+    public Type mClassStringList = new TypeToken<List<String>>(){
+    }.getType();
 
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
@@ -196,8 +200,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             List<WifiP2pDevice> list = new ArrayList<>();
                             list.addAll(peers.getDeviceList());
 
-                            for(int i = 0; list.size() > i; i++){
-                                if(list.get(i).isGroupOwner())
+                            for (int i = 0; list.size() > i; i++) {
+                                if (list.get(i).isGroupOwner())
                                     peersCollection.add(list.get(i));
                             }
 
@@ -275,15 +279,23 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 case IP_SENT:
                                     break;
                                 case UP_VOTE:
-                                    MainActivity.mQueueFragment.upVoteAssist(Integer.parseInt(data), sender);
-                                    MainActivity.mQueueFragment.sortQueue();
+                                    List<String> dataList = gson.fromJson(data,mClassStringList);
+                                    int position = MainActivity.mQueueFragment.checkPosition(Integer.parseInt(dataList.get(0)), dataList.get(1));
+                                    if(position != -1) {
+                                        MainActivity.mQueueFragment.upVoteAssist(position, sender);
+                                        MainActivity.mQueueFragment.sortQueue();
+                                    }
                                     String queueListUp = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
                                     sendDataToPeers(WifiDirectActivity.UP_VOTE, queueListUp);
                                     break;
                                 case DOWN_VOTE:
-                                    MainActivity.mQueueFragment.downVoteAssist(Integer.parseInt(data), sender);
-                                    MainActivity.mQueueFragment.voteThreshold(Integer.parseInt(data));
-                                    MainActivity.mQueueFragment.sortQueue();
+                                    List<String> dataList2 = gson.fromJson(data,mClassStringList);
+                                    int position2 = MainActivity.mQueueFragment.checkPosition(Integer.parseInt(dataList2.get(0)), dataList2.get(1));
+                                    if(position2 != -1) {
+                                        MainActivity.mQueueFragment.downVoteAssist(position2, sender);
+                                        MainActivity.mQueueFragment.voteThreshold(Integer.parseInt(data));
+                                        MainActivity.mQueueFragment.sortQueue();
+                                    }
                                     String queueListDown = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
                                     sendDataToPeers(WifiDirectActivity.DOWN_VOTE, queueListDown);
                                     break;
@@ -385,33 +397,50 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             String data = output.get(1);
 
                             Gson gson = new Gson();
-                            Type mClass = new TypeToken<List<QueueElement>>() {
+
+                            Type mClassMyTrack = new TypeToken<myTrack>(){
                             }.getType();
 
-                            List<QueueElement> newQueueList = gson.fromJson(data,mClass);
+                            Type mClassQueue = new TypeToken<List<QueueElement>>() {
+                            }.getType();
 
                             switch (type) {
                                 case UP_VOTE:
+                                    List<QueueElement> newQueueListUp = gson.fromJson(data, mClassQueue);
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
-                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueList);
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueListUp);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case DOWN_VOTE:
+                                    List<QueueElement> newQueueListDown = gson.fromJson(data, mClassQueue);
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
-                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueList);
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueListDown);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case TRACK_ADDED:
+                                    List<QueueElement> newQueueListAdd = gson.fromJson(data, mClassQueue);
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
-                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueList);
+                                    MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueListAdd);
                                     if(MainActivity.mQueueFragment.queueAdapter != null)
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     if(MainActivity.mSearchFragment.searchAdapter != null)
                                         MainActivity.mSearchFragment.searchAdapter.notifyDataSetChanged();
                                     if(MainActivity.mPlaylistFragment.listAdapter != null)
                                         MainActivity.mPlaylistFragment.listAdapter.notifyDataSetChanged();
+                                    break;
+                                case NEXT_SONG:
+                                    myTrack track = gson.fromJson(data,mClassMyTrack);
+                                    String artists = "Artists: ";
+                                    for(int i = 0; track.artists.size() > i; i++) {
+                                        artists += track.artists.get(i).name;
+                                        if(track.artists.size() != (i+1))
+                                            artists += "; ";
+                                    }
+
+                                    MainActivity.playedArtist.setText(artists);
+                                    MainActivity.playedName.setText(track.name);
                                     break;
                                 case DISCONNECT:
                                     Toast.makeText(getApplicationContext(), "Host left network", Toast.LENGTH_LONG).show();

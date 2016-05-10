@@ -144,6 +144,11 @@ public class QueueFragment extends Fragment {
     }
 
     public String nextSong(){ // TODO: 06-05-2016 Broadcast the track, so that peers can add the track to their playbar. 
+        if(MainActivity.mWifiDirectActivity.info != null){
+            Gson gson = new Gson();
+            String track = gson.toJson(mQueueElementList.get(0).track);
+            MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.NEXT_SONG, track);
+        }
         String trackId = mQueueElementList.get(0).track.id;
         String artists = "Artists: ";
         for(int i = 0; mQueueElementList.get(0).track.artists.size() > i; i++) {
@@ -162,6 +167,18 @@ public class QueueFragment extends Fragment {
         mQueueElementList.remove(i);
         if(queueAdapter != null)
             queueAdapter.notifyDataSetChanged();
+    }
+
+    public int checkPosition(int position, String id){
+        if(position < mQueueElementList.size() && mQueueElementList.get(position).track.id.equals(id)) {
+            return position;
+        } else{
+            for(int i = 0; i < mQueueElementList.size(); i++){
+                if(mQueueElementList.get(position).track.id.equals(id))
+                    return i;
+            }
+        }
+        return -1;
     }
 
     public void downVoteAssist(int position, String ip){
@@ -196,7 +213,11 @@ public class QueueFragment extends Fragment {
             MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.DOWN_VOTE, queueList);
         }
         else if(MainActivity.mWifiDirectActivity.info != null){
-            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DOWN_VOTE,Integer.toString(position),myIP);
+            List<String> dataToSend = new ArrayList<>();
+            dataToSend.add(Integer.toString(position));
+            dataToSend.add(mQueueElementList.get(position).track.id);
+            String data = gson.toJson(dataToSend);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DOWN_VOTE,data,myIP);
         } else {
             deleteTrack(position);
             sortQueue();
@@ -236,7 +257,11 @@ public class QueueFragment extends Fragment {
             MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.UP_VOTE, queueList);
         }
         else if(MainActivity.mWifiDirectActivity.info != null){
-            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.UP_VOTE,Integer.toString(position),myIP);
+            List<String> dataToSend = new ArrayList<>();
+            dataToSend.add(Integer.toString(position));
+            dataToSend.add(mQueueElementList.get(position).track.id);
+            String data = gson.toJson(dataToSend);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.UP_VOTE,data,myIP);
         } else {
             sortQueue();
         }
