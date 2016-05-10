@@ -27,8 +27,8 @@
             <ImageButton
                 android:id="@+id/playButtonImage"
                 android:src="@drawable/ic_action_playback_play"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_centerVertical="true"
