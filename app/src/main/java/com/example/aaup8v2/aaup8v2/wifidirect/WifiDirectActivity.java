@@ -54,6 +54,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public static final String UP_VOTE = "up_vote";
     public static final String DOWN_VOTE = "down_vote";
     public static final String DISCONNECT = "disconnect";
+    public static final String DISCONNECT_SUCCESS = "disconnect_success";
+    public static final String RECOMMENDER = "recommender";
+    public static final String RECOMMENDER_SUCCESS = "recommender_success";
 
     public static final String TAG = "wifidirect";
     private WifiP2pManager manager;
@@ -217,7 +220,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
             MainActivity.toggleConnectionButtons(false);
         } else if (info.groupFormed) {
-            sendDataToHost("ip_sent", "", MainActivity.mQueueFragment.myIP);
+            sendDataToHost(IP_SENT, "", MainActivity.mQueueFragment.myIP);
 
             MainActivity.initializePeer(false);
 
@@ -246,6 +249,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             if (!ipsOnNetwork.contains(sender)) {
                                 ipsOnNetwork.add(sender);
+                                //when user first joins the network, they receive the queue back, peer-side handling as if track was added
+                                if(MainActivity.mQueueFragment.mQueueElementList != null) {
+                                    String queueListJoin = gson.toJson(MainActivity.mQueueFragment.mQueueElementList);
+                                    sendDataToPeers(WifiDirectActivity.TRACK_ADDED, queueListJoin);
+                                }
                             }
 
                             switch (type) {
@@ -287,6 +295,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     //Handle disconnect
                                     if(ipsOnNetwork.contains(sender))
                                         ipsOnNetwork.remove(sender);
+
+                                    sendDataToPeer(DISCONNECT_SUCCESS, "", sender);
 
                                     break;
                                 default:
@@ -388,6 +398,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 case DISCONNECT:
                                     Toast.makeText(getApplicationContext(), "Host left network", Toast.LENGTH_LONG).show();
                                     break;
+                                case DISCONNECT_SUCCESS:
+                                    disconnect();
+                                    break;
                                 default:
                                     break;
                             }
@@ -422,7 +435,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             if(data.size() == 100)
                                 break;
 
-                        }catch (ClosedByInterruptException e){
+                        }catch (ClosedByInterruptException e) {
                             e.getCause();
                         }catch (IOException e) {
                             Log.e(WifiDirectActivity.TAG, e.getMessage());
@@ -565,14 +578,18 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
     public void sendDataToPeers(String type, String data){
         for(int j = 0; j < ipsOnNetwork.size(); j++){
-            Intent dataIntent = new Intent(this, DataTransferService.class);
-            dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
-            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ipsOnNetwork.get(j));
-            dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
-            dataIntent.putExtra(DataTransferService.EXTRAS_DATA, data);
-            dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, type);
-            startService(dataIntent);
+            sendDataToPeer(type, data, ipsOnNetwork.get(j));
         }
+    }
+
+    public void sendDataToPeer(String type, String data, String ip){
+        Intent dataIntent = new Intent(this, DataTransferService.class);
+        dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
+        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_ADDRESS, ip);
+        dataIntent.putExtra(DataTransferService.EXTRAS_PEER_PORT, 8988);
+        dataIntent.putExtra(DataTransferService.EXTRAS_DATA, data);
+        dataIntent.putExtra(DataTransferService.EXTRAS_TYPE, type);
+        startService(dataIntent);
     }
 }
 
