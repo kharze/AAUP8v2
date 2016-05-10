@@ -38,12 +38,16 @@ public class SearchFragment extends Fragment{
 
     private List<myTrack> mTracklist = new ArrayList<>();
     public SearchListAdapter searchAdapter;
+
+    // Values used for the search
+    private String searchTerm;
     private int preLast;
     private int offset = 0;
     private int limit = 50;
     private HashMap<String, Object> options = new HashMap<>();
     private Runnable searchRunnable;
 
+    // Views
     private Button searchButton;
     private EditText mText;
     private Activity activity;
@@ -100,7 +104,8 @@ public class SearchFragment extends Fragment{
                     im.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                     Toast.makeText(getContext(), "Search started", Toast.LENGTH_SHORT).show();
-                    startSearchThread(searchString);
+                    searchTerm = searchString;
+                    startSearchThread();
                 } else
                     Toast.makeText(getContext(),"Search input too short", Toast.LENGTH_SHORT).show();
             }
@@ -161,7 +166,7 @@ public class SearchFragment extends Fragment{
         void onFragmentInteraction(Uri uri);
     }
 
-    public void startSearchThread(final String id){
+    public void startSearchThread(){
         // Resets the search
         mTracklist.clear();
         preLast = 0;
@@ -178,7 +183,7 @@ public class SearchFragment extends Fragment{
             public void run() {
                 options.put(SpotifyService.LIMIT, limit);
                 options.put(SpotifyService.OFFSET, offset);
-                TracksPager result = MainActivity.mSpotifyAccess.mService.searchTracks(mText.getText().toString(), options);
+                TracksPager result = MainActivity.mSpotifyAccess.mService.searchTracks(searchTerm, options);
                 offset += limit;
                 for(int i = 0; result.tracks.items.size() > i; i++){
                     myTrack track = new myTrack(result.tracks.items.get(i));
