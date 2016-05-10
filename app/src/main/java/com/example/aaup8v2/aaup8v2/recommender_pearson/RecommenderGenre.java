@@ -7,11 +7,13 @@ public class RecommenderGenre {
     public Integer id;
     public String genre;
     public Double weight;
+    public int count;
 
-    public RecommenderGenre(Integer id, String genre, Double weight){
+    public RecommenderGenre(Integer id, String genre, Double weight, int count){
         this.id = id;
         this.genre = genre;
         this.weight = weight;
+        this.count = count;
     }
 
     public int getId(){

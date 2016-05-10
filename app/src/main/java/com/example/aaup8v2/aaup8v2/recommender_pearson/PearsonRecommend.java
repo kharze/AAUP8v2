@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 import com.example.aaup8v2.aaup8v2.Runnables.GetArtistsRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
@@ -42,8 +39,6 @@ public class PearsonRecommend{
     Artists mArtists;
     Context context;
     Activity activity;
-
-    //List<PlaylistTrack> tracksList = new ArrayList<>();
 
     public PearsonRecommend(Context context, Activity activity){
         this.context = context;
@@ -175,7 +170,7 @@ public class PearsonRecommend{
         List<Double> weights = calculateWeights(occArtist);
         List<RecommenderArtist> artistObjects = new ArrayList<>();
         for (int i = 0; i < occArtist.size(); i++){
-            artistObjects.add(new RecommenderArtist(difArtists.get(i), weights.get(i), genresList.get(i), null));
+            artistObjects.add(new RecommenderArtist(difArtists.get(i), weights.get(i), occArtist.get(i), genresList.get(i), null));
         }
 
         Collections.sort(artistObjects, new Comparator<RecommenderArtist>() {
@@ -231,7 +226,7 @@ public class PearsonRecommend{
         List<Double> weights = calculateWeights(occGenre);
         List<RecommenderGenre> genreObjects = new ArrayList<>();
         for (int i = 0; i < occGenre.size(); i++){
-            genreObjects.add(new RecommenderGenre(i, difGenres.get(i), weights.get(i)));
+            genreObjects.add(new RecommenderGenre(i, difGenres.get(i), weights.get(i), occGenre.get(i)));
         }
 
         Collections.sort(genreObjects, new Comparator<RecommenderGenre>() {
@@ -340,7 +335,6 @@ public class PearsonRecommend{
                     artistList.get(i).setTracks(artistTracks);
 
                     recommended.add(artistList.get(i));
-                    sendToHost(recommended, genreList);
                 }activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -349,6 +343,10 @@ public class PearsonRecommend{
                 });
             }
         }).start();
+    }
+
+    private void predictRating (RealMatrix weights, RealMatrix ratings){
+
     }
 
     public void sendToHost(List<RecommenderArtist> artists, List<RecommenderGenre> genres){
@@ -362,48 +360,6 @@ public class PearsonRecommend{
         tracksPager = null;
         mArtists = null;
 
-        //return userRecommendations;
-    }
-/**
-    public void matrixFact(){
-        RealMatrix matrix = new Array2DRowRealMatrix(5, 5);
-
-        double[] row1 = {2, 4, 3, 5, 2};
-        double[] row2 = {4, 1, 2, 2, 1};
-        double[] row3 = {3, 2, 1, 4, 4};
-        double[] row4 = {2, 3, 3, 5, 3};
-        double[] row5 = {1, 3, 0, 2, 2};
-
-        matrix.setRow(0,row1);
-        matrix.setRow(1, row2);
-        matrix.setRow(2, row3);
-        matrix.setRow(3, row4);
-        matrix.setRow(4, row5);
-
-        RealMatrix U = new SingularValueDecomposition(matrix).getU();
-        RealMatrix S = new SingularValueDecomposition(matrix).getS();
-        RealMatrix VT = new SingularValueDecomposition(matrix).getVT();
-        double[] user = matrix.getRow(0);
-        double avg = 0;
-        int counter = 0;
-
-        for(int i = 0; i < user.length; i++){
-            double temp = user[i];
-            if(temp != 0){
-                avg += temp;
-                counter++;
-            }
-        }
-        avg = avg/counter;
-
-        RealMatrix userM = new Array2DRowRealMatrix(1,5);
-        RealMatrix itemM = new Array2DRowRealMatrix(1,5);
-        userM.setRow(0, U.getRow(0));
-        itemM.setRow(0, VT.getRow(0));
-        RealMatrix temp = U.multiply(VT.multiply(S));
-
-        int x = 0;
 
     }
- **/
 }
