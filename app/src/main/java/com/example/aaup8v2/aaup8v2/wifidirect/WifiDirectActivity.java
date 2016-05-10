@@ -237,13 +237,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             sendDataToHost(IP_SENT, "", MainActivity.mQueueFragment.myIP);
 
             //Send artist/weight information to host
-            MainActivity.mRecommend.sendToHost();
+            //MainActivity.mRecommend.sendToHost();
 
             MainActivity.initializePeer(false);
 
             receiveDataSpawn();
-
-            Toast.makeText(this, "Connected to network", Toast.LENGTH_SHORT).show();
 
             MainActivity.toggleConnectionButtons(false);
         }
