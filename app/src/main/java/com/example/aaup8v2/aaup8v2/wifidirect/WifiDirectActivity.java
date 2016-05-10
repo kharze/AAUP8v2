@@ -298,6 +298,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     sendDataToPeer(DISCONNECT_SUCCESS, "", sender);
 
+                                    if(ipsOnNetwork.size() == 0)
+                                        disconnect();
+
                                     break;
                                 default:
                                     break;
@@ -491,7 +494,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                 @Override
                 public void onSuccess() {
-
+                    MainActivity.toggleConnectionButtons(true);
                 }
             });
         }
