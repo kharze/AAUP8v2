@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
+import com.example.aaup8v2.aaup8v2.fragments.models.WifitDirectListAdapter;
 import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
 import com.google.gson.Gson;
@@ -73,7 +74,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     ListView list;
     public List<String> ipsOnNetwork = new ArrayList<>();
     public Thread worker;
-    private SimpleAdapter deviceAdapter;
+    WifitDirectListAdapter deviceAdapter;
 
     /**
      * @param isWifiP2pEnabled the isWifiP2pEnabled to set
@@ -98,8 +99,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
         String[] from = {"flag", "txt", "cur"};
 
-        int[] to = {R.id.txt, R.id.cur, R.id.textView};
-        deviceAdapter = new SimpleAdapter(this, aList, R.layout.listview_layout_p2p, from, to);
+        deviceAdapter = new WifitDirectListAdapter(this,R.layout.listview_layout_p2p,peersCollection);
+
+        //int[] to = {R.id.txt, R.id.cur, R.id.textView};
+        //deviceAdapter = new SimpleAdapter(this, aList, R.layout.listview_layout_p2p, from, to);
 
         // Assign adapter to ListView
         list = (ListView) findViewById(R.id.listviewPeers);
@@ -178,13 +181,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             peersCollection.addAll(peers.getDeviceList());
 
-                            for (int i = 0; i < peersCollection.size(); i++) {
+                            /*for (int i = 0; i < peersCollection.size(); i++) {
                                 HashMap<String, String> hm = new HashMap<>();
 
                                 String s = peersCollection.get(i).deviceName;
                                 hm.put("txt", s);
                                 aList.add(hm);
-                            }
+                            }*/
 
                             deviceAdapter.notifyDataSetChanged();
                         }

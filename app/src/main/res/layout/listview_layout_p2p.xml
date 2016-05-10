@@ -4,30 +4,26 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal" android:clickable="true">
 
         <TextView
-            android:id="@+id/txt"
+            android:id="@+id/deviceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/textColor"
             android:clickable="true"/>
 
         <Button
+            android:id="@+id/buttonDeviceConnect"
             android:text="@string/connect"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:onClick="on_listViewClick"/>
-        <TextView
-            android:id="@+id/cur"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/colorPrimaryDark"/>
-    </LinearLayout>
+            android:onClick="on_listViewClick"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
 
 </LinearLayout>
