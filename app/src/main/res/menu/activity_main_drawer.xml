@@ -25,9 +25,9 @@
             android:id="@+id/nav_disconnect"
             android:icon="@drawable/ic_menu_share"
             android:title="@string/Connections" />
-        <item
-            android:id="@+id/nav_admin"
-            android:icon="@drawable/ic_star"
-            android:title="@string/Administration" />
+        <!--<item-->
+            <!--android:id="@+id/nav_admin"-->
+            <!--android:icon="@drawable/ic_star"-->
+            <!--android:title="@string/Administration" />-->
     </group>
 </menu>

@@ -13,7 +13,7 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/mange_spotify_account"
+            android:text=""
             android:textColor="@color/textColor"/>
     </TableRow>
 
@@ -21,12 +21,12 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center_horizontal">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/modify_account"
-            android:textSize="15sp"
-            android:id="@+id/modifyAcc"/>
+        <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/modify_account"-->
+            <!--android:textSize="15sp"-->
+            <!--android:id="@+id/modifyAcc"/>-->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,57 +38,57 @@
 
     </TableRow>
 
-    <TableRow android:minHeight="20dp">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/genre_prefences"
-            android:textColor="@color/textColor"/>
+    <!--<TableRow android:minHeight="20dp">-->
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/genre_prefences"-->
+            <!--android:textColor="@color/textColor"/>-->
 
-        <CheckBox
-            android:id="@+id/rockCheckbox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_weight="3"
-            android:drawableLeft="@android:color/transparent"
-            android:drawableStart="@android:color/transparent"
-            android:drawablePadding="0dp"
-            android:text="@string/rock"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="@color/textColor"
-            android:buttonTint="@color/textColor"/>
-        <CheckBox
-            android:id="@+id/jazzCheckbox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_weight="3"
-            android:drawableLeft="@android:color/transparent"
-            android:drawableStart="@android:color/transparent"
-            android:drawablePadding="0dp"
-            android:text="@string/jazz"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="@color/textColor"
-            android:buttonTint="@color/textColor"/>
-        <CheckBox
-            android:id="@+id/HouseCheckbox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_weight="3"
-            android:drawableLeft="@android:color/transparent"
-            android:drawableStart="@android:color/transparent"
-            android:drawablePadding="0dp"
-            android:text="@string/house"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="@color/textColor"
-            android:buttonTint="@color/textColor"/>
+        <!--<CheckBox-->
+            <!--android:id="@+id/rockCheckbox"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="0dp"-->
+            <!--android:layout_weight="3"-->
+            <!--android:drawableLeft="@android:color/transparent"-->
+            <!--android:drawableStart="@android:color/transparent"-->
+            <!--android:drawablePadding="0dp"-->
+            <!--android:text="@string/rock"-->
+            <!--android:textSize="12sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:textColor="@color/textColor"-->
+            <!--android:buttonTint="@color/textColor"/>-->
+        <!--<CheckBox-->
+            <!--android:id="@+id/jazzCheckbox"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="0dp"-->
+            <!--android:layout_weight="3"-->
+            <!--android:drawableLeft="@android:color/transparent"-->
+            <!--android:drawableStart="@android:color/transparent"-->
+            <!--android:drawablePadding="0dp"-->
+            <!--android:text="@string/jazz"-->
+            <!--android:textSize="12sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:textColor="@color/textColor"-->
+            <!--android:buttonTint="@color/textColor"/>-->
+        <!--<CheckBox-->
+            <!--android:id="@+id/HouseCheckbox"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="0dp"-->
+            <!--android:layout_weight="3"-->
+            <!--android:drawableLeft="@android:color/transparent"-->
+            <!--android:drawableStart="@android:color/transparent"-->
+            <!--android:drawablePadding="0dp"-->
+            <!--android:text="@string/house"-->
+            <!--android:textSize="12sp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:textColor="@color/textColor"-->
+            <!--android:buttonTint="@color/textColor"/>-->
 
-    </TableRow>
+    <!--</TableRow>-->
 
 
     </TableLayout>

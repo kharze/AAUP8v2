@@ -173,9 +173,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_settings:
                 fragmentClass = SettingsFragment.class;
                 break;
-            case R.id.nav_admin:
-                fragmentClass = AdminFragment.class;
-                break;
+//            case R.id.nav_admin:
+//                fragmentClass = AdminFragment.class;
+//                break;
             case R.id.nav_disconnect:
                 fragmentClass = DisconnectFragment.class;
                 //Instantiate the disconnect MenuItem
