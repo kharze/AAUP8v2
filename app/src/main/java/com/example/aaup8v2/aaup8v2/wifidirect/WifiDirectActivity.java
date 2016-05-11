@@ -446,6 +446,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     MainActivity.playedArtist.setText(artists);
                                     MainActivity.playedName.setText(track.name);
+                                    MainActivity.mQueueFragment.deleteTrack(0);
                                     break;
                                 case DISCONNECT:
                                     //Notify user the host left and handle make sure everything is reset
