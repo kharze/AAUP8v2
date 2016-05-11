@@ -350,6 +350,9 @@ public class MainActivity extends AppCompatActivity
         if(findViewById(R.id.btn_connectView) == view){
             isPeer = true;
             isHost = false;
+
+            //Could be playing a song so cleanUp will reset the view
+            cleanUp();
         } else {
             isPeer = false;
             isHost = true;
@@ -358,7 +361,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    public void disconnectSpotify(View view){
+    public static void cleanUp(){
         MainActivity.musicPlayer.mPlayer.pause();
         MainActivity.musicPlayer.mPlayer.clearQueue();
         MainActivity.musicPlayer.isPlaying = false;
@@ -366,9 +369,14 @@ public class MainActivity extends AppCompatActivity
         buttonState = 0;
         MainActivity.playedName.setText("No song playing");
         MainActivity.playedArtist.setText("");
-        AuthenticationClient.clearCookies(getApplicationContext());
         MainActivity.mPlaylistFragment.listDataChild = null;
         MainActivity.mPlaylistFragment.playlistName = null;
+    }
+
+    public void disconnectSpotify(View view){
+        cleanUp();
+
+        AuthenticationClient.clearCookies(getApplicationContext());
         authenticate();
     }
 

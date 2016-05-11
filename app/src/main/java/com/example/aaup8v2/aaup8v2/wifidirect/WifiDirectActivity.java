@@ -449,6 +449,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     break;
                                 case DISCONNECT:
                                     Toast.makeText(getApplicationContext(), "Host left network", Toast.LENGTH_LONG).show();
+                                    MainActivity.cleanUp();
                                     break;
                                 case DISCONNECT_SUCCESS:
                                     disconnect();
