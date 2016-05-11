@@ -56,6 +56,7 @@ public class DataTransferService extends IntentService {
                 oos.writeObject(dataType);
                 oos.writeObject(data);
                 Log.d(WifiDirectActivity.TAG, "Client: Data written");
+                timeOutFailed.remove(host);
             } catch (SocketTimeoutException e){
                 if(!timeOutFailed.containsKey(host))
                     timeOutFailed.put(host, (System.currentTimeMillis()/1000));
