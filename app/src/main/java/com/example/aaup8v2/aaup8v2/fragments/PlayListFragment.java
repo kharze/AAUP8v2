@@ -34,6 +34,7 @@ public class PlayListFragment extends Fragment{
     public List<List<myTrack>> listDataChild;
     public ExpandableListAdapters listAdapter;
     Activity activity;
+    static Thread worker;
 
     private OnFragmentInteractionListener mListener;
 
@@ -54,7 +55,7 @@ public class PlayListFragment extends Fragment{
                              Bundle savedInstanceState) {
         activity = getActivity();
         //Made to only update the playlist once in a runtime.
-        if(listDataChild == null && playlistName == null){
+        if(listDataChild == null && playlistName == null && (worker == null || !worker.isAlive())){
             Toast.makeText(getContext(), "Loading your playlists", Toast.LENGTH_LONG).show();
             listDataChild = new ArrayList<>();
             playlistName = new ArrayList<>();
@@ -67,7 +68,8 @@ public class PlayListFragment extends Fragment{
 
         expListView = (ExpandableListView) v.findViewById(R.id.expand_list);
 
-        expListView.setAdapter(listAdapter);
+        if(worker == null || !worker.isAlive())
+            expListView.setAdapter(listAdapter);
 
         // Inflate the layout for this fragment
         return v;
@@ -122,13 +124,14 @@ public class PlayListFragment extends Fragment{
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        MainActivity.mPlaylistFragment.expListView.setAdapter(MainActivity.mPlaylistFragment.listAdapter);
                         if(listAdapter != null)
                             listAdapter.notifyDataSetChanged();
                     }
                 });
             }
         });
-        Thread worker = new Thread(runnable);
+        worker = new Thread(runnable);
         worker.setName("Playlist builder");
         worker.start();
     }
