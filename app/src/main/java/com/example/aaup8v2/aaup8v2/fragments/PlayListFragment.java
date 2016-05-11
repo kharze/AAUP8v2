@@ -54,7 +54,7 @@ public class PlayListFragment extends Fragment{
                              Bundle savedInstanceState) {
         activity = getActivity();
         //Made to only update the playlist once in a runtime.
-        if(listDataChild == null || playlistName == null){
+        if(listDataChild == null && playlistName == null){
             Toast.makeText(getContext(), "Loading your playlists", Toast.LENGTH_LONG).show();
             listDataChild = new ArrayList<>();
             playlistName = new ArrayList<>();
