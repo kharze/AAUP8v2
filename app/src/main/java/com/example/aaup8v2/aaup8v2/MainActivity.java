@@ -362,13 +362,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static void cleanUp(){
-        MainActivity.musicPlayer.mPlayer.pause();
-        MainActivity.musicPlayer.mPlayer.clearQueue();
-        MainActivity.musicPlayer.isPlaying = false;
-        playButton.setImageResource(R.drawable.ic_action_playback_play);
-        buttonState = 0;
-        MainActivity.playedName.setText("No song playing");
-        MainActivity.playedArtist.setText("");
+        if(MainActivity.musicPlayer.isPlaying) {
+            MainActivity.musicPlayer.mPlayer.pause();
+            MainActivity.musicPlayer.mPlayer.clearQueue();
+            MainActivity.musicPlayer.isPlaying = false;
+            playButton.setImageResource(R.drawable.ic_action_playback_play);
+            buttonState = 0;
+            MainActivity.playedName.setText("No song playing");
+            MainActivity.playedArtist.setText("");
+        }
         MainActivity.mPlaylistFragment.listDataChild = null;
         MainActivity.mPlaylistFragment.playlistName = null;
     }
