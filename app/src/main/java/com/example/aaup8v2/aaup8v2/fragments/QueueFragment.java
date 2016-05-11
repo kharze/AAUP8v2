@@ -134,7 +134,7 @@ public class QueueFragment extends Fragment {
         Comparator<QueueElement> compareWeight = new Comparator<QueueElement>() {
             @Override
             public int compare(QueueElement lhs, QueueElement rhs) {
-                return (int)(rhs.weight - lhs.weight);
+                return (int)(((rhs.weight*thresholdUpdate())+rhs.upvoteList.size()-rhs.downvoteList.size()) - ((lhs.weight*thresholdUpdate())+lhs.upvoteList.size()-lhs.downvoteList.size()));
             }
         };
         Collections.sort(mQueueElementList, compareWeight);
@@ -186,15 +186,12 @@ public class QueueFragment extends Fragment {
             //Change the value of the up/down votes depending if the button has already been pressed.
             //Change the icon for the button.
             if (!mQueueElementList.get(position).downvoteList.contains(ip)) {
-                mQueueElementList.get(position).weight -= 1;
                 mQueueElementList.get(position).downvoteList.add(ip);
 
                 if (mQueueElementList.get(position).upvoteList.contains(ip)) {
-                    mQueueElementList.get(position).weight -= 1;
                     mQueueElementList.get(position).upvoteList.remove(ip);
                 }
             } else {
-                mQueueElementList.get(position).weight += 1;
                 mQueueElementList.get(position).downvoteList.remove(ip);
             }
         }
@@ -231,15 +228,12 @@ public class QueueFragment extends Fragment {
             //Change the value of the up/down votes depending if the button has already been pressed.
             //Change the icon for the button.
             if (!mQueueElementList.get(position).upvoteList.contains(ip)) {
-                mQueueElementList.get(position).weight += 1;
                 mQueueElementList.get(position).upvoteList.add(ip);
 
                 if (mQueueElementList.get(position).downvoteList.contains(ip)) {
-                    mQueueElementList.get(position).weight += 1;
                     mQueueElementList.get(position).downvoteList.remove(ip);
                 }
             } else {
-                mQueueElementList.get(position).weight -= 1;
                 mQueueElementList.get(position).upvoteList.remove(ip);
             }
         }
@@ -277,7 +271,7 @@ public class QueueFragment extends Fragment {
 
     public void applyWeight(){
         //Applies a basic weight to each track represented on the playlist
-        mQueueElementList.get(mQueueElementList.size()-1).weight = thresholdUpdate();
+        mQueueElementList.get(mQueueElementList.size()-1).weight = 1;
     }
 
     public void voteThreshold(int downVotedTrack) {
