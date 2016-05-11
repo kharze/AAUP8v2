@@ -548,17 +548,21 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                 }
             });
         }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    interupt = true;
-                    serverSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if(serverSocket != null) {
+            Thread disconnect = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        interupt = true;
+                        serverSocket.close();
+                    } catch (IOException e) {
+                        e.getCause();
+                    }
                 }
-            }
-        }).start();
+            });
+            disconnect.setName("DisconnectThread");
+            disconnect.start();
+        }
     }
 
     @Override
