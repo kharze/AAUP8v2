@@ -35,7 +35,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:contentDescription="@string/play_button"/>
-            <ImageButton
+            <!--<ImageButton
                 android:id="@+id/testButtonImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/playButtonImage"
                 android:layout_toStartOf="@id/playButtonImage"
-                android:contentDescription="@string/play_button" />
+                android:contentDescription="@string/play_button" />-->
             <TextView
                 android:id="@+id/track_name"
                 android:layout_width="match_parent"
