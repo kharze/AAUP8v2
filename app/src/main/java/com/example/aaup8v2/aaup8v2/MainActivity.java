@@ -28,7 +28,6 @@ import com.example.aaup8v2.aaup8v2.fragments.PlayListFragment;
 import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
-import com.example.aaup8v2.aaup8v2.recommender_pearson.PearsonRecommend;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -142,7 +141,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         me = up; //Saves the user for later use
-                        if(up.product.equals("premium")){
+                        if(up.product.equals("premium") && (MainActivity.mWifiDirectActivity.info == null || MainActivity.mWifiDirectActivity.info.isGroupOwner)){
                             initializePeer(true);
                             hasPremium = true;
                         }

@@ -144,7 +144,7 @@ public class QueueFragment extends Fragment {
             queueAdapter.notifyDataSetChanged();
     }
 
-    public String nextSong(){ // TODO: 06-05-2016 Broadcast the track, so that peers can add the track to their playbar. 
+    public String nextSong(){
         if(MainActivity.mWifiDirectActivity.info != null){
             Gson gson = new Gson();
             String track = gson.toJson(mQueueElementList.get(0).track);

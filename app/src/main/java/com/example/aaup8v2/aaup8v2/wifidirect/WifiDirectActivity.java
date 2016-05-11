@@ -22,13 +22,14 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.aaup8v2.aaup8v2.FindIP;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
-import com.example.aaup8v2.aaup8v2.fragments.models.WifitDirectListAdapter;
-import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.Recommender.RecommenderArtist;
 import com.example.aaup8v2.aaup8v2.Recommender.RecommenderGenre;
+import com.example.aaup8v2.aaup8v2.fragments.models.WifitDirectListAdapter;
+import com.example.aaup8v2.aaup8v2.myTrack;
 import com.example.aaup8v2.aaup8v2.wifidirect.DeviceListFragment.DeviceActionListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,6 +37,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.channels.ClosedByInterruptException;
@@ -234,7 +236,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
             MainActivity.toggleConnectionButtons(false);
         } else if (info.groupFormed) {
-            sendDataToHost(IP_SENT, "", MainActivity.mQueueFragment.myIP);
+            sendDataToHost(IP_SENT, "", FindIP.getIPAddress(true));
 
             //Send artist/weight information to host
             //MainActivity.mRecommend.sendToHost();
@@ -354,12 +356,17 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
                             Object type = objectInputStream.readObject();
                             Object object = objectInputStream.readObject();
-                            Object sender = objectInputStream.readObject();
+                            //Object sender2 = objectInputStream.readObject();
+
+                            // Finds the IP of the sender.
+                            InetAddress senderAddress = client.getInetAddress();
+                            String sender = senderAddress.toString();
+                            sender = sender.substring(1);
 
                             List<String> data = new ArrayList<>();
                             data.add((String) type);
                             data.add((String)object);
-                            data.add((String) sender);
+                            data.add(sender);
                             updateUI(data);
 
                             //Just to have a way out of the while loop, should never become true
@@ -646,7 +653,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
         serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, data);
         serviceIntent.putExtra(HostTransferService.EXTRAS_TYPE, type);
-        serviceIntent.putExtra(HostTransferService.EXTRAS_SENDER, ip);
+        //serviceIntent.putExtra(HostTransferService.EXTRAS_SENDER, ip);
         startService(serviceIntent);
     }
 

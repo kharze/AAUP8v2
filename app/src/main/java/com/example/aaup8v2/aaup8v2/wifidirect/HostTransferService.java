@@ -24,7 +24,7 @@ public class HostTransferService extends IntentService {
     public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
     public static final String EXTRAS_DATA = "data_to_send";
     public static final String EXTRAS_TYPE = "type_to_send";
-    public static final String EXTRAS_SENDER = "ip_of_sender";
+    //public static final String EXTRAS_SENDER = "ip_of_sender";
     public HostTransferService(String name) {
         super(name);
     }
@@ -43,7 +43,7 @@ public class HostTransferService extends IntentService {
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
             String type = intent.getExtras().getString(EXTRAS_TYPE);
             String data = intent.getExtras().getString(EXTRAS_DATA);
-            String sender = intent.getExtras().getString(EXTRAS_SENDER);
+            //String sender = intent.getExtras().getString(EXTRAS_SENDER);
             try {
                 Log.d(WifiDirectActivity.TAG, "Opening client socket - ");
                 socket.bind(null);
@@ -54,7 +54,7 @@ public class HostTransferService extends IntentService {
                 ObjectOutputStream oos = new ObjectOutputStream(stream);
                 oos.writeObject(type);
                 oos.writeObject(data);
-                oos.writeObject(sender);
+                //oos.writeObject(sender);
                 oos.close();
                 socket.close();
 
