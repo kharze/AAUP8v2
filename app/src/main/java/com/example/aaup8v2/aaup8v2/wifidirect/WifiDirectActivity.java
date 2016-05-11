@@ -448,7 +448,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     MainActivity.playedName.setText(track.name);
                                     break;
                                 case DISCONNECT:
+                                    //Notify user the host left and handle make sure everything is reset
                                     Toast.makeText(getApplicationContext(), "Host left network", Toast.LENGTH_LONG).show();
+                                    disconnect();
+                                    info = null;
+                                    MainActivity.toggleConnectionButtons(true);
                                     MainActivity.cleanUp();
                                     break;
                                 case DISCONNECT_SUCCESS:
