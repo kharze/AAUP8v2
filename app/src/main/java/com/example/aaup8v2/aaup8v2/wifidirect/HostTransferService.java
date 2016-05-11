@@ -9,6 +9,7 @@ import com.example.aaup8v2.aaup8v2.MainActivity;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
@@ -49,6 +50,10 @@ public class HostTransferService extends IntentService {
                 socket.bind(null);
                 socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
                 Log.d(WifiDirectActivity.TAG, "Client socket - " + socket.isConnected());
+
+
+                InetAddress senderAddress = socket.getLocalAddress();
+                MainActivity.mQueueFragment.myIP = senderAddress.toString().substring(1);
 
                 OutputStream stream = socket.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(stream);

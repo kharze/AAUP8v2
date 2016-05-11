@@ -224,7 +224,7 @@ public class SearchFragment extends Fragment{
         else if (MainActivity.mWifiDirectActivity.info != null){
             String track = gson.toJson(mTracklist.get(position));
 
-            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.TRACK_ADDED, track, MainActivity.mQueueFragment.myIP);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.TRACK_ADDED, track);
             }
         else{ //in case we aren't connected to a network, we just add it as a jukebox.
             MainActivity.mQueueFragment.addTrack(mTracklist.get(position));

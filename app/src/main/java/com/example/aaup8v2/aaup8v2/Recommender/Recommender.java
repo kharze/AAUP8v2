@@ -409,6 +409,6 @@ public class Recommender extends MainActivity {
         Gson data = new Gson();
         data.toJson(userRecommendations);
 
-        MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.RECOMMENDER, data.toString(), MainActivity.mQueueFragment.myIP);
+        MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.RECOMMENDER, data.toString());
     }
 }

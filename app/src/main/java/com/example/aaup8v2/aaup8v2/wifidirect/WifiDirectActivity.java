@@ -22,7 +22,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.aaup8v2.aaup8v2.FindIP;
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.QueueElement;
 import com.example.aaup8v2.aaup8v2.R;
@@ -236,7 +235,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
             MainActivity.toggleConnectionButtons(false);
         } else if (info.groupFormed) {
-            sendDataToHost(IP_SENT, "", FindIP.getIPAddress(true));
+            sendDataToHost(IP_SENT, "");
 
             //Send artist/weight information to host
             //MainActivity.mRecommend.sendToHost();
@@ -360,8 +359,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             // Finds the IP of the sender.
                             InetAddress senderAddress = client.getInetAddress();
-                            String sender = senderAddress.toString();
-                            sender = sender.substring(1);
+                            String sender = senderAddress.toString().substring(1);
 
                             List<String> data = new ArrayList<>();
                             data.add((String) type);
@@ -645,7 +643,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         connect(conf);
     }
 
-    public void sendDataToHost(String type, String data, String ip){
+    public void sendDataToHost(String type, String data){
         Intent serviceIntent = new Intent(this, HostTransferService.class);
         serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
         serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_ADDRESS,

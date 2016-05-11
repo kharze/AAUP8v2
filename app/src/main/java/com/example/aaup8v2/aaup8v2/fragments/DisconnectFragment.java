@@ -54,7 +54,7 @@ public class DisconnectFragment extends Fragment {
                 if (MainActivity.mWifiDirectActivity.info != null && MainActivity.mWifiDirectActivity.info.isGroupOwner) {
                     MainActivity.mWifiDirectActivity.sendDataToPeers(WifiDirectActivity.DISCONNECT, "");
                 } else if (MainActivity.mWifiDirectActivity.info != null) {
-                    MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DISCONNECT, "", MainActivity.mQueueFragment.myIP);
+                    MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DISCONNECT, "");
                 }
                 Toast.makeText(getContext(), "Disconnected", Toast.LENGTH_SHORT).show();
                 MainActivity.toggleConnectionButtons(true);

@@ -215,7 +215,7 @@ public class QueueFragment extends Fragment {
             dataToSend.add(Integer.toString(position));
             dataToSend.add(mQueueElementList.get(position).track.id);
             String data = gson.toJson(dataToSend);
-            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DOWN_VOTE,data,myIP);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DOWN_VOTE,data);
         } else {
             deleteTrack(position);
             sortQueue();
@@ -256,7 +256,7 @@ public class QueueFragment extends Fragment {
             dataToSend.add(Integer.toString(position));
             dataToSend.add(mQueueElementList.get(position).track.id);
             String data = gson.toJson(dataToSend);
-            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.UP_VOTE,data,myIP);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.UP_VOTE,data);
         } else {
             sortQueue();
         }
