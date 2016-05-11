@@ -174,7 +174,7 @@ public class QueueFragment extends Fragment {
             return position;
         } else{
             for(int i = 0; i < mQueueElementList.size(); i++){
-                if(mQueueElementList.get(position).track.id.equals(id))
+                if(mQueueElementList.get(i).track.id.equals(id))
                     return i;
             }
         }
