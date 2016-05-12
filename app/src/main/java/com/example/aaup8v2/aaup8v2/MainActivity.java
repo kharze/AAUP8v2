@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
         //builder.setScopes(new String[]{"user-read-private", "streaming"}); //Old version
-        builder.setScopes(new String[]{"user-library-read", "streaming"}); //New version
+        builder.setScopes(new String[]{"user-read-private", "user-library-read", "streaming"}); //New version
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);

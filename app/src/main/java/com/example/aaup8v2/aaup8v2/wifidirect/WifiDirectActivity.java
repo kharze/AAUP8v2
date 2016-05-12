@@ -201,7 +201,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 if(list.get(i).isGroupOwner())
                                     peersCollection.add(list.get(i));
                             }
-                            deviceAdapter.notifyDataSetChanged();
+                            MainActivity.mWifiDirectActivity.deviceAdapter.notifyDataSetChanged();
                         }
                     });
 
