@@ -36,6 +36,7 @@ import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.Spotify;
 
+import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.models.UserPrivate;
 
 public class MainActivity extends AppCompatActivity
@@ -376,6 +377,9 @@ public class MainActivity extends AppCompatActivity
 
     public void disconnectSpotify(View view){
         cleanUp();
+
+        SpotifyApi test = new SpotifyApi();
+        MainActivity.mSpotifyAccess.mService = test.getService();
 
         AuthenticationClient.clearCookies(getApplicationContext());
         authenticate();
