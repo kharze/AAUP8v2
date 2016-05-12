@@ -29,15 +29,19 @@ public class MySavedTracksRunnable extends ThreadResponseInterface<Pager<SavedTr
         result.items = new ArrayList<>();
         Pager<SavedTrack> temp = new Pager<>();
         temp.items = new ArrayList<>();
-        do{
-            options.put(SpotifyService.OFFSET, offset);
-            temp = MainActivity.mSpotifyAccess.mService.getMySavedTracks(options);
+        try {
+            do {
+                options.put(SpotifyService.OFFSET, offset);
+                temp = MainActivity.mSpotifyAccess.mService.getMySavedTracks(options);
 
-            result.items.addAll(temp.items);
+                result.items.addAll(temp.items);
 
-            offset += 50;
-        }while (temp.items.size() != 0);
+                offset += 50;
+            } while (temp.items.size() != 0);
 
-        delegate.processFinish(result);
+            delegate.processFinish(result);
+        } catch (Exception e){
+            delegate.processFinish(null);
+        }
     }
 }

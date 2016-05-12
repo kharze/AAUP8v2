@@ -45,7 +45,7 @@ public class GetPlaylistsRunnable extends ThreadResponseInterface<Pager<Playlist
             delegate.processFinish(playlists);
 
         } catch (Exception e) {
-            delegate.processFinish(new Pager<PlaylistSimple>());
+            delegate.processFinish(null);
         }
     }
 }

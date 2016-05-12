@@ -192,19 +192,32 @@ public class SearchFragment extends Fragment{
             public void run() {
                 options.put(SpotifyService.LIMIT, limit);
                 options.put(SpotifyService.OFFSET, offset);
-                TracksPager result = MainActivity.mSpotifyAccess.mService.searchTracks(searchTerm, options);
+                TracksPager result = null;
+                try {
+                    result = MainActivity.mSpotifyAccess.mService.searchTracks(searchTerm, options);
+                } catch (Exception e){
+                    Log.e("Search Thread", "run: ", e );
+                }
                 offset += limit;
-                for(int i = 0; result.tracks.items.size() > i; i++){
-                    myTrack track = new myTrack(result.tracks.items.get(i));
-                    mTracklist.add(track);
+                if(result != null) {
+                    for (int i = 0; result.tracks.items.size() > i; i++) {
+                        myTrack track = new myTrack(result.tracks.items.get(i));
+                        mTracklist.add(track);
+                    }
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            searchAdapter.notifyDataSetChanged();
+                            if (mTracklist.isEmpty()) {
+                                Toast.makeText(getContext(), "Search did not find anything", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        searchAdapter.notifyDataSetChanged();
-                        if(mTracklist.isEmpty()){
-                            Toast.makeText(getContext(), "Search did not find anything", Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(getContext(), "Search failed. Is the device connected ?", Toast.LENGTH_LONG).show();
                     }
                 });
             }
