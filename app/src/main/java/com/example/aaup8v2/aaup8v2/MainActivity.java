@@ -378,6 +378,7 @@ public class MainActivity extends AppCompatActivity
     public void disconnectSpotify(View view){
         cleanUp();
 
+        initializePeer(false);
         SpotifyApi test = new SpotifyApi();
         MainActivity.mSpotifyAccess.mService = test.getService();
 
