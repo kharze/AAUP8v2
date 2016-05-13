@@ -18,6 +18,7 @@ import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -329,8 +330,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     break;
                                 case RECOMMENDER:
-                                    Type recHashMap = new TypeToken<HashMap<List<RecommenderArtist>, List<RecommenderGenre>>>() { }.getType();
-                                    HashMap<List<RecommenderArtist>, List<RecommenderGenre>> weights = gson.fromJson(data, recHashMap);
+                                    Type recValPair = new TypeToken<Pair<List<RecommenderArtist>, List<RecommenderGenre>>>(){}.getType();
+                                    Pair<List<RecommenderArtist>, List<RecommenderGenre>> userArtistGenres = gson.fromJson(data, recValPair);
                                     //MainActivity.mRecommend.addWeights()
                                     break;
                                 default:

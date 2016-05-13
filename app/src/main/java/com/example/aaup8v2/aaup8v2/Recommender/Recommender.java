@@ -2,6 +2,7 @@ package com.example.aaup8v2.aaup8v2.Recommender;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Pair;
 import android.widget.Toast;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistSimple;
@@ -37,19 +39,15 @@ public class Recommender extends MainActivity {
     private ArrayList<String> mGenreOrder;
     private ArrayList<String> mArtistOrder;
 
-    HashMap<List<RecommenderArtist>, List<RecommenderGenre>> userRecommendations = new HashMap<>();
+    Pair<List<RecommenderArtist>, List<RecommenderGenre>> userRecommendations;
     List<Artist> artistsList = new ArrayList<>();
     List<String> p_id = new ArrayList<>();
     List<String> playlistOwnerId = new ArrayList<>();
     List<Track> trackList = new ArrayList<>();
     Pager<PlaylistTrack> tracksPager;
     Artists mArtists;
-    Context context;
-    Activity activity;
 
-    public Recommender(Context context, Activity activity, String uid){
-        this.context = context;
-        this.activity = activity;
+    public Recommender(String uid){
         init(uid);
     }
 
@@ -384,13 +382,9 @@ public class Recommender extends MainActivity {
                     artistList.get(i).setTracks(artistTracks);
 
                     recommended.add(artistList.get(i));
-                    userRecommendations.put(artistList, genreList);
-                }activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(context, "Recommender done " + Integer.toString(trackList.size()), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    //userRecommendations.first.addAll(artistList);
+                    //userRecommendations.second.addAll(genreList);
+                }
             }
         }).start();
     }
@@ -407,8 +401,8 @@ public class Recommender extends MainActivity {
 
     public void sendToHost(){
         Gson data = new Gson();
-        data.toJson(userRecommendations);
+        //data.toJson(userRecommendations);
 
-        MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.RECOMMENDER, data.toString(), MainActivity.mQueueFragment.myIP);
+        //MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.RECOMMENDER, data.toString(), MainActivity.mQueueFragment.myIP);
     }
 }
