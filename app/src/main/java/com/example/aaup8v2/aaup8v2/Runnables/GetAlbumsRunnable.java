@@ -11,10 +11,10 @@ import kaaes.spotify.webapi.android.models.Albums;
  * Created by Sean Skov Them on 04-05-2016.
  */
 public class GetAlbumsRunnable extends ThreadResponseInterface<Albums> implements Runnable {
-    private List<String> artistIds;
+    private List<String> albumIds;
 
-    public GetAlbumsRunnable(List<String> artistIds, ThreadResponse<Albums> delegate) {
-        this.artistIds = artistIds;
+    public GetAlbumsRunnable(List<String> albumIds, ThreadResponse<Albums> delegate) {
+        this.albumIds = albumIds;
         this.delegate = delegate;
     }
 
@@ -22,21 +22,21 @@ public class GetAlbumsRunnable extends ThreadResponseInterface<Albums> implement
         Albums albums = new Albums();
         albums.albums = new ArrayList<>();
         do {
-            String albumIds = null;
+            String requestAlbumIds = null;
             int counter = 0;
             do {
-                if (albumIds == null) {
-                    albumIds = artistIds.get(0);
-                    artistIds.remove(0);
+                if (requestAlbumIds == null) {
+                    requestAlbumIds = albumIds.get(0);
+                    this.albumIds.remove(0);
                 } else {
-                    albumIds += "," + artistIds.get(0);
-                    artistIds.remove(0);
+                    requestAlbumIds += "," + albumIds.get(0);
+                    albumIds.remove(0);
                 }
                 counter++;
-            } while (counter < 50 && !artistIds.isEmpty());
+            } while (counter < 50 && !albumIds.isEmpty());
 
-            albums.albums.addAll(MainActivity.mSpotifyAccess.mService.getAlbums(albumIds).albums);
-        } while (!artistIds.isEmpty());
+            albums.albums.addAll(MainActivity.mSpotifyAccess.mService.getAlbums(requestAlbumIds).albums);
+        } while (!albumIds.isEmpty());
 
         delegate.processFinish(albums);
 

@@ -36,7 +36,7 @@ public class MySavedTracksRunnable extends ThreadResponseInterface<Pager<SavedTr
 
                 result.items.addAll(temp.items);
 
-                offset += 50;
+                offset += limit;
             } while (temp.items.size() != 0);
 
             delegate.processFinish(result);

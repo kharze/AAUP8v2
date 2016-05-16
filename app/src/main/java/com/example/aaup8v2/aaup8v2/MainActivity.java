@@ -235,6 +235,7 @@ public class MainActivity extends AppCompatActivity
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
         //builder.setScopes(new String[]{"user-read-private", "streaming"}); //Old version
+        // Input in this order. "Access to the users data", "Access to user libraries like My Saved Tracks", "Access to streaming"
         builder.setScopes(new String[]{"user-read-private", "user-library-read", "streaming"}); //New version
         AuthenticationRequest request = builder.build();
 
@@ -303,7 +304,7 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                mSpotifyAccess.setAccessToken(response.getAccessToken());
+                mSpotifyAccess.setAccessToken(response.getAccessToken()); // Authentication of Spotify Web Wrapper.
                 isPremium();
 
                 Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
