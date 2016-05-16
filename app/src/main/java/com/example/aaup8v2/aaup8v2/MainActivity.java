@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity
 
         });
 
-        initializePeer(false);
         authenticate(); //Authenticates Spotify
 
         mSpotifyAccess = new SpotifyAccess(); //Sets the SpotifyAccess class
