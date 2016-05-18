@@ -151,6 +151,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
+    public void test(View view){
+        MainActivity.mRecommend.pearsonSim();
+    }
+
     public void enableP2P(View view){
         if (manager != null && channel != null) {
             // Since this is the system wireless settings activity, it's
