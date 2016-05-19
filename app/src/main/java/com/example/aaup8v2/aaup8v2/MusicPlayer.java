@@ -8,6 +8,11 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 
+import java.util.List;
+import java.util.Random;
+
+import kaaes.spotify.webapi.android.models.Track;
+
 /**
  * Created by lasse on 19-04-2016.
  **/
@@ -24,9 +29,22 @@ public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationC
                 mPlayer.resume();
             }
             else {
-                mPlayer.play("spotify:track:" + MainActivity.mQueueFragment.nextSong());
+                if (MainActivity.mQueueFragment.mQueueElementList.isEmpty() ){
+                    MainActivity.mRecommend.recommendedTracks.add("61DLPczTvnkCwvwNqwPKgv");
+                    List<String> recommendList = MainActivity.mRecommend.recommendedTracks;
+                    Random random = new Random();
+                    String track = recommendList.get(random.nextInt(recommendList.size()));
+                    mPlayer.play("spotify:track:" + track);
+                }
+
+                else {
+                    mPlayer.play("spotify:track:" + MainActivity.mQueueFragment.nextSong());
+                }
+
                 isPlaying = true;
+
             }
+
         } catch (Exception e){
             e.getMessage();
         }

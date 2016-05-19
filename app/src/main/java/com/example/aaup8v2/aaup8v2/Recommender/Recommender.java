@@ -34,6 +34,8 @@ public class Recommender extends MainActivity {
     private Double[][] mArtistWeights;
     private ArrayList<String> mGenreOrder;
     private ArrayList<String> mArtistOrder;
+    public List<String> recommendedTracks = new ArrayList<>();
+
 
     HashMap<List<RecommenderArtist>, List<RecommenderGenre>> userRecommendations = new HashMap<>();
     List<Artist> artistsList = new ArrayList<>();
@@ -218,7 +220,7 @@ public class Recommender extends MainActivity {
         Collections.sort(artistObjects, new Comparator<RecommenderArtist>() {
             @Override
             public int compare(RecommenderArtist lhs, RecommenderArtist rhs) {
-                return lhs.weight.compareTo(rhs.weight);
+                return lhs.name.compareTo(rhs.name);
             }
         });
 
@@ -273,7 +275,7 @@ public class Recommender extends MainActivity {
         Collections.sort(genreObjects, new Comparator<RecommenderGenre>() {
             @Override
             public int compare(RecommenderGenre lhs, RecommenderGenre rhs) {
-                return lhs.weight.compareTo(rhs.weight);
+                return lhs.getGenre().compareTo(rhs.getGenre());
             }
         });
         return genreObjects;
@@ -397,14 +399,14 @@ public class Recommender extends MainActivity {
         return prediction;
     }
 
-    public List<Track> recommend (RealMatrix userRatings){
+    public void recommend (RealMatrix userRatings){
 
         int columnSize = userRatings.getRow(0).length;
         int rowSize = userRatings.getColumn(0).length;
         RealMatrix ratings = new Array2DRowRealMatrix(rowSize, columnSize);
         ratings = userRatings;
 
-        List<Double> genreScor = new ArrayList<>();
+        double[] genreScor = new double[columnSize];
         List<Double> avgList = new ArrayList<>();
         List<Double> minList = new ArrayList<>();
 
@@ -413,10 +415,16 @@ public class Recommender extends MainActivity {
             double[] temp = ratings.getColumn(i);
             avgList.add(StatUtils.mean(temp));
             minList.add(StatUtils.min(temp));
-            genreScor.add((StatUtils.mean(temp)/2) + StatUtils.min(temp));
+            genreScor[i] = StatUtils.mean(temp)/2 + StatUtils.min(temp);
         }
 
-        return null;
+        Double bestGenre = StatUtils.max(genreScor);
+
+        /**
+         * Insert something artist here.
+         * Make spotify call to get recommended songs.
+         */
+
     }
 
     public void sendToHost(){
