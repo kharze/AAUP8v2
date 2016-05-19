@@ -12,13 +12,12 @@ import com.google.gson.Gson;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
@@ -49,7 +48,7 @@ public class Recommender extends MainActivity {
 
     public Recommender(){
         //GetArtists/Genres - put in userRecommendations
-        getArtists(me.id);
+        //getArtists(me.id);
 
         //If !Host - send userRecommendations
 
@@ -96,7 +95,7 @@ public class Recommender extends MainActivity {
      */
 
 
-    private void getArtists(String u_id){
+    public void getArtists(String u_id){
         try{
             new GetPlaylistsRunnable(MainActivity.me.id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
                 @Override

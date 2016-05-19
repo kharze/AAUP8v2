@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity
         musicPlayer = new MusicPlayer();
         mPlaylistFragment = new PlayListFragment();
         mDisconnectFragment = new DisconnectFragment();
+        mRecommend = new Recommender();
 
         // Instantiate the playbar
         playedName = (TextView)findViewById(R.id.track_name);
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity
         Thread worker = new Thread(new Runnable() {
             private void changePlaybutton(final UserPrivate up) {
                 me = up; //Saves the user for later use
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -153,6 +155,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
+                mRecommend.getArtists(me.id);
                 //mRecommend = new Recommender(); //Needs to know the user id for spotify
             }
             @Override
