@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import com.example.aaup8v2.aaup8v2.Recommender.RecommenderArtist;
@@ -39,13 +40,6 @@ public class PearsonRecommend{
     List<Track> trackList = new ArrayList<>();
     Pager<PlaylistTrack> tracksPager;
     Artists mArtists;
-    Context context;
-    Activity activity;
-
-    public PearsonRecommend(Context context, Activity activity){
-        this.context = context;
-        this.activity = activity;
-    }
 
     /*
     Getting a list of artist based on tracks from a playlist
@@ -337,16 +331,78 @@ public class PearsonRecommend{
                     artistList.get(i).setTracks(artistTracks);
 
                     recommended.add(artistList.get(i));
-                }activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(context, "Recommender done " + Integer.toString(trackList.size()), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                }
             }
         }).start();
     }
+    public void pearsonSim(/**RealMatrix userRatings**/){
 
+        List<List<int[]>> missingList = new ArrayList<>();
+        //int columnSize = userRatings.getColumn(0).length;
+        //int rowSize = userRatings.getRow(0).length;
+
+        RealMatrix userRatings = new Array2DRowRealMatrix(4, 5);
+        int columnSize = userRatings.getColumn(0).length;
+        int rowSize = userRatings.getRow(0).length;
+
+        double[] row1 = {4, 3, 5, 2, 0};
+        double[] row2 = {3, 4, 5, 1, 3};
+        double[] row3 = {5, 2, 4, 3, 5};
+        double[] row4 = {1, 0, 3, 3, 4};
+
+        userRatings.setRow(0,row1);
+        userRatings.setRow(1, row2);
+        userRatings.setRow(2, row3);
+        userRatings.setRow(3, row4);
+
+        /**
+         * finding the positions for 0 values in the matrix
+         */
+        for (int i = 0; i < columnSize; i++){
+            List<int[]> missing = new ArrayList<>();
+            for(int j = 0; j < rowSize; j++){
+                int[] position = new int[2];
+                if(userRatings.getEntry(i,j) == 0){
+                    position[0] = i;
+                    position[1] = j;
+                    missing.add(position);
+                }
+            }
+            missingList.add(missing);
+        }
+
+        /**
+         * calculating the similarity value
+         */
+        for (int i = 0; i < columnSize; i++){
+            if (missingList.get(i).size() > 0){
+                List<int[]> userMissing = missingList.get(i);
+                List<double[]> simRatings = new ArrayList<>();
+
+                for(int k = 0; k < columnSize; k++){
+                    double[] userRow = userRatings.getRow(k);
+                    int counter = 0;
+                    for(int j = 0; j < userMissing.size(); j++){
+                        int[] coordinate = userMissing.get(j);
+                        int col = coordinate[1];
+                        int row = coordinate[0];
+                        double userRating = userRatings.getEntry(row, col);
+
+                        if(userRatings.getEntry(row, col) != 0.0){
+                            counter++;
+                        }
+                    }
+                    if (userMissing.size() == counter){
+                        simRatings.add(userRow);
+                    }
+                }
+            }
+            /**
+             * calculate weights here.
+             */
+            int o = 0;
+        }
+    }
     private void predictRating (RealMatrix weights, RealMatrix ratings){
 
     }
@@ -361,7 +417,5 @@ public class PearsonRecommend{
         trackList = null;
         tracksPager = null;
         mArtists = null;
-
-
     }
 }

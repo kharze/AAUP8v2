@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:text="@string/enable_p2p_button"
             android:gravity="center_vertical"
-            android:onClick="enableP2P"/>
+            android:onClick="test"/>
 
         <Button
             android:layout_width="wrap_content"

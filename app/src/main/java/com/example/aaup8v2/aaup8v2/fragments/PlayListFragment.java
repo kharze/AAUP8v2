@@ -34,6 +34,7 @@ public class PlayListFragment extends Fragment{
     public List<List<myTrack>> listDataChild;
     public ExpandableListAdapters listAdapter;
     Activity activity;
+    static Thread worker;
 
     private OnFragmentInteractionListener mListener;
 
@@ -54,7 +55,7 @@ public class PlayListFragment extends Fragment{
                              Bundle savedInstanceState) {
         activity = getActivity();
         //Made to only update the playlist once in a runtime.
-        if(listDataChild == null || playlistName == null){
+        if(listDataChild == null && playlistName == null && (worker == null || !worker.isAlive())){
             Toast.makeText(getContext(), "Loading your playlists", Toast.LENGTH_LONG).show();
             listDataChild = new ArrayList<>();
             playlistName = new ArrayList<>();
@@ -67,71 +68,96 @@ public class PlayListFragment extends Fragment{
 
         expListView = (ExpandableListView) v.findViewById(R.id.expand_list);
 
-        expListView.setAdapter(listAdapter);
+        if(worker == null || !worker.isAlive())
+            expListView.setAdapter(listAdapter);
 
         // Inflate the layout for this fragment
         return v;
     }
 
-    public void getPlaylists(){
-        GetPlaylistsRunnable runnable = new GetPlaylistsRunnable(MainActivity.me.id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
-            @Override
-            public void processFinish(Pager<PlaylistSimple> output) {
-                final List<List<myTrack>> tracksLists = new ArrayList<>();
-                playlistName.add("Saved Tracks");
-                tracksLists.add(new ArrayList<myTrack>());
+    public void getPlaylists() {
+        if (MainActivity.me != null) {
+            GetPlaylistsRunnable runnable = new GetPlaylistsRunnable(MainActivity.me.id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
+                @Override
+                public void processFinish(Pager<PlaylistSimple> output) {
+                    if (output != null) {
+                        final List<List<myTrack>> tracksLists = new ArrayList<>();
+                        playlistName.add("Saved Tracks");
+                        tracksLists.add(new ArrayList<myTrack>());
 
-                new MySavedTracksRunnable(new ThreadResponseInterface.ThreadResponse<Pager<SavedTrack>>() {
-                    @Override
-                    public void processFinish(Pager<SavedTrack> tracks) {
-                        final List<myTrack> aList = new ArrayList<>();
-                        if(tracks != null) {
-                            for (int i = 0; tracks.items.size() > i; i++) {
-                                if(tracks.items.get(i).track.available_markets.contains(MainActivity.me.country)) {
-                                    myTrack track = new myTrack(tracks.items.get(i));
-                                    aList.add(track);
-                                }
-                            }
-                        }
-                        tracksLists.set(0, aList);
-                    }
-                }).run();
-
-                for (int i = 0; i < output.items.size(); i++){
-                    playlistName.add(output.items.get(i).name);
-
-                    new GetPlaylistTracksRunnable(output.items.get(i).owner.id, output.items.get(i).id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistTrack>>() {
-                        @Override
-                        public void processFinish(Pager<PlaylistTrack> tracks) {
+                        new MySavedTracksRunnable(new ThreadResponseInterface.ThreadResponse<Pager<SavedTrack>>() {
+                            @Override
+                            public void processFinish(Pager<SavedTrack> tracks) {
                                 final List<myTrack> aList = new ArrayList<>();
-                                for(int i = 0; tracks.items.size() > i; i++) {
-                                    if(tracks.items.get(i).track.available_markets.contains(MainActivity.me.country)) {
-                                        myTrack track = new myTrack(tracks.items.get(i));
-                                        aList.add(track);
+                                if (tracks != null) {
+                                    for (int i = 0; tracks.items.size() > i; i++) {
+                                        if (tracks.items.get(i).track.available_markets.contains(MainActivity.me.country)) {
+                                            myTrack track = new myTrack(tracks.items.get(i));
+                                            aList.add(track);
+                                        }
                                     }
                                 }
-                                tracksLists.add(aList);
+                                tracksLists.set(0, aList);
+                            }
+                        }).run();
+
+                        for (int i = 0; i < output.items.size(); i++) {
+                            playlistName.add(output.items.get(i).name);
+
+                            new GetPlaylistTracksRunnable(output.items.get(i).owner.id, output.items.get(i).id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistTrack>>() {
+                                @Override
+                                public void processFinish(Pager<PlaylistTrack> tracks) {
+                                    if (tracks != null) {
+                                        final List<myTrack> aList = new ArrayList<>();
+                                        for (int i = 0; tracks.items.size() > i; i++) {
+                                            if (tracks.items.get(i).track.available_markets.contains(MainActivity.me.country)) {
+                                                myTrack track = new myTrack(tracks.items.get(i));
+                                                aList.add(track);
+                                            }
+                                        }
+
+                                        tracksLists.add(aList);
+                                    }
+                                }
+                            }).run();
                         }
-                    }).run();
-                }
 
-                for(int i = 0; i < playlistName.size(); i++){
-                    listDataChild.add(tracksLists.get(i));
-                }
+                        for (int i = 0; i < playlistName.size(); i++) {
+                            listDataChild.add(tracksLists.get(i));
+                        }
 
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(listAdapter != null)
-                            listAdapter.notifyDataSetChanged();
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                MainActivity.mPlaylistFragment.expListView.setAdapter(MainActivity.mPlaylistFragment.listAdapter);
+                                if (listAdapter != null)
+                                    listAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    } else {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getContext(), "Searching for playlists failed", Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
-                });
-            }
-        });
-        Thread worker = new Thread(runnable);
-        worker.setName("Playlist builder");
-        worker.start();
+                }
+            });
+            worker = new Thread(runnable);
+            worker.setName("Playlist builder");
+            worker.start();
+        } else {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getContext(), "Could not fetch playlists", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
     }
+
 
     public void click_playlist_add_track(int groupPosition, int childPosition){
         Gson gson = new Gson();
@@ -146,7 +172,7 @@ public class PlayListFragment extends Fragment{
         else if (MainActivity.mWifiDirectActivity.info != null){
             String track = gson.toJson(listDataChild.get(groupPosition).get(childPosition));
 
-            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.TRACK_ADDED, track, MainActivity.mQueueFragment.myIP);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.TRACK_ADDED, track);
         }
         else{ //in case we aren't connected to a network, we just add it as a jukebox.
             MainActivity.mQueueFragment.addTrack(listDataChild.get(groupPosition).get(childPosition));

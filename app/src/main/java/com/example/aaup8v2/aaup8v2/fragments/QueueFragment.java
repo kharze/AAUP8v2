@@ -131,10 +131,11 @@ public class QueueFragment extends Fragment {
 
     public void sortQueue(){
         // Comparator for the sorting
+        final double base = thresholdUpdate();
         Comparator<QueueElement> compareWeight = new Comparator<QueueElement>() {
             @Override
             public int compare(QueueElement lhs, QueueElement rhs) {
-                return (int)(rhs.weight - lhs.weight);
+                return (int) Math.round(((rhs.weight*base)+rhs.upvoteList.size()-rhs.downvoteList.size()) - ((lhs.weight*base)+lhs.upvoteList.size()-lhs.downvoteList.size()));
             }
         };
         Collections.sort(mQueueElementList, compareWeight);
@@ -143,7 +144,7 @@ public class QueueFragment extends Fragment {
             queueAdapter.notifyDataSetChanged();
     }
 
-    public String nextSong(){ // TODO: 06-05-2016 Broadcast the track, so that peers can add the track to their playbar. 
+    public String nextSong(){
         if(MainActivity.mWifiDirectActivity.info != null){
             Gson gson = new Gson();
             String track = gson.toJson(mQueueElementList.get(0).track);
@@ -186,15 +187,12 @@ public class QueueFragment extends Fragment {
             //Change the value of the up/down votes depending if the button has already been pressed.
             //Change the icon for the button.
             if (!mQueueElementList.get(position).downvoteList.contains(ip)) {
-                mQueueElementList.get(position).weight -= 1;
                 mQueueElementList.get(position).downvoteList.add(ip);
 
                 if (mQueueElementList.get(position).upvoteList.contains(ip)) {
-                    mQueueElementList.get(position).weight -= 1;
                     mQueueElementList.get(position).upvoteList.remove(ip);
                 }
             } else {
-                mQueueElementList.get(position).weight += 1;
                 mQueueElementList.get(position).downvoteList.remove(ip);
             }
         }
@@ -217,7 +215,7 @@ public class QueueFragment extends Fragment {
             dataToSend.add(Integer.toString(position));
             dataToSend.add(mQueueElementList.get(position).track.id);
             String data = gson.toJson(dataToSend);
-            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DOWN_VOTE,data,myIP);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.DOWN_VOTE,data);
         } else {
             deleteTrack(position);
             sortQueue();
@@ -231,15 +229,12 @@ public class QueueFragment extends Fragment {
             //Change the value of the up/down votes depending if the button has already been pressed.
             //Change the icon for the button.
             if (!mQueueElementList.get(position).upvoteList.contains(ip)) {
-                mQueueElementList.get(position).weight += 1;
                 mQueueElementList.get(position).upvoteList.add(ip);
 
                 if (mQueueElementList.get(position).downvoteList.contains(ip)) {
-                    mQueueElementList.get(position).weight += 1;
                     mQueueElementList.get(position).downvoteList.remove(ip);
                 }
             } else {
-                mQueueElementList.get(position).weight -= 1;
                 mQueueElementList.get(position).upvoteList.remove(ip);
             }
         }
@@ -261,7 +256,7 @@ public class QueueFragment extends Fragment {
             dataToSend.add(Integer.toString(position));
             dataToSend.add(mQueueElementList.get(position).track.id);
             String data = gson.toJson(dataToSend);
-            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.UP_VOTE,data,myIP);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.UP_VOTE,data);
         } else {
             sortQueue();
         }
@@ -270,14 +265,13 @@ public class QueueFragment extends Fragment {
     }
 
     public double thresholdUpdate(){
-        double threshold;
         int numberOfPeers = MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1;
-        return threshold = numberOfPeers * 0.67; //Setting the threshold limit
+        return numberOfPeers * 0.67; //Setting the threshold limit
     }
 
     public void applyWeight(){
         //Applies a basic weight to each track represented on the playlist
-        mQueueElementList.get(mQueueElementList.size()-1).weight = thresholdUpdate();
+        mQueueElementList.get(mQueueElementList.size()-1).weight = 1;
     }
 
     public void voteThreshold(int downVotedTrack) {

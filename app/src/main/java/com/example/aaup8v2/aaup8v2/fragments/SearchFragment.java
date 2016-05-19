@@ -192,21 +192,35 @@ public class SearchFragment extends Fragment{
             public void run() {
                 options.put(SpotifyService.LIMIT, limit);
                 options.put(SpotifyService.OFFSET, offset);
-                TracksPager result = MainActivity.mSpotifyAccess.mService.searchTracks(searchTerm, options);
-                offset += limit;
-                for(int i = 0; result.tracks.items.size() > i; i++){
-                    myTrack track = new myTrack(result.tracks.items.get(i));
-                    mTracklist.add(track);
+                TracksPager result = null;
+                try {
+                    result = MainActivity.mSpotifyAccess.mService.searchTracks(searchTerm, options);
+                } catch (Exception e) {
+                    Log.e("Search Thread", "run: ", e);
                 }
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        searchAdapter.notifyDataSetChanged();
-                        if(mTracklist.isEmpty()){
-                            Toast.makeText(getContext(), "Search did not find anything", Toast.LENGTH_SHORT).show();
-                        }
+                offset += limit;
+                if (result != null) {
+                    for (int i = 0; result.tracks.items.size() > i; i++) {
+                        myTrack track = new myTrack(result.tracks.items.get(i));
+                        mTracklist.add(track);
                     }
-                });
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            searchAdapter.notifyDataSetChanged();
+                            if (mTracklist.isEmpty()) {
+                                Toast.makeText(getContext(), "Search did not find anything", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), "Search failed. Is the device connected ?", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
         };
     }
@@ -224,7 +238,7 @@ public class SearchFragment extends Fragment{
         else if (MainActivity.mWifiDirectActivity.info != null){
             String track = gson.toJson(mTracklist.get(position));
 
-            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.TRACK_ADDED, track, MainActivity.mQueueFragment.myIP);
+            MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.TRACK_ADDED, track);
             }
         else{ //in case we aren't connected to a network, we just add it as a jukebox.
             MainActivity.mQueueFragment.addTrack(mTracklist.get(position));

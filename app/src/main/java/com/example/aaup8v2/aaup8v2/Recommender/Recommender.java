@@ -1,10 +1,5 @@
 package com.example.aaup8v2.aaup8v2.Recommender;
 
-import android.app.Activity;
-import android.content.Context;
-import android.util.Pair;
-import android.widget.Toast;
-
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.Runnables.GetArtistsRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
@@ -13,17 +8,18 @@ import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 import com.google.gson.Gson;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.StatUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import kaaes.spotify.webapi.android.models.Artist;
-import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Artists;
 import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
@@ -31,8 +27,8 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
- * Created by Flaka_000 on 05-05-2016.
- */
+ * Created by Lukas on 05-05-2016.
+ **/
 public class Recommender extends MainActivity {
     private Double[][] mGenreWeights;
     private Double[][] mArtistWeights;
@@ -54,7 +50,7 @@ public class Recommender extends MainActivity {
     //Initializes recommender
     //Takes user id - Currently not implemented
     private void init(String uid){
-        weightAdjust(uid);
+        //weightAdjust(uid);
     }
 
     //Updates the matrix with a new user-row
@@ -165,9 +161,11 @@ public class Recommender extends MainActivity {
                     } while (!artistsIdList.isEmpty());
 
                 }catch (Exception e) {
+                    e.getMessage();
                 }
             }
         }catch (Exception e){
+            e.getMessage();
         }
         return artistsList;
     }
@@ -214,10 +212,9 @@ public class Recommender extends MainActivity {
                 }
             }
         }
-        List<Double> weights = calculateWeights(occArtist);
         List<RecommenderArtist> artistObjects = new ArrayList<>();
         for (int i = 0; i < occArtist.size(); i++){
-            artistObjects.add(new RecommenderArtist(difArtists.get(i), weights.get(i), occArtist.get(i), genresList.get(i), null));
+            artistObjects.add(new RecommenderArtist(difArtists.get(i), null, occArtist.get(i), genresList.get(i), null));
         }
 
         Collections.sort(artistObjects, new Comparator<RecommenderArtist>() {
@@ -270,10 +267,9 @@ public class Recommender extends MainActivity {
                 }
             }
         }
-        List<Double> weights = calculateWeights(occGenre);
         List<RecommenderGenre> genreObjects = new ArrayList<>();
         for (int i = 0; i < occGenre.size(); i++){
-            genreObjects.add(new RecommenderGenre(i, difGenres.get(i), weights.get(i), occGenre.get(i)));
+            genreObjects.add(new RecommenderGenre(i, difGenres.get(i), null, occGenre.get(i)));
         }
 
         Collections.sort(genreObjects, new Comparator<RecommenderGenre>() {
@@ -284,119 +280,145 @@ public class Recommender extends MainActivity {
         });
         return genreObjects;
     }
-    /*
-    Pearson weight calculator
-     */
 
-    public List<Double> calculateWeights(List<Integer> occurrence){
+    public void pearsonSim(/**RealMatrix userRatingsMatrix**/) {
+        //int columnSize = userRatingsMatrix.getColumn(0).length;
+        //int rowSize = userRatingsMatrix.getRow(0).length;
 
-        List<Double> weights = new ArrayList<>();
+        RealMatrix userRatingsMatrix = new Array2DRowRealMatrix(4, 5);
+        int columnSize = userRatingsMatrix.getColumn(0).length;
+        int rowSize = userRatingsMatrix.getRow(0).length;
+        List<List<Double>> userRatingList = new ArrayList<>();
 
-        Double avgGenre = 0.0;
-        Double summation = 0.0;
+        double[] row1 = {4, 3, 5, 0, 0};
+        double[] row2 = {3, 4, 5, 1, 3};
+        double[] row3 = {5, 2, 4, 3, 5};
+        double[] row4 = {1, 3, 3, 3, 4};
 
-        for(int i = 0; i < occurrence.size(); i++)
-        {
-            avgGenre += occurrence.get(i);
+        userRatingsMatrix.setRow(0, row1);
+        userRatingsMatrix.setRow(1, row2);
+        userRatingsMatrix.setRow(2, row3);
+        userRatingsMatrix.setRow(3, row4);
+
+
+        for (int i = 0; i < columnSize; i++) {
+            List<Double> temp = new ArrayList<>();
+            for (int j = 0; j < rowSize; j++) {
+                temp.add(userRatingsMatrix.getEntry(i, j));
+            }
+            userRatingList.add(temp);
         }
 
-        avgGenre = avgGenre / occurrence.size();
-
-        for(int i = 0; i < occurrence.size(); i++)
-        {
-            summation += Math.pow(occurrence.get(i) - avgGenre, 2);
-        }
-
-        for(int i = 0; i < occurrence.size(); i++)
-        {
-            Double pearson;
-            pearson = (occurrence.get(i)-avgGenre)/Math.sqrt(summation);
-            weights.add(pearson);
-        }
-        return weights;
-    }
-    /*
-    Should end up being the recommender
-     */
-
-    public void weightAdjust(final String u_id) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<Artist> artistsList = getArtists(u_id);
-                List<RecommenderArtist> artistList = getArtistList(artistsList);
-                List<RecommenderGenre> genreList = getGenreList(artistsList);
-                List<RecommenderArtist> recommended = new ArrayList<>();
-
-                /**
-                 * used when recommending for one user
-                 * DO NOT DELETE
-                 */
-                for (int i = 0; i < artistList.size(); i++) {
-                    double artistWeight = artistList.get(i).weight;
-                    double genreWeight = 0;
-                    for (int j = 0; j < genreList.size(); j++) {
-                        double tempWeight = genreList.get(j).weight;
-                        if (artistList.get(i).genre.contains(genreList.get(j).genre) && tempWeight > genreWeight ) {
-                            genreWeight = tempWeight;
-                        }
-                    }
-                    double newWeight = genreWeight + artistWeight;
-                    artistList.get(i).setWeight(newWeight);
-                }
-                /**
-                 for(int i = 0; i < artistList.size(); i++){
-                 double newWeight = 0;
-                 for(int j = 0; j < genreList.size(); j++){
-                 if (artistList.get(i).genre.contains(genreList.get(j).genre)) {
-                 newWeight += genreList.get(j).weight;
-                 }
-                 }
-                 artistList.get(i).setWeight(newWeight);
-                 }
-                 **/
-                Collections.sort(artistList, new Comparator<RecommenderArtist>() {
-                    @Override
-                    public int compare(RecommenderArtist lhs, RecommenderArtist rhs) {
-                        return lhs.weight.compareTo(rhs.weight);
-                    }
-                });
-
-                Collections.reverse(artistList);
-
-                for (int i = 0; i < artistList.size(); i++) {
-
-                    List<String> artistTracks = new ArrayList<>();
-                    String artist = artistList.get(i).name;
-                    for (int j = 0; j < trackList.size(); j++) {
-                        for (ArtistSimple trackArtist: trackList.get(j).artists) {
-                            String trackArtistName = trackArtist.name;
-                            if(trackArtistName.equals(artist)){
-                                String temp = trackList.get(j).name;
-                                if (!artistTracks.contains(temp)){
-                                    artistTracks.add(temp);
-                                }
-                            }
-                        }
-                    }
-                    artistList.get(i).setTracks(artistTracks);
-
-                    recommended.add(artistList.get(i));
-                    //userRecommendations.first.addAll(artistList);
-                    //userRecommendations.second.addAll(genreList);
+        for (int i = 0; i < columnSize; i++) {
+            List<Double> temp = new ArrayList<>();
+            temp.addAll(userRatingList.get(i));
+            for (int j = 0; j < rowSize; j++) {
+                if (temp.get(j) == 0) {
+                    userRatingList.get(i).set(j, predictRating(userRatingList, i, j));
+                    //Double predicted = predictRating(userRatingList, i, j);
                 }
             }
-        }).start();
+        }
+
+        RealMatrix normalizedUserRatings = new Array2DRowRealMatrix(4, 5);
+
+        for (int i = 0; i < userRatingList.size(); i++){
+            double[] row = new double[userRatingList.get(i).size()];
+            for (int j = 0; j < userRatingList.get(i).size(); j++){
+                row[j] = userRatingList.get(i).get(j);
+            }
+            normalizedUserRatings.setRow(i, StatUtils.normalize(row));
+        }
+        recommend(normalizedUserRatings);
+
     }
 
-    //Not yet implemented
-    private void personSim(RealMatrix user1, RealMatrix user2){
+    public Double predictRating(List<List<Double>> userRatings, int row, int column){
 
+        List <List<Double>> userRatingsList = new ArrayList<>();
+        userRatingsList.addAll(userRatings);
+
+        List<Double> simList = new ArrayList<>();
+
+        List<Double> userList = new ArrayList<>();
+        userList.addAll(userRatingsList.get(row));
+        double userAvg = 0;
+        userRatingsList.remove(row);
+        double wSum = 0;
+        PearsonsCorrelation pearson = new PearsonsCorrelation();
+        List<Double> itemRating = new ArrayList<>();
+        List<Double> avgRating = new ArrayList<>();
+
+        for(int i = 0; i < userRatingsList.size(); i++){
+            List<Double> temp = new ArrayList<>();
+            temp.addAll(userRatingsList.get(i));
+            if (temp.get(column) != 0){
+                List<Double> localUserList = new ArrayList<>();
+                itemRating.add(temp.get(column));
+                localUserList.addAll(userList);
+                localUserList.remove(column);
+                temp.remove(column);
+                for(int j = 0; j < temp.size(); j++){
+                    if(temp.get(j) == 0){
+                        temp.remove(j);
+                        localUserList.remove(j);
+                    }
+                }
+                for(int j = column; j < localUserList.size(); j++){
+                    if(localUserList.get(j) == 0){
+                        temp.remove(j);
+                        localUserList.remove(j);
+                    }
+                }
+                double[] tempArray = new double[temp.size()];
+                double[] localUserArray = new double[localUserList.size()];
+                for (int j = 0; j < temp.size(); j++){
+                    tempArray[j] = temp.get(j);
+                    localUserArray[j] = localUserList.get(j);
+                }
+                avgRating.add(StatUtils.mean(tempArray));
+                userAvg = StatUtils.mean(localUserArray);
+                double simValue = pearson.correlation(localUserArray, tempArray);
+                if (simValue >= 0){
+                    wSum += simValue;
+                    simList.add(simValue);
+                }
+
+            }
+        }
+
+        double prediction = 0.0;
+
+        for (int i = 0; i < simList.size(); i++){
+            double w = simList.get(i)/wSum;
+            prediction += w * (itemRating.get(i) - avgRating.get(i) );
+        }
+
+        userList.remove(column);
+        prediction += userAvg;
+        return prediction;
     }
 
-    //Not yet implemented
-    public void predict(){
+    public List<Track> recommend (RealMatrix userRatings){
 
+        int columnSize = userRatings.getRow(0).length;
+        int rowSize = userRatings.getColumn(0).length;
+        RealMatrix ratings = new Array2DRowRealMatrix(rowSize, columnSize);
+        ratings = userRatings;
+
+        List<Double> genreScor = new ArrayList<>();
+        List<Double> avgList = new ArrayList<>();
+        List<Double> minList = new ArrayList<>();
+
+
+        for (int i = 0; i < columnSize; i++ ){
+            double[] temp = ratings.getColumn(i);
+            avgList.add(StatUtils.mean(temp));
+            minList.add(StatUtils.min(temp));
+            genreScor.add((StatUtils.mean(temp)/2) + StatUtils.min(temp));
+        }
+
+        return null;
     }
 
     public void sendToHost(){

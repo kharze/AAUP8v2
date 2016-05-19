@@ -37,6 +37,7 @@ import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.Spotify;
 
+import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.models.UserPrivate;
 
 public class MainActivity extends AppCompatActivity
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity
     public static int buttonState = 0;
 
     public static Recommender mRecommend;
+    public static PearsonRecommend pearsonRecommend;
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;
@@ -113,6 +115,7 @@ public class MainActivity extends AppCompatActivity
         musicPlayer = new MusicPlayer();
         mPlaylistFragment = new PlayListFragment();
         mDisconnectFragment = new DisconnectFragment();
+        mRecommend = new Recommender();
 
         // Instantiate the playbar
         playedName = (TextView)findViewById(R.id.track_name);
@@ -142,7 +145,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void run() {
                         me = up; //Saves the user for later use
-                        if(up.product.equals("premium")){
+                        if(up.product.equals("premium") && (MainActivity.mWifiDirectActivity.info == null || MainActivity.mWifiDirectActivity.info.isGroupOwner)){
                             initializePeer(true);
                             hasPremium = true;
                         }
@@ -234,7 +237,8 @@ public class MainActivity extends AppCompatActivity
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
         //builder.setScopes(new String[]{"user-read-private", "streaming"}); //Old version
-        builder.setScopes(new String[]{"user-library-read", "streaming"}); //New version
+        // Input in this order. "Access to the users data", "Access to user libraries like My Saved Tracks", "Access to streaming"
+        builder.setScopes(new String[]{"user-read-private", "user-library-read", "streaming"}); //New version
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
@@ -302,7 +306,7 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                mSpotifyAccess.setAccessToken(response.getAccessToken());
+                mSpotifyAccess.setAccessToken(response.getAccessToken()); // Authentication of Spotify Web Wrapper.
                 isPremium();
 
                 Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
@@ -377,6 +381,10 @@ public class MainActivity extends AppCompatActivity
 
     public void disconnectSpotify(View view){
         cleanUp();
+
+        initializePeer(false);
+        SpotifyApi test = new SpotifyApi();
+        MainActivity.mSpotifyAccess.mService = test.getService();
 
         AuthenticationClient.clearCookies(getApplicationContext());
         authenticate();
