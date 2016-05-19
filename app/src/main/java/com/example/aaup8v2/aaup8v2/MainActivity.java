@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity
         authenticate(); //Authenticates Spotify
 
         mSpotifyAccess = new SpotifyAccess(); //Sets the SpotifyAccess class
-        //mRecommend = new Recommender(this, this, me.id); //Sets the PearsonRecommend class
 
         mWifiDirectActivity = new WifiDirectActivity();
 
@@ -115,7 +114,6 @@ public class MainActivity extends AppCompatActivity
         musicPlayer = new MusicPlayer();
         mPlaylistFragment = new PlayListFragment();
         mDisconnectFragment = new DisconnectFragment();
-        mRecommend = new Recommender();
 
         // Instantiate the playbar
         playedName = (TextView)findViewById(R.id.track_name);
@@ -141,10 +139,10 @@ public class MainActivity extends AppCompatActivity
     public void isPremium(){
         Thread worker = new Thread(new Runnable() {
             private void changePlaybutton(final UserPrivate up) {
+                me = up; //Saves the user for later use
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        me = up; //Saves the user for later use
                         if(up.product.equals("premium") && (MainActivity.mWifiDirectActivity.info == null || MainActivity.mWifiDirectActivity.info.isGroupOwner)){
                             initializePeer(true);
                             hasPremium = true;
@@ -155,6 +153,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
+                //mRecommend = new Recommender(); //Needs to know the user id for spotify
             }
             @Override
             public void run() { changePlaybutton(mSpotifyAccess.mService.getMe()); }

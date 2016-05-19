@@ -1,5 +1,7 @@
 package com.example.aaup8v2.aaup8v2.Recommender;
 
+import android.util.Pair;
+
 import com.example.aaup8v2.aaup8v2.MainActivity;
 import com.example.aaup8v2.aaup8v2.Runnables.GetArtistsRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
@@ -43,14 +45,13 @@ public class Recommender extends MainActivity {
     Pager<PlaylistTrack> tracksPager;
     Artists mArtists;
 
-    public Recommender(String uid){
-        init(uid);
-    }
+    public Recommender(){
+        //GetArtists/Genres - put in userRecommendations
+        getArtists(me.id);
 
-    //Initializes recommender
-    //Takes user id - Currently not implemented
-    private void init(String uid){
-        //weightAdjust(uid);
+        //If !Host - send userRecommendations
+
+        //If host - do not send
     }
 
     //Updates the matrix with a new user-row
@@ -93,10 +94,9 @@ public class Recommender extends MainActivity {
      */
 
 
-    private List<Artist> getArtists(String u_id){
+    private void getArtists(String u_id){
         try{
-
-            new GetPlaylistsRunnable(u_id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
+            new GetPlaylistsRunnable(MainActivity.me.id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
                 @Override
                 public void processFinish(Pager<PlaylistSimple> output) {
                     for (int i = 0; i < output.items.size(); i++) {
@@ -167,12 +167,12 @@ public class Recommender extends MainActivity {
         }catch (Exception e){
             e.getMessage();
         }
-        return artistsList;
+        putGenreList(artistsList);
     }
     /*
     Converting artist list to a list of new artist objects contaning artist and weight of the artist
      */
-    public List<RecommenderArtist> getArtistList(List<Artist> artistsList){
+    public void putArtistList(List<Artist> artistsList){
         List<String> difArtists = new ArrayList<>();
         List<Integer> occArtist = new ArrayList<>();
         List<List<String>> genresList = new ArrayList<>();
@@ -224,13 +224,13 @@ public class Recommender extends MainActivity {
             }
         });
 
-        return artistObjects;
+        userRecommendations.first.addAll(artistObjects);
     }
     /*
     Generating a list of new genre object which contains id, genre and weight
      */
 
-    public  List<RecommenderGenre> getGenreList(List<Artist> artistsList){
+    public void putGenreList(List<Artist> artistsList){
         List<String> genresList = new ArrayList<>();
         for(int i = 0; i < artistsList.size(); i++){
             int temp = artistsList.get(i).genres.size();
@@ -278,7 +278,7 @@ public class Recommender extends MainActivity {
                 return lhs.weight.compareTo(rhs.weight);
             }
         });
-        return genreObjects;
+        userRecommendations.second.addAll(genreObjects);
     }
 
     public void pearsonSim(/**RealMatrix userRatingsMatrix**/) {
@@ -423,8 +423,7 @@ public class Recommender extends MainActivity {
 
     public void sendToHost(){
         Gson data = new Gson();
-        //data.toJson(userRecommendations);
-
-        //MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.RECOMMENDER, data.toString(), MainActivity.mQueueFragment.myIP);
+        data.toJson(userRecommendations);
+        MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.RECOMMENDER, data.toString());
     }
 }
