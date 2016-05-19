@@ -1,6 +1,5 @@
 package com.example.aaup8v2.aaup8v2;
 
-import android.app.Activity;
 import android.util.Log;
 
 import com.spotify.sdk.android.player.ConnectionStateCallback;
@@ -11,16 +10,13 @@ import com.spotify.sdk.android.player.PlayerState;
 import java.util.List;
 import java.util.Random;
 
-import kaaes.spotify.webapi.android.models.Track;
-
 /**
  * Created by lasse on 19-04-2016.
  **/
 public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationCallback {
 
     public Player mPlayer;
-    public Activity activity;
-    boolean isPlaying = false;
+    boolean isPlaying = false; //Used to check if the player already is playing a track.
 
     public void play(){
 
@@ -28,7 +24,7 @@ public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationC
             if(isPlaying) {
                 mPlayer.resume();
             }
-            else {
+            else { //If the queue is empty the recommender is called to get a track.
                 if (MainActivity.mQueueFragment.mQueueElementList.isEmpty() ){
                     MainActivity.mRecommend.recommendedTracks.add("61DLPczTvnkCwvwNqwPKgv");
                     List<String> recommendList = MainActivity.mRecommend.recommendedTracks;
@@ -36,13 +32,11 @@ public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationC
                     String track = recommendList.get(random.nextInt(recommendList.size()));
                     mPlayer.play("spotify:track:" + track);
                 }
-
-                else {
+                else { //If queue is not empty, play the top song on the list.
                     mPlayer.play("spotify:track:" + MainActivity.mQueueFragment.nextSong());
                 }
 
                 isPlaying = true;
-
             }
 
         } catch (Exception e){
@@ -80,9 +74,9 @@ public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationC
         Log.d("MusicPlayer", "Playback event received: " + eventType.name());
         switch (eventType) {
             case TRACK_END:
-                isPlaying = false;
-                play();
-                MainActivity.mQueueFragment.trackWeightIncrease();
+                isPlaying = false; //Set player to stopped.
+                play(); //Play next track.
+                MainActivity.mQueueFragment.trackWeightIncrease(); //Apply weight to elements in the queue.
                 break;
             default:
                 break;

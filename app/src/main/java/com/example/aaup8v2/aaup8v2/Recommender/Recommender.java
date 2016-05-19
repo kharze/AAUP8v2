@@ -132,34 +132,35 @@ public class Recommender extends MainActivity {
                     }
                 }
                 try {
-                    do {
-                        String artistsRequests = null;
-                        int counter = 0;
-                        do {
-                            if (artistsRequests == null) {
-                                artistsRequests = artistsIdList.get(0);
-                                artistsIdList.remove(0);
-                                counter++;
-                            } else {
-                                artistsRequests += "," + artistsIdList.get(0);
-                                artistsIdList.remove(0);
-                                counter++;
-                            }
-                        } while (counter < 50 && !artistsIdList.isEmpty());
-                        try {
-                            new GetArtistsRunnable(artistsRequests, new ThreadResponseInterface.ThreadResponse<Artists>() {
+//                    do {
+//                        String artistsRequests = null;
+//                        int counter = 0;
+//                        do {
+//                            if (artistsRequests == null) {
+//                                artistsRequests = artistsIdList.get(0);
+//                                artistsIdList.remove(0);
+//                                counter++;
+//                            } else {
+//                                artistsRequests += "," + artistsIdList.get(0);
+//                                artistsIdList.remove(0);
+//                                counter++;
+//                            }
+//                        } while (counter < 50 && !artistsIdList.isEmpty());
+//                        try {
+                            new GetArtistsRunnable(artistsIdList, new ThreadResponseInterface.ThreadResponse<Artists>() {
                                 @Override
                                 public void processFinish(Artists output) {
                                     mArtists = output;
                                 }
                             }).run();
-                        } catch (Exception e) {
-                            e.getMessage();
-                        }
-                        for (int i = 0; i < mArtists.artists.size(); i++) {
-                            artistsList.add(mArtists.artists.get(i));
-                        }
-                    } while (!artistsIdList.isEmpty());
+//                        } catch (Exception e) {
+//                            e.getMessage();
+//                        }
+                        //for (int i = 0; i < mArtists.artists.size(); i++) {
+                            artistsList.addAll(mArtists.artists);
+                            //artistsList.add(mArtists.artists.get(i));
+                        //}
+//                    } while (!artistsIdList.isEmpty());
 
                 }catch (Exception e) {
                     e.getMessage();
