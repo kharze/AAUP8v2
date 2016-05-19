@@ -21,28 +21,25 @@ public class GetArtistsRunnable extends ThreadResponseInterface<Artists> impleme
 
     @Override
     public void run() {
-        Artists albums = new Artists();
-        albums.artists = new ArrayList<>();
+        Artists result = new Artists();
+        result.artists = new ArrayList<>();
         do {
-            String requestAlbumIds = null;
+            String requestArtistIds = null;
             int counter = 0;
             do {
-                if (requestAlbumIds == null) {
-                    requestAlbumIds = artistIds.get(0);
+                if (requestArtistIds == null) {
+                    requestArtistIds = artistIds.get(0);
                     this.artistIds.remove(0);
                 } else {
-                    requestAlbumIds += "," + artistIds.get(0);
+                    requestArtistIds += "," + artistIds.get(0);
                     artistIds.remove(0);
                 }
                 counter++;
             } while (counter < 50 && !artistIds.isEmpty());
 
-            albums.artists.addAll(MainActivity.mSpotifyAccess.mService.getArtists(requestAlbumIds).artists);
+            result.artists.addAll(MainActivity.mSpotifyAccess.mService.getArtists(requestArtistIds).artists);
         } while (!artistIds.isEmpty());
 
-        delegate.processFinish(albums);
-
-        //try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getArtists(artistIds)); }
-        //catch (Exception e) { delegate.processFinish(new Artists()); }
+        delegate.processFinish(result);
     }
 }

@@ -11,6 +11,7 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * Return all playlist from a user given a userId.
  */
 public class GetPlaylistsRunnable extends ThreadResponseInterface<Pager<PlaylistSimple>> implements Runnable {
     String userId;

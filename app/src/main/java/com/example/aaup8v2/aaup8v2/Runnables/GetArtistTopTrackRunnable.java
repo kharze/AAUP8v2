@@ -6,6 +6,7 @@ import kaaes.spotify.webapi.android.models.Tracks;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * Returns the most popular tracks from an artist given the artist id.
  */
 public class GetArtistTopTrackRunnable extends ThreadResponseInterface<Tracks> implements Runnable {
     String artistId;
@@ -18,6 +19,6 @@ public class GetArtistTopTrackRunnable extends ThreadResponseInterface<Tracks> i
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getArtistTopTrack(artistId, MainActivity.me.country)); }
-        catch (Exception e){ delegate.processFinish(new Tracks()); }
+        catch (Exception e){ delegate.processFinish(null); }
     }
 }

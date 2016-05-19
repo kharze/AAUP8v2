@@ -6,6 +6,7 @@ import kaaes.spotify.webapi.android.models.Playlist;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * Returns a playlist given given a userId and a playlistId
  */
 public class GetPlaylistRunnable extends ThreadResponseInterface<Playlist> implements Runnable {
     String userID;
@@ -20,6 +21,6 @@ public class GetPlaylistRunnable extends ThreadResponseInterface<Playlist> imple
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getPlaylist(userID, playlistID)); }
-        catch (Exception e) { delegate.processFinish(new Playlist()); }
+        catch (Exception e) { delegate.processFinish(null); }
     }
 }

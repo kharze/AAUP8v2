@@ -15,6 +15,11 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.TracksPager;
 
+/**
+ * Created by Sean Skov Them on 04-05-2016.
+ * Returns a number of tracks given a searchString.
+ */
+
 public class SearchMusicRunnable extends ThreadResponseInterface<List<myTrack>> implements Runnable {
     //private static final String TAG = "Search music runnable:";
     private String searchTerm;

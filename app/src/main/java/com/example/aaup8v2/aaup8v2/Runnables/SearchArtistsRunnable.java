@@ -6,6 +6,7 @@ import kaaes.spotify.webapi.android.models.ArtistsPager;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * Returns a number of artists given a searchString.
  */
 public class SearchArtistsRunnable extends ThreadResponseInterface<ArtistsPager> implements Runnable {
     String searchTerm;

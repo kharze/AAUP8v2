@@ -6,6 +6,7 @@ import kaaes.spotify.webapi.android.models.AudioFeaturesTrack;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * Returns the audioFeatures for a track given the trackId.
  */
 public class GetTrackAudioFeatures extends ThreadResponseInterface<AudioFeaturesTrack> implements Runnable {
     String trackId;
@@ -18,6 +19,6 @@ public class GetTrackAudioFeatures extends ThreadResponseInterface<AudioFeatures
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getTrackAudioFeatures(trackId)); }
-        catch (Exception e){ delegate.processFinish(new AudioFeaturesTrack()); }
+        catch (Exception e){ delegate.processFinish(null); }
     }
 }

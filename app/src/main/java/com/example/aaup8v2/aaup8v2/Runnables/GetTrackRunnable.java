@@ -6,6 +6,7 @@ import kaaes.spotify.webapi.android.models.Track;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * Returns a Track given a trackId.
  */
 public class GetTrackRunnable extends ThreadResponseInterface<Track> implements Runnable {
     String trackId;
@@ -18,6 +19,6 @@ public class GetTrackRunnable extends ThreadResponseInterface<Track> implements 
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getTrack(trackId)); }
-        catch (Exception e){ delegate.processFinish(new Track()); }
+        catch (Exception e){ delegate.processFinish(null); }
     }
 }
