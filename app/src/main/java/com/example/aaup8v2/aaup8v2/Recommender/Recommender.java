@@ -47,8 +47,7 @@ public class Recommender extends MainActivity {
     Artists mArtists;
 
     public Recommender(){
-        //GetArtists/Genres - put in userRecommendations
-        //getArtists(me.id);
+        userRecommendations = new Pair<List<RecommenderArtist>, List<RecommenderGenre>>(new ArrayList<RecommenderArtist>(), new ArrayList<RecommenderGenre>());
 
         //If !Host - send userRecommendations
 
@@ -95,7 +94,7 @@ public class Recommender extends MainActivity {
      */
 
 
-    public void getArtists(String u_id){
+    public void getArtists(){
         try{
             new GetPlaylistsRunnable(MainActivity.me.id, new ThreadResponseInterface.ThreadResponse<Pager<PlaylistSimple>>() {
                 @Override
@@ -169,6 +168,7 @@ public class Recommender extends MainActivity {
         }catch (Exception e){
             e.getMessage();
         }
+        putArtistList(artistsList);
         putGenreList(artistsList);
     }
     /*
@@ -430,8 +430,8 @@ public class Recommender extends MainActivity {
     }
 
     public void sendToHost(){
-        Gson data = new Gson();
-        data.toJson(userRecommendations);
-        MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.RECOMMENDER, data.toString());
+        Gson gson = new Gson();
+        String data = gson.toJson(userRecommendations);
+        MainActivity.mWifiDirectActivity.sendDataToHost(WifiDirectActivity.RECOMMENDER, data);
     }
 }

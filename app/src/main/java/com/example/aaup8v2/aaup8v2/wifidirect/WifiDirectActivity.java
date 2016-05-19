@@ -242,8 +242,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         } else if (info.groupFormed) {
             sendDataToHost(IP_SENT, "");
 
-            //Send artist/weight information to host
-            //MainActivity.mRecommend.sendToHost();
+            //Send track information to host for recommendation
+            MainActivity.mRecommend.sendToHost();
 
             MainActivity.initializePeer(false);
 
@@ -335,9 +335,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     break;
                                 case RECOMMENDER:
-                                    Type recValPair = new TypeToken<Pair<List<RecommenderArtist>, List<RecommenderGenre>>>(){}.getType();
-                                    Pair<List<RecommenderArtist>, List<RecommenderGenre>> userArtistGenres = gson.fromJson(data, recValPair);
-                                    //MainActivity.mRecommend.addWeights()
+                                    Type recValPair = new TypeToken<Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>>>(){}.getType();
+                                    Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>> userArtistGenres = gson.fromJson(data, recValPair);
+                                    //MainActivity.mRecommend.getArtists();
                                     break;
                                 default:
                                     break;

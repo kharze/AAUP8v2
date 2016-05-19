@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
-                mRecommend.getArtists(me.id);
+                mRecommend.getArtists();
                 //mRecommend = new Recommender(); //Needs to know the user id for spotify
             }
             @Override
