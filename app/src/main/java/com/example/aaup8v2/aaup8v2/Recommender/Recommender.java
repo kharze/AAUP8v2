@@ -11,8 +11,6 @@ import com.google.gson.Gson;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.StatUtils;
 
 import java.util.ArrayList;
@@ -161,9 +159,11 @@ public class Recommender extends MainActivity {
                     } while (!artistsIdList.isEmpty());
 
                 }catch (Exception e) {
+                    e.getMessage();
                 }
             }
         }catch (Exception e){
+            e.getMessage();
         }
         return artistsList;
     }
@@ -286,8 +286,9 @@ public class Recommender extends MainActivity {
         RealMatrix userRatingsMatrix = new Array2DRowRealMatrix(4, 5);
         int columnSize = userRatingsMatrix.getColumn(0).length;
         int rowSize = userRatingsMatrix.getRow(0).length;
+        List<List<Double>> userRatingList = new ArrayList<>();
 
-        double[] row1 = {4, 3, 5, 2, 0};
+        double[] row1 = {4, 3, 5, 0, 0};
         double[] row2 = {3, 4, 5, 1, 3};
         double[] row3 = {5, 2, 4, 3, 5};
         double[] row4 = {1, 3, 3, 3, 4};
@@ -297,13 +298,6 @@ public class Recommender extends MainActivity {
         userRatingsMatrix.setRow(2, row3);
         userRatingsMatrix.setRow(3, row4);
 
-        /**
-         * for normalization!
-         */
-        double[] rowx = {4, 3, 5, 2, 0};
-        double[] test = StatUtils.normalize(rowx);
-
-        List<List<Double>> userRatingList = new ArrayList<>();
 
         for (int i = 0; i < columnSize; i++) {
             List<Double> temp = new ArrayList<>();
@@ -323,6 +317,18 @@ public class Recommender extends MainActivity {
                 }
             }
         }
+
+        RealMatrix normalizedUserRatings = new Array2DRowRealMatrix(4, 5);
+
+        for (int i = 0; i < userRatingList.size(); i++){
+            double[] row = new double[userRatingList.get(i).size()];
+            for (int j = 0; j < userRatingList.get(i).size(); j++){
+                row[j] = userRatingList.get(i).get(j);
+            }
+            normalizedUserRatings.setRow(i, StatUtils.normalize(row));
+        }
+        recommend(normalizedUserRatings);
+
     }
 
     public Double predictRating(List<List<Double>> userRatings, int row, int column){
@@ -338,7 +344,6 @@ public class Recommender extends MainActivity {
         userRatingsList.remove(row);
         double wSum = 0;
         PearsonsCorrelation pearson = new PearsonsCorrelation();
-        Mean avgCal = new Mean();
         List<Double> itemRating = new ArrayList<>();
         List<Double> avgRating = new ArrayList<>();
 
@@ -357,14 +362,20 @@ public class Recommender extends MainActivity {
                         localUserList.remove(j);
                     }
                 }
+                for(int j = column; j < localUserList.size(); j++){
+                    if(localUserList.get(j) == 0){
+                        temp.remove(j);
+                        localUserList.remove(j);
+                    }
+                }
                 double[] tempArray = new double[temp.size()];
                 double[] localUserArray = new double[localUserList.size()];
                 for (int j = 0; j < temp.size(); j++){
                     tempArray[j] = temp.get(j);
                     localUserArray[j] = localUserList.get(j);
                 }
-                avgRating.add(avgCal.evaluate(tempArray));
-                userAvg = avgCal.evaluate(localUserArray);
+                avgRating.add(StatUtils.mean(tempArray));
+                userAvg = StatUtils.mean(localUserArray);
                 double simValue = pearson.correlation(localUserArray, tempArray);
                 if (simValue >= 0){
                     wSum += simValue;
@@ -384,6 +395,28 @@ public class Recommender extends MainActivity {
         userList.remove(column);
         prediction += userAvg;
         return prediction;
+    }
+
+    public List<Track> recommend (RealMatrix userRatings){
+
+        int columnSize = userRatings.getRow(0).length;
+        int rowSize = userRatings.getColumn(0).length;
+        RealMatrix ratings = new Array2DRowRealMatrix(rowSize, columnSize);
+        ratings = userRatings;
+
+        List<Double> genreScor = new ArrayList<>();
+        List<Double> avgList = new ArrayList<>();
+        List<Double> minList = new ArrayList<>();
+
+
+        for (int i = 0; i < columnSize; i++ ){
+            double[] temp = ratings.getColumn(i);
+            avgList.add(StatUtils.mean(temp));
+            minList.add(StatUtils.min(temp));
+            genreScor.add((StatUtils.mean(temp)/2) + StatUtils.min(temp));
+        }
+
+        return null;
     }
 
     public void sendToHost(){
