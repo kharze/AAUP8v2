@@ -131,11 +131,16 @@ public class QueueFragment extends Fragment {
 
     public void sortQueue(){
         // Comparator for the sorting
-        final double base = thresholdUpdate();
+        final double threshold = thresholdUpdate();
         Comparator<QueueElement> compareWeight = new Comparator<QueueElement>() {
             @Override
             public int compare(QueueElement lhs, QueueElement rhs) {
-                return (int) Math.round(((rhs.weight*base)+rhs.upvoteList.size()-rhs.downvoteList.size()) - ((lhs.weight*base)+lhs.upvoteList.size()-lhs.downvoteList.size()));
+                if((((rhs.weight*threshold)+rhs.upvoteList.size()-rhs.downvoteList.size()) - ((lhs.weight*threshold)+lhs.upvoteList.size()-lhs.downvoteList.size())) < 0){
+                    return -1;
+                }
+                else{
+                    return 1;
+                }
             }
         };
         Collections.sort(mQueueElementList, compareWeight);
