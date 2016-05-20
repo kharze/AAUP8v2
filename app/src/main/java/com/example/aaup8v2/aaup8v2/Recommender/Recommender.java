@@ -18,6 +18,7 @@ import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -40,8 +41,10 @@ public class Recommender extends MainActivity {
     private ArrayList<String> mArtistOrder;
     private RealMatrix userRatingsMatrix;
     private List<String> genresList = new ArrayList<>();
+    private List<String> artistList = new ArrayList<>();
     private List<List<String>> userGenreLists = new ArrayList<>();
     private List<List<Integer>> userRatingLists = new ArrayList<>();
+    private ArrayList<RecommenderArtist> artistObject = new ArrayList<>();
     public List<String> recommendedTracks = new ArrayList<>();
 
 
@@ -184,6 +187,7 @@ public class Recommender extends MainActivity {
     public void putArtistList(List<Artist> artistsList){
         List<String> difArtists = new ArrayList<>();
         List<Integer> occArtist = new ArrayList<>();
+        List<Integer> artistPop = new ArrayList<>();
         List<List<String>> genresList = new ArrayList<>();
 
         Collections.sort(artistsList, new Comparator<Artist>() {
@@ -197,6 +201,7 @@ public class Recommender extends MainActivity {
         for (int i = 0; i < artistsList.size(); i++){
             if (!difArtists.contains(artistsList.get(i).name)){
                 difArtists.add(artistsList.get(i).name);
+                artistPop.add(artistsList.get(i).popularity);
                 List<String> temp = new ArrayList<>();
                 for(int j = 0; j < artistsList.get(i).genres.size(); j++){
                     String[] split = artistsList.get(i).genres.get(j).split("\\W+");
@@ -223,7 +228,7 @@ public class Recommender extends MainActivity {
         }
         List<RecommenderArtist> artistObjects = new ArrayList<>();
         for (int i = 0; i < occArtist.size(); i++){
-            artistObjects.add(new RecommenderArtist(difArtists.get(i), null, occArtist.get(i), genresList.get(i), null));
+            artistObjects.add(new RecommenderArtist(difArtists.get(i), artistPop.get(i), occArtist.get(i), genresList.get(i), null));
         }
 
         Collections.sort(artistObjects, new Comparator<RecommenderArtist>() {
@@ -296,7 +301,10 @@ public class Recommender extends MainActivity {
         List<Integer> genreRatings = new ArrayList<>();
         List<String> genreName = new ArrayList<>();
         genresObject.addAll(userArtistGenres.second);
+        artistObject.addAll(userArtistGenres.first);
         HashSet<String> unionGenres = new HashSet<>();
+        HashSet<String> unionArtist = new HashSet<>();
+
 
         for (int i = 0; i < genresObject.size(); i++){
             genreRatings.add(genresObject.get(i).count);
@@ -309,7 +317,9 @@ public class Recommender extends MainActivity {
         unionGenres.addAll(genresList);
         genresList = new ArrayList<>(unionGenres);
         Collections.sort(genresList);
+
         createRatingMatrix();
+
     }
 
     public void createRatingMatrix (){
@@ -322,22 +332,21 @@ public class Recommender extends MainActivity {
             userRatings.addAll(userRatingLists.get(i));
             List<String> userGenres = new ArrayList<>();
             userGenres.addAll(userGenreLists.get(i));
-                for (int j = 0; j < genresList.size(); j++){
-                    String lGenre = genresList.get(j);
-                    if(userGenres.size() > 0){
-                        if(userGenres.get(0).equals(lGenre)){
-                            row[j] = userRatings.get(0);
-                            userGenres.remove(0);
-                            userRatings.remove(0);
-                        }
-                        else{
-                            row[j] = 0;
-                        }
-                    }
-                    else {
+            for (int j = 0; j < genresList.size(); j++){
+                String lGenre = genresList.get(j);
+                if(userGenres.size() > 0){
+                    if(userGenres.get(0).equals(lGenre)){
+                        row[j] = userRatings.get(0);
+                        userGenres.remove(0);
+                        userRatings.remove(0);
+                    } else {
                         row[j] = 0;
                     }
                 }
+                else {
+                    row[j] = 0;
+                }
+            }
             userRatingsMatrix.setRow(i, row);
         }
         pearsonSim(userRatingsMatrix);
@@ -390,7 +399,7 @@ public class Recommender extends MainActivity {
             }
             normalizedUserRatings.setRow(i, StatUtils.normalize(row));
         }
-        recommend(normalizedUserRatings);
+        recommendGenre(normalizedUserRatings);
 
     }
 
@@ -460,14 +469,13 @@ public class Recommender extends MainActivity {
         return prediction;
     }
 
-    public void recommend (RealMatrix userRatings){
+    public void recommendGenre (RealMatrix userRatings){
 
         int columnSize = userRatings.getRow(0).length;
         int rowSize = userRatings.getColumn(0).length;
-        RealMatrix ratings = new Array2DRowRealMatrix(rowSize, columnSize);
-        ratings = userRatings;
+        RealMatrix ratings = userRatings;
 
-        double[] genreScor = new double[columnSize];
+        double[] genreScore = new double[columnSize];
         List<Double> avgList = new ArrayList<>();
         List<Double> minList = new ArrayList<>();
 
@@ -476,15 +484,43 @@ public class Recommender extends MainActivity {
             double[] temp = ratings.getColumn(i);
             avgList.add(StatUtils.mean(temp));
             minList.add(StatUtils.min(temp));
-            genreScor[i] = StatUtils.mean(temp)/2 + StatUtils.min(temp);
+            genreScore[i] = StatUtils.mean(temp)/2 + StatUtils.min(temp);
         }
 
-        Double bestGenre = StatUtils.max(genreScor);
+        Double bestGenre = StatUtils.max(genreScore);
+        int bestGenreIndex = 0;
+        for(int i = 0; i < genreScore.length; i++){
+            if (genreScore[i] == bestGenre){
+                bestGenreIndex = i;
+            }
+        }
 
+        findTracks(genresList.get(bestGenreIndex));
+    }
+
+    public void findTracks(String genre){
         /**
-         * Insert something artist here.
-         * Make spotify call to get recommended songs.
-         */
+        List<Integer> artistPop = new ArrayList<>();
+        for (int j = 0; j < userArtistLists.size(); j++){
+            List<String> userArtists = new ArrayList<>();
+            userArtists.addAll(userArtistLists.get(j));
+            List<Integer> userArtistsPopularity = new ArrayList<>();
+            userArtistsPopularity.addAll(userArtistCountLists.get(j));
+            for(int i = 0; i < artistList.size(); i++){
+                if(userArtists.size() < 0){
+                    if(userArtists.equals(artistList) && artistPop.get(i) < 0){
+                        artistPop.add(userArtistsPopularity.get(0));
+                        userArtistsPopularity.remove(0);
+                        userArtists.remove(0);
+                    }
+                    else{
+                        artistPop.add(0);
+                    }
+                }
+
+            }
+        }
+         **/
 
     }
 

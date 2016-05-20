@@ -7,13 +7,13 @@ import java.util.List;
  */
 public class RecommenderArtist {
     public String name;
-    public Double weight;
+    public int popularity;
     public int count;
     public List<String> genre;
     public List<String> tracks;
 
-    public RecommenderArtist(String name, Double weight, int count, List<String> genre, List<String> tracks) {
-        this.weight = weight;
+    public RecommenderArtist(String name, int popularity, int count, List<String> genre, List<String> tracks) {
+        this.popularity = popularity;
         this.count = count;
         this.name = name;
         this.genre = genre;
@@ -21,8 +21,8 @@ public class RecommenderArtist {
     }
 
     public void setCount (int newCount) { count = newCount; }
-    public void setWeight (Double newWeight){
-        weight = newWeight;
+    public void setPopularity (int newPopularity){
+        popularity = newPopularity;
     }
     public void setTracks (List<String> newTracks){ tracks = newTracks; }
 }
