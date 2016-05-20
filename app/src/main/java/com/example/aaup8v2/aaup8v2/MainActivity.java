@@ -28,7 +28,6 @@ import com.example.aaup8v2.aaup8v2.fragments.PlayListFragment;
 import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
-import com.example.aaup8v2.aaup8v2.recommender_pearson.PearsonRecommend;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -59,7 +58,6 @@ public class MainActivity extends AppCompatActivity
     public static int buttonState = 0;
 
     public static Recommender mRecommend;
-    public static PearsonRecommend pearsonRecommend;
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;

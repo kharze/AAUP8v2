@@ -38,12 +38,6 @@
             android:singleLine="true"
             android:ellipsize="marquee"
             android:textColor="@color/textColor"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/enable_p2p_button"
-            android:gravity="center_vertical"
-            android:onClick="test"/>
 
         <Button
             android:layout_width="wrap_content"

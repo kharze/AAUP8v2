@@ -10,6 +10,8 @@ import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 import com.google.gson.Gson;
 
+import junit.framework.Test;
+
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.StatUtils;
@@ -18,6 +20,7 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
@@ -35,6 +38,10 @@ public class Recommender extends MainActivity {
     private Double[][] mArtistWeights;
     private ArrayList<String> mGenreOrder;
     private ArrayList<String> mArtistOrder;
+    private RealMatrix userRatingsMatrix;
+    private List<String> genresList = new ArrayList<>();
+    private List<List<String>> userGenreLists = new ArrayList<>();
+    private List<List<Integer>> userRatingLists = new ArrayList<>();
     public List<String> recommendedTracks = new ArrayList<>();
 
 
@@ -271,7 +278,7 @@ public class Recommender extends MainActivity {
         }
         List<RecommenderGenre> genreObjects = new ArrayList<>();
         for (int i = 0; i < occGenre.size(); i++){
-            genreObjects.add(new RecommenderGenre(i, difGenres.get(i), null, occGenre.get(i)));
+            genreObjects.add(new RecommenderGenre(i, difGenres.get(i), occGenre.get(i)));
         }
 
         Collections.sort(genreObjects, new Comparator<RecommenderGenre>() {
@@ -283,15 +290,67 @@ public class Recommender extends MainActivity {
         userRecommendations.second.addAll(genreObjects);
     }
 
-    public void pearsonSim(/**RealMatrix userRatingsMatrix**/) {
-        //int columnSize = userRatingsMatrix.getColumn(0).length;
-        //int rowSize = userRatingsMatrix.getRow(0).length;
+    public void extractUserInfo (Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>> userArtistGenres){
 
-        RealMatrix userRatingsMatrix = new Array2DRowRealMatrix(4, 5);
-        int columnSize = userRatingsMatrix.getColumn(0).length;
-        int rowSize = userRatingsMatrix.getRow(0).length;
+        ArrayList<RecommenderGenre> genresObject = new ArrayList<>();
+        List<Integer> genreRatings = new ArrayList<>();
+        List<String> genreName = new ArrayList<>();
+        genresObject.addAll(userArtistGenres.second);
+        HashSet<String> unionGenres = new HashSet<>();
+
+        for (int i = 0; i < genresObject.size(); i++){
+            genreRatings.add(genresObject.get(i).count);
+            genreName.add(genresObject.get(i).genre);
+        }
+        userGenreLists.add(genreName);
+        userRatingLists.add(genreRatings);
+
+        unionGenres.addAll(genreName);
+        unionGenres.addAll(genresList);
+        genresList = new ArrayList<>(unionGenres);
+        Collections.sort(genresList);
+        createRatingMatrix();
+    }
+
+    public void createRatingMatrix (){
+
+        userRatingsMatrix = new Array2DRowRealMatrix(userRatingLists.size(), genresList.size());
+
+        for(int i = 0; i < userGenreLists.size(); i++){
+            double[] row = new double[genresList.size()];
+            List<Integer> userRatings = new ArrayList<>();
+            userRatings.addAll(userRatingLists.get(i));
+            List<String> userGenres = new ArrayList<>();
+            userGenres.addAll(userGenreLists.get(i));
+                for (int j = 0; j < genresList.size(); j++){
+                    String lGenre = genresList.get(j);
+                    if(userGenres.size() > 0){
+                        if(userGenres.get(0).equals(lGenre)){
+                            row[j] = userRatings.get(0);
+                            userGenres.remove(0);
+                            userRatings.remove(0);
+                        }
+                        else{
+                            row[j] = 0;
+                        }
+                    }
+                    else {
+                        row[j] = 0;
+                    }
+                }
+            userRatingsMatrix.setRow(i, row);
+        }
+        pearsonSim(userRatingsMatrix);
+    }
+
+    public void pearsonSim(RealMatrix userMatrix) {
+        int rowSize = userRatingsMatrix.getColumn(0).length;
+        int columnSize = userRatingsMatrix.getRow(0).length;
+
+        RealMatrix userRatingsMatrix = new Array2DRowRealMatrix(rowSize, columnSize);
+        userRatingsMatrix = userMatrix;
         List<List<Double>> userRatingList = new ArrayList<>();
-
+/**
         double[] row1 = {4, 3, 5, 0, 0};
         double[] row2 = {3, 4, 5, 1, 3};
         double[] row3 = {5, 2, 4, 3, 5};
@@ -301,20 +360,20 @@ public class Recommender extends MainActivity {
         userRatingsMatrix.setRow(1, row2);
         userRatingsMatrix.setRow(2, row3);
         userRatingsMatrix.setRow(3, row4);
+**/
 
-
-        for (int i = 0; i < columnSize; i++) {
+        for (int i = 0; i < userMatrix.getColumn(0).length; i++) {
             List<Double> temp = new ArrayList<>();
-            for (int j = 0; j < rowSize; j++) {
+            for (int j = 0; j < userMatrix.getRow(0).length; j++) {
                 temp.add(userRatingsMatrix.getEntry(i, j));
             }
             userRatingList.add(temp);
         }
 
-        for (int i = 0; i < columnSize; i++) {
+        for (int i = 0; i < userMatrix.getColumn(0).length; i++) {
             List<Double> temp = new ArrayList<>();
             temp.addAll(userRatingList.get(i));
-            for (int j = 0; j < rowSize; j++) {
+            for (int j = 0; j < userMatrix.getRow(0).length; j++) {
                 if (temp.get(j) == 0) {
                     userRatingList.get(i).set(j, predictRating(userRatingList, i, j));
                     //Double predicted = predictRating(userRatingList, i, j);
@@ -322,7 +381,7 @@ public class Recommender extends MainActivity {
             }
         }
 
-        RealMatrix normalizedUserRatings = new Array2DRowRealMatrix(4, 5);
+        RealMatrix normalizedUserRatings = new Array2DRowRealMatrix(rowSize, columnSize);
 
         for (int i = 0; i < userRatingList.size(); i++){
             double[] row = new double[userRatingList.get(i).size()];

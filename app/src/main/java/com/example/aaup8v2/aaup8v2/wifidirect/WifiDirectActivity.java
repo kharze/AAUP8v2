@@ -152,10 +152,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
-    public void test(View view){
-        MainActivity.mRecommend.pearsonSim();
-    }
-
     public void enableP2P(View view){
         if (manager != null && channel != null) {
             // Since this is the system wireless settings activity, it's
@@ -240,7 +236,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
             MainActivity.toggleConnectionButtons(false);
         } else if (info.groupFormed) {
-            sendDataToHost(IP_SENT, "");
+            //sendDataToHost(IP_SENT, "");
 
             //Send track information to host for recommendation
             MainActivity.mRecommend.sendToHost();
@@ -330,13 +326,14 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     sendDataToPeer(DISCONNECT_SUCCESS, "", sender);
 
-                                    if(ipsOnNetwork.size() == 0)
-                                        disconnect();
+                                    //if(ipsOnNetwork.size() == 0)
+                                    //    disconnect();
 
                                     break;
                                 case RECOMMENDER:
                                     Type recValPair = new TypeToken<Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>>>(){}.getType();
                                     Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>> userArtistGenres = gson.fromJson(data, recValPair);
+                                    MainActivity.mRecommend.extractUserInfo(userArtistGenres);
                                     //MainActivity.mRecommend.getArtists();
                                     break;
                                 default:
