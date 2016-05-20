@@ -11,6 +11,7 @@ import kaaes.spotify.webapi.android.models.SavedTrack;
 
 /**
  * Created by Sean Skov Them on 06-05-2016.
+ * Returns all saved tracks for the user.
  */
 public class MySavedTracksRunnable extends ThreadResponseInterface<Pager<SavedTrack>> implements Runnable {
 

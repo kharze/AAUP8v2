@@ -1,18 +1,14 @@
 package com.example.aaup8v2.aaup8v2.recommender_pearson;
 
-import android.app.Activity;
-import android.content.Context;
-import android.widget.Toast;
-
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
-
 import com.example.aaup8v2.aaup8v2.Recommender.RecommenderArtist;
 import com.example.aaup8v2.aaup8v2.Recommender.RecommenderGenre;
 import com.example.aaup8v2.aaup8v2.Runnables.GetArtistsRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistsRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
+
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,13 +36,6 @@ public class PearsonRecommend{
     List<Track> trackList = new ArrayList<>();
     Pager<PlaylistTrack> tracksPager;
     Artists mArtists;
-    Context context;
-    Activity activity;
-
-    public PearsonRecommend(Context context, Activity activity){
-        this.context = context;
-        this.activity = activity;
-    }
 
     /*
     Getting a list of artist based on tracks from a playlist
@@ -91,34 +80,34 @@ public class PearsonRecommend{
                     }
                 }
                 try {
-                    do {
-                        String artistsRequests = null;
-                        int counter = 0;
-                        do {
-                            if (artistsRequests == null) {
-                                artistsRequests = artistsIdList.get(0);
-                                artistsIdList.remove(0);
-                                counter++;
-                            } else {
-                                artistsRequests += "," + artistsIdList.get(0);
-                                artistsIdList.remove(0);
-                                counter++;
-                            }
-                        } while (counter < 50 && !artistsIdList.isEmpty());
-                        try {
-                            new GetArtistsRunnable(artistsRequests, new ThreadResponseInterface.ThreadResponse<Artists>() {
+//                    do {
+//                        String artistsRequests = null;
+//                        int counter = 0;
+//                        do {
+//                            if (artistsRequests == null) {
+//                                artistsRequests = artistsIdList.get(0);
+//                                artistsIdList.remove(0);
+//                                counter++;
+//                            } else {
+//                                artistsRequests += "," + artistsIdList.get(0);
+//                                artistsIdList.remove(0);
+//                                counter++;
+//                            }
+//                        } while (counter < 50 && !artistsIdList.isEmpty());
+//                        try {
+                            new GetArtistsRunnable(artistsIdList, new ThreadResponseInterface.ThreadResponse<Artists>() {
                                 @Override
                                 public void processFinish(Artists output) {
                                     mArtists = output;
                                 }
                             }).run();
-                        } catch (Exception e) {
-                            e.getMessage();
-                        }
+//                        } catch (Exception e) {
+//                            e.getMessage();
+//                        }
                         for (int i = 0; i < mArtists.artists.size(); i++) {
                             artistsList.add(mArtists.artists.get(i));
                         }
-                    } while (!artistsIdList.isEmpty());
+                    //} while (!artistsIdList.isEmpty());
 
                 }catch (Exception e) {
                 }
@@ -338,16 +327,12 @@ public class PearsonRecommend{
                     artistList.get(i).setTracks(artistTracks);
 
                     recommended.add(artistList.get(i));
-                }activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(context, "Recommender done " + Integer.toString(trackList.size()), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                }
             }
         }).start();
     }
     public void pearsonSim(/**RealMatrix userRatings**/){
+
         List<List<int[]>> missingList = new ArrayList<>();
         //int columnSize = userRatings.getColumn(0).length;
         //int rowSize = userRatings.getRow(0).length;
@@ -381,8 +366,6 @@ public class PearsonRecommend{
             }
             missingList.add(missing);
         }
-
-
 
         /**
          * calculating the similarity value

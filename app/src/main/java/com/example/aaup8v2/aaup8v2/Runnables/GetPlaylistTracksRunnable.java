@@ -11,6 +11,7 @@ import kaaes.spotify.webapi.android.models.PlaylistTrack;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * Returns all tracks from a playlist given a playlistId and the userId for the owner of the list.
  */
 public class GetPlaylistTracksRunnable extends ThreadResponseInterface<Pager<PlaylistTrack>> implements Runnable {
     String userID;

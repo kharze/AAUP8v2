@@ -19,6 +19,6 @@ public class SpotifyAccess extends AppCompatActivity{
 
     public void setAccessToken(String token){
         mSpotify.setAccessToken(token);
-        mService = mSpotify.getService();
+        mService = mSpotify.getService(); //Create an instance of a Spotify service, to use for web requests.
     }
 }

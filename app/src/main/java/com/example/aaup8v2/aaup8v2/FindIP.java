@@ -1,7 +1,8 @@
 package com.example.aaup8v2.aaup8v2;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
 /**
  * Created by zatiru on 29-04-2016.
  */
@@ -34,7 +35,7 @@ public class FindIP {
                     }
                 }
             }
-        } catch (Exception ex) { } // for now eat exceptions
+        } catch (Exception ex) { ex.getCause(); } // for now eat exceptions
         return "";
     }
 }

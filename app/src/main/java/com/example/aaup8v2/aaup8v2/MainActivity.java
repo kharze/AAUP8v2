@@ -28,6 +28,7 @@ import com.example.aaup8v2.aaup8v2.fragments.PlayListFragment;
 import com.example.aaup8v2.aaup8v2.fragments.QueueFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SearchFragment;
 import com.example.aaup8v2.aaup8v2.fragments.SettingsFragment;
+import com.example.aaup8v2.aaup8v2.recommender_pearson.PearsonRecommend;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity
     public static int buttonState = 0;
 
     public static Recommender mRecommend;
+    public static PearsonRecommend pearsonRecommend;
     public static SearchFragment mSearchFragment;
     public static QueueFragment mQueueFragment;
     public static WifiDirectActivity mWifiDirectActivity;
@@ -103,7 +105,6 @@ public class MainActivity extends AppCompatActivity
         authenticate(); //Authenticates Spotify
 
         mSpotifyAccess = new SpotifyAccess(); //Sets the SpotifyAccess class
-        //mRecommend = new Recommender(this, this, me.id); //Sets the PearsonRecommend class
 
         mWifiDirectActivity = new WifiDirectActivity();
 
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity
         musicPlayer = new MusicPlayer();
         mPlaylistFragment = new PlayListFragment();
         mDisconnectFragment = new DisconnectFragment();
+        mRecommend = new Recommender();
 
         // Instantiate the playbar
         playedName = (TextView)findViewById(R.id.track_name);
@@ -138,10 +140,11 @@ public class MainActivity extends AppCompatActivity
     public void isPremium(){
         Thread worker = new Thread(new Runnable() {
             private void changePlaybutton(final UserPrivate up) {
+                me = up; //Saves the user for later use
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        me = up; //Saves the user for later use
                         if(up.product.equals("premium") && (MainActivity.mWifiDirectActivity.info == null || MainActivity.mWifiDirectActivity.info.isGroupOwner)){
                             initializePeer(true);
                             hasPremium = true;
@@ -152,6 +155,8 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 });
+                mRecommend.getArtists();
+                //mRecommend = new Recommender(); //Needs to know the user id for spotify
             }
             @Override
             public void run() { changePlaybutton(mSpotifyAccess.mService.getMe()); }

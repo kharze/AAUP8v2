@@ -15,9 +15,9 @@ public class QueueElement {
     public List<String> downvoteList = new ArrayList<>();
 
     // makes sure the values are always 0 at creation;
-    public void onCreate(){
-        this.track = null;
-        this.weight = 0;
+    public void QueueElement(){
+        this.track = new myTrack();
+        this.weight = 1;
         this.upvoteList = new ArrayList<>();
         this.downvoteList = new ArrayList<>();
     }

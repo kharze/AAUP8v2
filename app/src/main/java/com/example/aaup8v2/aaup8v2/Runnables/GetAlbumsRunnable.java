@@ -9,6 +9,7 @@ import kaaes.spotify.webapi.android.models.Albums;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * This Runnable gets a number of albums, given a list of ids for those albums.
  */
 public class GetAlbumsRunnable extends ThreadResponseInterface<Albums> implements Runnable {
     private List<String> albumIds;

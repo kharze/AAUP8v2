@@ -18,6 +18,7 @@ import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -151,6 +152,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
+    public void test(View view){
+        MainActivity.mRecommend.pearsonSim();
+    }
+
     public void enableP2P(View view){
         if (manager != null && channel != null) {
             // Since this is the system wireless settings activity, it's
@@ -237,8 +242,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         } else if (info.groupFormed) {
             sendDataToHost(IP_SENT, "");
 
-            //Send artist/weight information to host
-            //MainActivity.mRecommend.sendToHost();
+            //Send track information to host for recommendation
+            MainActivity.mRecommend.sendToHost();
 
             MainActivity.initializePeer(false);
 
@@ -330,9 +335,9 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     break;
                                 case RECOMMENDER:
-                                    Type recHashMap = new TypeToken<HashMap<List<RecommenderArtist>, List<RecommenderGenre>>>() { }.getType();
-                                    HashMap<List<RecommenderArtist>, List<RecommenderGenre>> weights = gson.fromJson(data, recHashMap);
-                                    //MainActivity.mRecommend.addWeights()
+                                    Type recValPair = new TypeToken<Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>>>(){}.getType();
+                                    Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>> userArtistGenres = gson.fromJson(data, recValPair);
+                                    //MainActivity.mRecommend.getArtists();
                                     break;
                                 default:
                                     break;

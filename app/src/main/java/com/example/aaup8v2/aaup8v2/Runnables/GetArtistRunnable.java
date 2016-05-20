@@ -6,6 +6,7 @@ import kaaes.spotify.webapi.android.models.Artist;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * This Runnable return the artist with the id artistId.
  */
 public class GetArtistRunnable extends ThreadResponseInterface<Artist> implements Runnable {
     String artistId;
@@ -18,6 +19,6 @@ public class GetArtistRunnable extends ThreadResponseInterface<Artist> implement
     @Override
     public void run() {
         try { delegate.processFinish(MainActivity.mSpotifyAccess.mService.getArtist(artistId)); }
-        catch (Exception e) { delegate.processFinish(new Artist()); }
+        catch (Exception e) { delegate.processFinish(null); }
     }
 }

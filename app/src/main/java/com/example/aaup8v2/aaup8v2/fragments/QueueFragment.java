@@ -169,28 +169,30 @@ public class QueueFragment extends Fragment {
         return trackId;
     }
 
-    public void deleteTrack(int i){
+    public void deleteTrack(int i){ //Deletes a track from the queue and notify the adapter.
         mQueueElementList.remove(i);
         if(queueAdapter != null)
             queueAdapter.notifyDataSetChanged();
     }
 
     public int checkPosition(int position, String id){
+        //Checks if the track on the position has the right id.
         if(position < mQueueElementList.size() && mQueueElementList.get(position).track.id.equals(id)) {
             return position;
         } else{
+            //If it does not have the right id, the list is searched through to find the position of the track.
             for(int i = 0; i < mQueueElementList.size(); i++){
                 if(mQueueElementList.get(i).track.id.equals(id))
                     return i;
             }
         }
+        //If the tracks is not found -1 is returned.
         return -1;
     }
 
     public void downVoteAssist(int position, String ip){
         if(position < mQueueElementList.size()) {
-            //Change the value of the up/down votes depending if the button has already been pressed.
-            //Change the icon for the button.
+            //Adds or removes ips from upvoteList/downvoteList depending if the user has already voted on that track.
             if (!mQueueElementList.get(position).downvoteList.contains(ip)) {
                 mQueueElementList.get(position).downvoteList.add(ip);
 
@@ -231,8 +233,7 @@ public class QueueFragment extends Fragment {
 
     public void upVoteAssist(int position, String ip){
         if(position < mQueueElementList.size()) {
-            //Change the value of the up/down votes depending if the button has already been pressed.
-            //Change the icon for the button.
+            //Adds or removes ips from upvoteList/downvoteList depending if the user has already voted on that track.
             if (!mQueueElementList.get(position).upvoteList.contains(ip)) {
                 mQueueElementList.get(position).upvoteList.add(ip);
 

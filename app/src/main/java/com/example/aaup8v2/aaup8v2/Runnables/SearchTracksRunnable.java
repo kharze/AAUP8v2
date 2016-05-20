@@ -10,6 +10,7 @@ import kaaes.spotify.webapi.android.models.TracksPager;
 
 /**
  * Created by Sean Skov Them on 04-05-2016.
+ * Returns a number of tracks given a searchString.
  */
 public class SearchTracksRunnable extends ThreadResponseInterface<TracksPager> implements Runnable {
     String searchTerm;
