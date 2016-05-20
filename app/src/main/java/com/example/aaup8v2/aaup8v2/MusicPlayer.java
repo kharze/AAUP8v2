@@ -10,6 +10,8 @@ import com.spotify.sdk.android.player.PlayerState;
 import java.util.List;
 import java.util.Random;
 
+import kaaes.spotify.webapi.android.models.Track;
+
 /**
  * Created by lasse on 19-04-2016.
  **/
@@ -26,11 +28,11 @@ public class MusicPlayer implements ConnectionStateCallback, PlayerNotificationC
             }
             else { //If the queue is empty the recommender is called to get a track.
                 if (MainActivity.mQueueFragment.mQueueElementList.isEmpty() ){
-                    MainActivity.mRecommend.recommendedTracks.add("61DLPczTvnkCwvwNqwPKgv");
-                    List<String> recommendList = MainActivity.mRecommend.recommendedTracks;
+                    List<Track> recommendList = MainActivity.mRecommend.recommendedTracks;
                     Random random = new Random();
-                    String track = recommendList.get(random.nextInt(recommendList.size()));
-                    mPlayer.play("spotify:track:" + track);
+                    Track track = recommendList.get(random.nextInt(recommendList.size()));
+                    MainActivity.mQueueFragment.addTrack(track);
+                    mPlayer.play("spotify:track:" + MainActivity.mQueueFragment.nextSong());
                 }
                 else { //If queue is not empty, play the top song on the list.
                     mPlayer.play("spotify:track:" + MainActivity.mQueueFragment.nextSong());
