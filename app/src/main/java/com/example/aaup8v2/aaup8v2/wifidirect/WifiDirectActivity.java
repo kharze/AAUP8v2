@@ -330,6 +330,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     sendDataToPeer(DISCONNECT_SUCCESS, "", sender);
 
+                                    //should be removed
                                     if(ipsOnNetwork.size() == 0)
                                         disconnect();
 
@@ -371,10 +372,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             data.add((String)object);
                             data.add(sender);
                             updateUI(data);
-
-                            //Just to have a way out of the while loop, should never become true
-                            if(data.size() == 100)
-                                break;
 
                         }catch (ClosedByInterruptException e){
                             e.getCause();
@@ -498,10 +495,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             updateUI(data);
 
                             objectInputStream.close();
-
-                            //Just to have a way out of the while loop, should never become true
-                            if(data.size() == 100)
-                                break;
 
                         }catch (ClosedByInterruptException e) {
                             e.getCause();
