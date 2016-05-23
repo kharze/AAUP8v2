@@ -231,7 +231,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
         if (info.groupFormed && info.isGroupOwner) {
             receiveHostSpawn();
-
+            MainActivity.mRecommend.extractUserInfo(MainActivity.mRecommend.userRecommendations);
             MainActivity.initializePeer(true);
 
             MainActivity.toggleConnectionButtons(false);
@@ -331,8 +331,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                                     break;
                                 case RECOMMENDER:
-                                    Type recValPair = new TypeToken<Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>>>(){}.getType();
-                                    Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>> userArtistGenres = gson.fromJson(data, recValPair);
+                                    Type recValPair = new TypeToken<Pair<List<RecommenderArtist>, List<RecommenderGenre>>>(){}.getType();
+                                    Pair<List<RecommenderArtist>, List<RecommenderGenre>> userArtistGenres = gson.fromJson(data, recValPair);
                                     MainActivity.mRecommend.extractUserInfo(userArtistGenres);
                                     //MainActivity.mRecommend.getArtists();
                                     break;

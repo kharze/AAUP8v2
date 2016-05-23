@@ -7,12 +7,12 @@ import java.util.List;
  */
 public class RecommenderArtist {
     public String name;
-    public int popularity;
+    public Integer popularity;
     public int count;
     public List<String> genre;
     public List<String> tracks;
 
-    public RecommenderArtist(String name, int popularity, int count, List<String> genre, List<String> tracks) {
+    public RecommenderArtist(String name, Integer popularity, int count, List<String> genre, List<String> tracks) {
         this.popularity = popularity;
         this.count = count;
         this.name = name;

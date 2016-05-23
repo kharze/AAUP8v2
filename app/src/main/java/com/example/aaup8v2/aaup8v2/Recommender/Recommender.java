@@ -3,6 +3,7 @@ package com.example.aaup8v2.aaup8v2.Recommender;
 import android.util.Pair;
 
 import com.example.aaup8v2.aaup8v2.MainActivity;
+import com.example.aaup8v2.aaup8v2.Runnables.GetArtistTopTrackRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetArtistsRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistTracksRunnable;
 import com.example.aaup8v2.aaup8v2.Runnables.GetPlaylistsRunnable;
@@ -30,6 +31,7 @@ import kaaes.spotify.webapi.android.models.Pager;
 import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.Tracks;
 
 /**
  * Created by Lukas on 05-05-2016.
@@ -45,10 +47,10 @@ public class Recommender extends MainActivity {
     private List<List<String>> userGenreLists = new ArrayList<>();
     private List<List<Integer>> userRatingLists = new ArrayList<>();
     private ArrayList<RecommenderArtist> artistObject = new ArrayList<>();
-    public List<String> recommendedTracks = new ArrayList<>();
+    public List<Track> recommendedTracks = new ArrayList<>();
 
 
-    Pair<List<RecommenderArtist>, List<RecommenderGenre>> userRecommendations;
+    public Pair<List<RecommenderArtist>, List<RecommenderGenre>> userRecommendations;
     List<Artist> artistsList = new ArrayList<>();
     List<String> p_id = new ArrayList<>();
     List<String> playlistOwnerId = new ArrayList<>();
@@ -199,8 +201,8 @@ public class Recommender extends MainActivity {
 
         int occurrence = 0;
         for (int i = 0; i < artistsList.size(); i++){
-            if (!difArtists.contains(artistsList.get(i).name)){
-                difArtists.add(artistsList.get(i).name);
+            if (!difArtists.contains(artistsList.get(i).id)){
+                difArtists.add(artistsList.get(i).id);
                 artistPop.add(artistsList.get(i).popularity);
                 List<String> temp = new ArrayList<>();
                 for(int j = 0; j < artistsList.get(i).genres.size(); j++){
@@ -295,7 +297,7 @@ public class Recommender extends MainActivity {
         userRecommendations.second.addAll(genreObjects);
     }
 
-    public void extractUserInfo (Pair<ArrayList<RecommenderArtist>, ArrayList<RecommenderGenre>> userArtistGenres){
+    public void extractUserInfo (Pair<List<RecommenderArtist>, List<RecommenderGenre>> userArtistGenres){
 
         ArrayList<RecommenderGenre> genresObject = new ArrayList<>();
         List<Integer> genreRatings = new ArrayList<>();
@@ -498,29 +500,40 @@ public class Recommender extends MainActivity {
         findTracks(genresList.get(bestGenreIndex));
     }
 
-    public void findTracks(String genre){
-        /**
-        List<Integer> artistPop = new ArrayList<>();
-        for (int j = 0; j < userArtistLists.size(); j++){
-            List<String> userArtists = new ArrayList<>();
-            userArtists.addAll(userArtistLists.get(j));
-            List<Integer> userArtistsPopularity = new ArrayList<>();
-            userArtistsPopularity.addAll(userArtistCountLists.get(j));
-            for(int i = 0; i < artistList.size(); i++){
-                if(userArtists.size() < 0){
-                    if(userArtists.equals(artistList) && artistPop.get(i) < 0){
-                        artistPop.add(userArtistsPopularity.get(0));
-                        userArtistsPopularity.remove(0);
-                        userArtists.remove(0);
+    public void findTracks(final String genre){
+
+        Collections.sort(artistObject, new Comparator<RecommenderArtist>() {
+            @Override
+            public int compare(RecommenderArtist lhs, RecommenderArtist rhs) {
+                return lhs.popularity.compareTo(rhs.popularity);
+            }
+        });
+        Collections.reverse(artistObject);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<String> topArtists = new ArrayList<>();
+                int counter = 0;
+                while (topArtists.size() < 10 && counter < artistObject.size()){
+                    if (artistObject.get(counter).genre.contains(genre)){
+                        topArtists.add(artistObject.get(counter).name);
                     }
-                    else{
-                        artistPop.add(0);
-                    }
+                    counter++;
                 }
 
+                for(int i = 0; i < topArtists.size(); i++){
+                    new GetArtistTopTrackRunnable(topArtists.get(i), new ThreadResponseInterface.ThreadResponse<Tracks>() {
+                        @Override
+                        public void processFinish(Tracks output) {
+                            for(int j = 0; j < output.tracks.size(); j++){
+                                recommendedTracks.add(output.tracks.get(j));
+                            }
+                        }
+                    }).run();
+                }
             }
-        }
-         **/
+        }).start();
 
     }
 
