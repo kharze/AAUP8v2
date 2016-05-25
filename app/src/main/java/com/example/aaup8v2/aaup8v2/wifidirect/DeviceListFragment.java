@@ -151,7 +151,6 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
      * events.
      */
     public interface DeviceActionListener {
-        void showDetails(WifiP2pDevice device);
         void cancelDisconnect();
         void connect(WifiP2pConfig config);
         void disconnect();

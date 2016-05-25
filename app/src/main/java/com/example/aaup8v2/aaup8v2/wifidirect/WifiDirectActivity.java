@@ -16,7 +16,6 @@ import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -42,7 +41,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.channels.ClosedByInterruptException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -60,7 +58,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     public static final String DISCONNECT = "disconnect";
     public static final String DISCONNECT_SUCCESS = "disconnect_success";
     public static final String RECOMMENDER = "recommender";
-    public static final String RECOMMENDER_SUCCESS = "recommender_success";
     public static final String NEXT_SONG = "next_song";
 
     public static final String TAG = "wifidirect";
@@ -99,11 +96,14 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         this.ipsOnNetwork = MainActivity.mWifiDirectActivity.ipsOnNetwork;
         this.info = MainActivity.mWifiDirectActivity.info;
         MainActivity.mWifiDirectActivity = this;
-        // add necessary intent values to be matched.
+
+        // add intent values to be matched.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        // create wifip2pmanager and set the channel
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
 
@@ -113,6 +113,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         list = (ListView) findViewById(R.id.listviewPeers);
         list.setAdapter(deviceAdapter);
 
+        // If trying to host, create a network with this device as groupowner, else search for other networks
         if(MainActivity.isHost){
             manager.createGroup(channel, new ActionListener() {
                 @Override
@@ -152,21 +153,13 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
-    public void enableP2P(View view){
-        if (manager != null && channel != null) {
-            // Since this is the system wireless settings activity, it's
-            // not going to send us a result. We will be notified by
-            // WiFiDeviceBroadcastReceiver instead.
-            startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
-        } else {
-            Log.e(TAG, "channel or manager is null");
-        }
-    }
-
+    // Starts a search for active networks, and lists them for the user to select from.
     public void discoverPeers(){
+        // clear the list of networks
         peersCollection.clear();
         deviceAdapter.notifyDataSetChanged();
 
+        // prompt user to turn on p2p if it is not enabled on the device
         if (!isWifiP2pEnabled) {
             Toast.makeText(WifiDirectActivity.this, R.string.p2p_off_warning,
                     Toast.LENGTH_SHORT).show();
@@ -174,6 +167,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         final DeviceListFragment fragment = (DeviceListFragment) getFragmentManager()
                 .findFragmentById(R.id.frag_list);
         fragment.onInitiateDiscovery();
+
+        // start discovery of networks, returns with either success of failure
         manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -190,14 +185,14 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             Log.d(TAG, String.format("PeerListListener: %d peers available, updating device list", peers.getDeviceList().size()));
                             fragment.onPeersAvailable(peers);
 
-                            // DO WHATEVER YOU WANT HERE
-                            // YOU CAN GET ACCESS TO ALL THE DEVICES YOU FOUND FROM peers OBJECT
+                            // making sure the list is empty
                             peersCollection.clear();
 
+                            // adding all found devices to a list
                             List<WifiP2pDevice> list = new ArrayList<>();
                             list.addAll(peers.getDeviceList());
 
-                            // Search the list of Group Owners
+                            // Search the list for group owners, as these equal active networks
                             for(int i = 0; list.size() > i; i++){
                                 if(list.get(i).isGroupOwner())
                                     peersCollection.add(list.get(i));
@@ -218,17 +213,24 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         });
     }
 
+    // refresh the network list
     public void refresh(View view){
         discoverPeers();
     }
 
+    // Called when we have either created a network/group or when we successfully connect to a
+    // network. This is where we call functions specifically for the host and peers.
     @Override
     public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+        // Close any open progress dialogs.
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+        // saving the info so we can access it elsewhere
         this.info = info;
 
+        // if we are a group owner/host we start the receiving tread for the host, get the
+        // recommender data and set the different button visibilities as needed.
         if (info.groupFormed && info.isGroupOwner) {
             receiveHostSpawn();
             MainActivity.mRecommend.extractUserInfo(MainActivity.mRecommend.userRecommendations);
@@ -236,7 +238,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
             MainActivity.toggleConnectionButtons(false);
         } else if (info.groupFormed) {
-            //sendDataToHost(IP_SENT, "");
+            // we are a peer, so we send recommender data to host, set button visibility, and
+            // start the receiving thread for peers.
 
             //Send track information to host for recommendation
             MainActivity.mRecommend.sendToHost();
@@ -247,14 +250,18 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
             MainActivity.toggleConnectionButtons(false);
         }
+        // closing the activity and returning to where we came in.
         finish();
     }
 
+    // this is where we start the receiving thread for the host.
     public void receiveHostSpawn(){
+        // checking whether the thread exists or is terminated so we don't cause crashes
         if (worker == null || !worker.isAlive()) {
             interupt = false;
             worker = new Thread(new Runnable(){
 
+                // this runs on the UI thread so no heavy computation should be done here
                 private void updateUI(final List<String> output)
                 {
                     runOnUiThread(new Runnable(){
@@ -267,6 +274,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             String sender = output.get(2);
                             Gson gson = new Gson();
 
+                            // add the ip to our list of ips if it is not already there, and
+                            // send the queue to the peer we just "met"
                             if (!ipsOnNetwork.contains(sender)) {
                                 ipsOnNetwork.add(sender);
                                 //when user first joins the network, they receive the queue back, peer-side handling as if track was added
@@ -276,10 +285,12 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                 }
                             }
 
+                            // depending on the type of data we receive, we handle it differently.
                             switch (type) {
                                 case IP_SENT:
                                     break;
                                 case UP_VOTE:
+                                    // make the upvote for the peer and send out the resulting queue to everyone.
                                     List<String> dataList = gson.fromJson(data,mClassStringList);
                                     int position = MainActivity.mQueueFragment.checkPosition(Integer.parseInt(dataList.get(0)), dataList.get(1));
                                     if(position != -1) {
@@ -290,6 +301,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     sendDataToPeers(WifiDirectActivity.UP_VOTE, queueListUp);
                                     break;
                                 case DOWN_VOTE:
+                                    // make the downvote for the peer and send out the resulting queue to everyone.
                                     List<String> dataList2 = gson.fromJson(data,mClassStringList);
                                     int position2 = MainActivity.mQueueFragment.checkPosition(Integer.parseInt(dataList2.get(0)), dataList2.get(1));
                                     if(position2 != -1) {
@@ -301,6 +313,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     sendDataToPeers(WifiDirectActivity.DOWN_VOTE, queueListDown);
                                     break;
                                 case TRACK_ADDED:
+                                    // add track to queue and send the queue to everyone.
+                                    // if the track is already on the list due to synchronisation errors we don't add it
                                     Type mClass = new TypeToken<myTrack>() {
                                     }.getType();
                                     myTrack track = gson.fromJson(data, mClass);
@@ -320,17 +334,16 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     }
                                     break;
                                 case DISCONNECT:
-                                    //Handle disconnect
+                                    // remove the peer from our internal list so they don't receive
+                                    // anymore updates, and tell them they have disconnected.
                                     if(ipsOnNetwork.contains(sender))
                                         ipsOnNetwork.remove(sender);
 
                                     sendDataToPeer(DISCONNECT_SUCCESS, "", sender);
 
-                                    //if(ipsOnNetwork.size() == 0)
-                                    //    disconnect();
-
                                     break;
                                 case RECOMMENDER:
+                                    // receive and handle recommender data from peers
                                     Type recValPair = new TypeToken<Pair<List<RecommenderArtist>, List<RecommenderGenre>>>(){}.getType();
                                     Pair<List<RecommenderArtist>, List<RecommenderGenre>> userArtistGenres = gson.fromJson(data, recValPair);
                                     MainActivity.mRecommend.extractUserInfo(userArtistGenres);
@@ -343,6 +356,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                     });
                 }
 
+                // constantly opens a receiving data socket and awaits a connection
                 @Override
                 public void run()
                 {
@@ -357,7 +371,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
                             Object type = objectInputStream.readObject();
                             Object object = objectInputStream.readObject();
-                            //Object sender2 = objectInputStream.readObject();
 
                             // Finds the IP of the sender.
                             InetAddress senderAddress = client.getInetAddress();
@@ -367,11 +380,8 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             data.add((String) type);
                             data.add((String)object);
                             data.add(sender);
+                            // send the received data to the UI thread
                             updateUI(data);
-
-                            //Just to have a way out of the while loop, should never become true
-                            if(data.size() == 100)
-                                break;
 
                         }catch (ClosedByInterruptException e){
                             e.getCause();
@@ -395,11 +405,14 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
     }
 
+    // this is where we start the receiving thread for the peer.
     public void receiveDataSpawn(){
+        // checking whether the thread exists or is terminated so we don't cause crashes
         if(worker == null || !worker.isAlive()) {
             interupt = false;
             worker = new Thread(new Runnable() {
 
+                // this runs on the UI thread so no heavy computation should be done here
                 private void updateUI(final List<String> output) {
                     runOnUiThread(new Runnable() {
 
@@ -418,6 +431,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
 
                             switch (type) {
                                 case UP_VOTE:
+                                    // update queue
                                     List<QueueElement> newQueueListUp = gson.fromJson(data, mClassQueue);
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
                                     MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueListUp);
@@ -425,6 +439,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case DOWN_VOTE:
+                                    // update queue
                                     List<QueueElement> newQueueListDown = gson.fromJson(data, mClassQueue);
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
                                     MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueListDown);
@@ -432,6 +447,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                         MainActivity.mQueueFragment.queueAdapter.notifyDataSetChanged();
                                     break;
                                 case TRACK_ADDED:
+                                    // update queue, search, and playlist
                                     List<QueueElement> newQueueListAdd = gson.fromJson(data, mClassQueue);
                                     MainActivity.mQueueFragment.mQueueElementList.clear();
                                     MainActivity.mQueueFragment.mQueueElementList.addAll(newQueueListAdd);
@@ -443,6 +459,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                         MainActivity.mPlaylistFragment.listAdapter.notifyDataSetChanged();
                                     break;
                                 case NEXT_SONG:
+                                    // new song started, so updating the playbar info
                                     myTrack track = gson.fromJson(data,mClassMyTrack);
                                     String artists = "Artists: ";
                                     for(int i = 0; track.artists.size() > i; i++) {
@@ -456,7 +473,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     MainActivity.mQueueFragment.deleteTrack(0);
                                     break;
                                 case DISCONNECT:
-                                    //Notify user the host left and handle make sure everything is reset
+                                    //Notify user the host left and handle it, makes sure everything is reset
                                     Toast.makeText(getApplicationContext(), "Host left network", Toast.LENGTH_LONG).show();
                                     disconnect();
                                     info = null;
@@ -464,6 +481,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                                     MainActivity.cleanUp();
                                     break;
                                 case DISCONNECT_SUCCESS:
+                                    // host has recognized our disconnect so we are free to disconnect
                                     disconnect();
                                     break;
                                 default:
@@ -473,7 +491,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                     });
                 }
 
-
+                // constantly opens a receiving data socket and awaits a connection
                 @Override
                 public void run() {
                     Log.d(TAG, "Thread run()");
@@ -492,13 +510,11 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                             List<String> data = new ArrayList<>();
                             data.add((String)type);
                             data.add((String)object);
+                            // send the received data to the UI thread
                             updateUI(data);
 
                             objectInputStream.close();
 
-                            //Just to have a way out of the while loop, should never become true
-                            if(data.size() == 100)
-                                break;
 
                         }catch (ClosedByInterruptException e) {
                             e.getCause();
@@ -524,10 +540,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
-    @Override
-    public void showDetails(WifiP2pDevice device) {
 
-    }
     @Override
     public void connect(WifiP2pConfig config) {
         manager.connect(channel, config, new ActionListener() {
@@ -543,9 +556,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
             }
         });
     }
+
+    // disconnect from network and reset data as needed
     @Override
     public void disconnect() {
-        //Add data communication that peer left the network.
         if(manager != null) {
             manager.removeGroup(channel, new ActionListener() {
                 @Override
@@ -582,8 +596,6 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
     protected void onDestroy()
     {
         super.onDestroy();
-        /*if(worker != null)
-            worker.interrupt();*/
     }
     @Override
     public void onChannelDisconnected() {
@@ -636,15 +648,14 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         ListView listviewcontent = (ListView)view.getParent().getParent().getParent();
         int bIndex = listviewcontent.indexOfChild((View) view.getParent().getParent());
 
-        //WifiP2pDevice dev = peersCollection.get(bIndex);
+        // connect to the network at this index in the list
         WifiP2pConfig conf = new WifiP2pConfig();
-        if(MainActivity.isHost)
-            conf.groupOwnerIntent = 15;
         conf.deviceAddress =  peersCollection.get(bIndex).deviceAddress;
         conf.wps.setup = WpsInfo.PBC;
         connect(conf);
     }
 
+    // starts a serviceIntent and stores the data to be send to the host.
     public void sendDataToHost(String type, String data){
         Intent serviceIntent = new Intent(this, HostTransferService.class);
         serviceIntent.setAction(HostTransferService.ACTION_SEND_DATA);
@@ -653,10 +664,10 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         serviceIntent.putExtra(HostTransferService.EXTRAS_GROUP_OWNER_PORT, 8888);
         serviceIntent.putExtra(HostTransferService.EXTRAS_DATA, data);
         serviceIntent.putExtra(HostTransferService.EXTRAS_TYPE, type);
-        //serviceIntent.putExtra(HostTransferService.EXTRAS_SENDER, ip);
         startService(serviceIntent);
     }
 
+    // for each ip on the network we prepare to send the data
     public void sendDataToPeers(String type, String data){
         if(type.equals(DISCONNECT) && ipsOnNetwork.isEmpty()) {
             disconnect();
@@ -667,6 +678,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
         }
     }
 
+    // start an intentservice and store the data to be send to each peer
     public void sendDataToPeer(String type, String data, String ip){
         Intent dataIntent = new Intent(this, DataTransferService.class);
         dataIntent.setAction(DataTransferService.ACTION_SEND_DATA);
