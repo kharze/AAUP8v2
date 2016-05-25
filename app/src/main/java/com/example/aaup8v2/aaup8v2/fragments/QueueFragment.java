@@ -272,7 +272,7 @@ public class QueueFragment extends Fragment {
 
     public double thresholdUpdate(){
         int numberOfPeers = MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1;
-        return numberOfPeers * (2/3); //Setting the threshold limit
+        return numberOfPeers * 2/3; //Setting the threshold limit
     }
 
     public void applyWeight(){
