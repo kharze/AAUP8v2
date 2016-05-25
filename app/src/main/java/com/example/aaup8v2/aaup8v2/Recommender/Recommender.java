@@ -11,15 +11,12 @@ import com.example.aaup8v2.aaup8v2.Runnables.ThreadResponseInterface;
 import com.example.aaup8v2.aaup8v2.wifidirect.WifiDirectActivity;
 import com.google.gson.Gson;
 
-import junit.framework.Test;
-
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -37,13 +34,14 @@ import kaaes.spotify.webapi.android.models.Tracks;
  * Created by Lukas on 05-05-2016.
  **/
 public class Recommender extends MainActivity {
+    /**
     private Double[][] mGenreWeights;
     private Double[][] mArtistWeights;
     private ArrayList<String> mGenreOrder;
     private ArrayList<String> mArtistOrder;
+     **/
     private RealMatrix userRatingsMatrix;
     private List<String> genresList = new ArrayList<>();
-    private List<String> artistList = new ArrayList<>();
     private List<List<String>> userGenreLists = new ArrayList<>();
     private List<List<Integer>> userRatingLists = new ArrayList<>();
     private ArrayList<RecommenderArtist> artistObject = new ArrayList<>();
@@ -60,15 +58,12 @@ public class Recommender extends MainActivity {
 
     public Recommender(){
         userRecommendations = new Pair<List<RecommenderArtist>, List<RecommenderGenre>>(new ArrayList<RecommenderArtist>(), new ArrayList<RecommenderGenre>());
-
-        //If !Host - send userRecommendations
-
-        //If host - do not send
     }
 
     //Updates the matrix with a new user-row
     //Works on both genres and artists. Takes as param. Returns the updated matrix.
     //Bool for type of weights. True for mGenre. False for mArtist.
+    /**
     public Double[][] addWeights(Double[][] lArr, ArrayList<String> inOrder, Double[] inArr, boolean isGenre){
         ArrayList<String> order;
         //Get the order in the arraylist.
@@ -100,6 +95,7 @@ public class Recommender extends MainActivity {
 
         return local;
     }
+     **/
 
     /*
     Getting a list of artist based on tracks from a playlist
@@ -143,36 +139,13 @@ public class Recommender extends MainActivity {
                     }
                 }
                 try {
-//                    do {
-//                        String artistsRequests = null;
-//                        int counter = 0;
-//                        do {
-//                            if (artistsRequests == null) {
-//                                artistsRequests = artistsIdList.get(0);
-//                                artistsIdList.remove(0);
-//                                counter++;
-//                            } else {
-//                                artistsRequests += "," + artistsIdList.get(0);
-//                                artistsIdList.remove(0);
-//                                counter++;
-//                            }
-//                        } while (counter < 50 && !artistsIdList.isEmpty());
-//                        try {
                             new GetArtistsRunnable(artistsIdList, new ThreadResponseInterface.ThreadResponse<Artists>() {
                                 @Override
                                 public void processFinish(Artists output) {
                                     mArtists = output;
                                 }
                             }).run();
-//                        } catch (Exception e) {
-//                            e.getMessage();
-//                        }
-                        //for (int i = 0; i < mArtists.artists.size(); i++) {
                             artistsList.addAll(mArtists.artists);
-                            //artistsList.add(mArtists.artists.get(i));
-                        //}
-//                    } while (!artistsIdList.isEmpty());
-
                 }catch (Exception e) {
                     e.getMessage();
                 }
@@ -183,10 +156,11 @@ public class Recommender extends MainActivity {
         putArtistList(artistsList);
         putGenreList(artistsList);
     }
+
     /*
     Converting artist list to a list of new artist objects contaning artist and weight of the artist
      */
-    public void putArtistList(List<Artist> artistsList){
+    private void putArtistList(List<Artist> artistsList){
         List<String> difArtists = new ArrayList<>();
         List<Integer> occArtist = new ArrayList<>();
         List<Integer> artistPop = new ArrayList<>();
@@ -246,7 +220,7 @@ public class Recommender extends MainActivity {
     Generating a list of new genre object which contains id, genre and weight
      */
 
-    public void putGenreList(List<Artist> artistsList){
+    private void putGenreList(List<Artist> artistsList){
         List<String> genresList = new ArrayList<>();
         for(int i = 0; i < artistsList.size(); i++){
             int temp = artistsList.get(i).genres.size();
@@ -285,7 +259,7 @@ public class Recommender extends MainActivity {
         }
         List<RecommenderGenre> genreObjects = new ArrayList<>();
         for (int i = 0; i < occGenre.size(); i++){
-            genreObjects.add(new RecommenderGenre(i, difGenres.get(i), occGenre.get(i)));
+            genreObjects.add(new RecommenderGenre(difGenres.get(i), occGenre.get(i)));
         }
 
         Collections.sort(genreObjects, new Comparator<RecommenderGenre>() {
@@ -305,8 +279,6 @@ public class Recommender extends MainActivity {
         genresObject.addAll(userArtistGenres.second);
         artistObject.addAll(userArtistGenres.first);
         HashSet<String> unionGenres = new HashSet<>();
-        HashSet<String> unionArtist = new HashSet<>();
-
 
         for (int i = 0; i < genresObject.size(); i++){
             genreRatings.add(genresObject.get(i).count);
@@ -324,7 +296,7 @@ public class Recommender extends MainActivity {
 
     }
 
-    public void createRatingMatrix (){
+    private void createRatingMatrix (){
 
         userRatingsMatrix = new Array2DRowRealMatrix(userRatingLists.size(), genresList.size());
 
@@ -354,25 +326,13 @@ public class Recommender extends MainActivity {
         pearsonSim(userRatingsMatrix);
     }
 
-    public void pearsonSim(RealMatrix userMatrix) {
+    private void pearsonSim(RealMatrix userMatrix) {
         int rowSize = userRatingsMatrix.getColumn(0).length;
         int columnSize = userRatingsMatrix.getRow(0).length;
 
-        RealMatrix userRatingsMatrix = new Array2DRowRealMatrix(rowSize, columnSize);
+        RealMatrix userRatingsMatrix;
         userRatingsMatrix = userMatrix;
         List<List<Double>> userRatingList = new ArrayList<>();
-/**
-        double[] row1 = {4, 3, 5, 0, 0};
-        double[] row2 = {3, 4, 5, 1, 3};
-        double[] row3 = {5, 2, 4, 3, 5};
-        double[] row4 = {1, 3, 3, 3, 4};
-
-        userRatingsMatrix.setRow(0, row1);
-        userRatingsMatrix.setRow(1, row2);
-        userRatingsMatrix.setRow(2, row3);
-        userRatingsMatrix.setRow(3, row4);
-**/
-
         for (int i = 0; i < userMatrix.getColumn(0).length; i++) {
             List<Double> temp = new ArrayList<>();
             for (int j = 0; j < userMatrix.getRow(0).length; j++) {
@@ -387,7 +347,6 @@ public class Recommender extends MainActivity {
             for (int j = 0; j < userMatrix.getRow(0).length; j++) {
                 if (temp.get(j) == 0) {
                     userRatingList.get(i).set(j, predictRating(userRatingList, i, j));
-                    //Double predicted = predictRating(userRatingList, i, j);
                 }
             }
         }
@@ -405,7 +364,7 @@ public class Recommender extends MainActivity {
 
     }
 
-    public Double predictRating(List<List<Double>> userRatings, int row, int column){
+    private Double predictRating(List<List<Double>> userRatings, int row, int column){
 
         List <List<Double>> userRatingsList = new ArrayList<>();
         userRatingsList.addAll(userRatings);
@@ -448,12 +407,12 @@ public class Recommender extends MainActivity {
                     tempArray[j] = temp.get(j);
                     localUserArray[j] = localUserList.get(j);
                 }
-                avgRating.add(StatUtils.mean(tempArray));
                 userAvg = StatUtils.mean(localUserArray);
                 double simValue = pearson.correlation(localUserArray, tempArray);
                 if (simValue >= 0){
                     wSum += simValue;
                     simList.add(simValue);
+                    avgRating.add(StatUtils.mean(tempArray));
                 }
 
             }
@@ -466,26 +425,19 @@ public class Recommender extends MainActivity {
             prediction += w * (itemRating.get(i) - avgRating.get(i) );
         }
 
-        userList.remove(column);
+        //userList.remove(column);
         prediction += userAvg;
         return prediction;
     }
 
-    public void recommendGenre (RealMatrix userRatings){
+    private void recommendGenre (RealMatrix userRatings){
 
         int columnSize = userRatings.getRow(0).length;
-        int rowSize = userRatings.getColumn(0).length;
-        RealMatrix ratings = userRatings;
 
         double[] genreScore = new double[columnSize];
-        List<Double> avgList = new ArrayList<>();
-        List<Double> minList = new ArrayList<>();
-
 
         for (int i = 0; i < columnSize; i++ ){
-            double[] temp = ratings.getColumn(i);
-            avgList.add(StatUtils.mean(temp));
-            minList.add(StatUtils.min(temp));
+            double[] temp = userRatings.getColumn(i);
             genreScore[i] = StatUtils.mean(temp)/2 + StatUtils.min(temp);
         }
 
@@ -496,11 +448,10 @@ public class Recommender extends MainActivity {
                 bestGenreIndex = i;
             }
         }
-
         findTracks(genresList.get(bestGenreIndex));
     }
 
-    public void findTracks(final String genre){
+    private void findTracks(final String genre){
 
         Collections.sort(artistObject, new Comparator<RecommenderArtist>() {
             @Override

@@ -272,7 +272,7 @@ public class QueueFragment extends Fragment {
 
     public double thresholdUpdate(){
         int numberOfPeers = MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1;
-        return numberOfPeers * 0.67; //Setting the threshold limit
+        return numberOfPeers * 2/3; //Setting the threshold limit
     }
 
     public void applyWeight(){
@@ -283,7 +283,7 @@ public class QueueFragment extends Fragment {
     public void voteThreshold(int downVotedTrack) {
         if(downVotedTrack < mQueueElementList.size()) {
             //If track weight gets below the set threshold it will be removed from the list
-            if (((thresholdUpdate() + mQueueElementList.get(downVotedTrack).upvoteList.size() - mQueueElementList.get(downVotedTrack).downvoteList.size()) <= 0) || (MainActivity.mWifiDirectActivity.ipsOnNetwork.size() + 1 == 1)) {
+            if ((thresholdUpdate() + mQueueElementList.get(downVotedTrack).upvoteList.size() - mQueueElementList.get(downVotedTrack).downvoteList.size()) <= 0) {
                 deleteTrack(downVotedTrack);
             }
         }

@@ -272,31 +272,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    /*@SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }*/
-
     //Might be possible to move some of this to the MusicPlayer class.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -341,15 +316,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void Test_spotify(View view){
-        /** ID's
-         * Empty list: user:aaup8 :playlist:6B3WEOcvqjEsURp4Icu9vN
-         * Our test list: user:aaup8: playlist:1RdQS80EE32zxXBFOfLnNR
-         *https://play.spotify.com/user/117012207/playlist/4cFMwqkMGdO2OBAjxGZDyl
-         */
-        //mRecommend.recommend("lasse.d.c91");
-    }
-
     public void pToP(View view){
         if(findViewById(R.id.btn_connectView) == view){
             isPeer = true;
@@ -372,7 +338,8 @@ public class MainActivity extends AppCompatActivity
             MainActivity.musicPlayer.isPlaying = false;
             playButton.setImageResource(R.drawable.ic_action_playback_play);
             buttonState = 0;
-            MainActivity.playedName.setText("No song playing");
+            String noSongPlaying = "No song playing";
+            MainActivity.playedName.setText(noSongPlaying);
             MainActivity.playedArtist.setText("");
         }
         MainActivity.mPlaylistFragment.listDataChild = null;
