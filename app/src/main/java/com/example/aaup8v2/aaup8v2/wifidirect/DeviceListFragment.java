@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  * A ListFragment that displays available peers on discovery and requests the
- * parent activity to handle user interaction events
+ * parent activity to handle user interaction events.
+ *
+ * Should no longer be in use but causes errors when removed and don't have time to remove it completely
  */
 public class DeviceListFragment extends ListFragment implements PeerListListener {
     private List<WifiP2pDevice> peers = new ArrayList<>();
@@ -68,11 +70,7 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
      */
     public class WiFiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
         private List<WifiP2pDevice> items;
-        /**
-         * @param context
-         * @param textViewResourceId
-         * @param objects
-         */
+
         public WiFiPeerListAdapter(Context context, int textViewResourceId,
                                    List<WifiP2pDevice> objects) {
             super(context, textViewResourceId, objects);
@@ -122,7 +120,6 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
         ((WiFiPeerListAdapter) getListAdapter()).notifyDataSetChanged();
         if (peers.size() == 0) {
             Log.d(WifiDirectActivity.TAG, "No devices found");
-            return;
         }
     }
     public void clearPeers() {
@@ -151,7 +148,6 @@ public class DeviceListFragment extends ListFragment implements PeerListListener
      * events.
      */
     public interface DeviceActionListener {
-        void cancelDisconnect();
         void connect(WifiP2pConfig config);
         void disconnect();
     }

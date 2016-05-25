@@ -1,7 +1,6 @@
 package com.example.aaup8v2.aaup8v2.wifidirect;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -22,7 +21,6 @@ import java.util.HashMap;
 public class DataTransferService extends IntentService {
     private static final int SOCKET_TIMEOUT = 1000;
     public static final String ACTION_SEND_DATA = "com.example.aaup8v2.aaup8v2.wifidirect.SEND_DATA";
-    public static final String EXTRAS_FILE_PATH = "file_url";
     public static final String EXTRAS_PEER_ADDRESS = "go_host";
     public static final String EXTRAS_PEER_PORT = "go_port";
     public static final String EXTRAS_DATA = "data_to_send";
@@ -38,10 +36,8 @@ public class DataTransferService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        Context context = getApplicationContext();
         if (intent.getAction().equals(ACTION_SEND_DATA)) {
-            String fileUri = intent.getExtras().getString(EXTRAS_FILE_PATH);
-            String host = intent.getExtras().getString(EXTRAS_PEER_ADDRESS);
+            String peer = intent.getExtras().getString(EXTRAS_PEER_ADDRESS);
             Socket socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_PEER_PORT);
             String data = intent.getExtras().getString(EXTRAS_DATA);
@@ -49,19 +45,22 @@ public class DataTransferService extends IntentService {
             try {
                 Log.d(WifiDirectActivity.TAG, "Opening client socket - ");
                 socket.bind(null);
-                socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
+                // Attempt to connect to the listening socket at the peer.
+                socket.connect((new InetSocketAddress(peer, port)), SOCKET_TIMEOUT);
                 Log.d(WifiDirectActivity.TAG, "Client socket - " + socket.isConnected());
                 OutputStream stream = socket.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(stream);
                 oos.writeObject(dataType);
                 oos.writeObject(data);
                 Log.d(WifiDirectActivity.TAG, "Client: Data written");
-                timeOutFailed.remove(host);
+                // We have been connected to the peer, so we remove the flag
+                timeOutFailed.remove(peer);
             } catch (SocketTimeoutException e){
-                if(!timeOutFailed.containsKey(host))
-                    timeOutFailed.put(host, (System.currentTimeMillis()/1000));
-                else if((timeOutFailed.get(host)+300) < (System.currentTimeMillis()/1000)){
-                    MainActivity.mWifiDirectActivity.ipsOnNetwork.remove(host);
+                // If the host fails to connect to the peer, we flag the peer as potentially disconnected
+                if(!timeOutFailed.containsKey(peer))
+                    timeOutFailed.put(peer, (System.currentTimeMillis()/1000));
+                else if((timeOutFailed.get(peer)+300) < (System.currentTimeMillis()/1000)){
+                    MainActivity.mWifiDirectActivity.ipsOnNetwork.remove(peer);
                 }
             } catch (IOException e) {
                 Log.e(WifiDirectActivity.TAG, e.getMessage());
@@ -76,8 +75,10 @@ public class DataTransferService extends IntentService {
                         }
                     }
                 }
+                // remove peer from our list of ips, and if we are the last one left, close the network
+                // should be removed
                 if(dataType != null && dataType.equals(WifiDirectActivity.DISCONNECT)) {
-                    MainActivity.mWifiDirectActivity.ipsOnNetwork.remove(host);
+                    MainActivity.mWifiDirectActivity.ipsOnNetwork.remove(peer);
                     if(MainActivity.mWifiDirectActivity.ipsOnNetwork.isEmpty())
                         MainActivity.mWifiDirectActivity.disconnect();
                 }
