@@ -611,7 +611,7 @@ public class WifiDirectActivity extends Activity implements ChannelListener, Dev
                     Toast.LENGTH_LONG).show();
         }
     }
-    @Override
+    //@Override
     public void cancelDisconnect() {
         /*
          * A cancel abort request by user. Disconnect i.e. removeGroup if
